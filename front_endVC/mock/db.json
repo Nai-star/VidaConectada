@@ -1,0 +1,8 @@
+{
+  "tipo_sangre": [
+    { "id": 1, "blood_type": "B-",  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:30:42Z" },
+    { "id": 2, "blood_type": "AB-", "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:10Z" },
+    { "id": 3, "blood_type": "O-",  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:40Z" },
+    { "id": 4, "blood_type": "A+",  "urgency": "priority", "is_active": false, "note": "Reserva",                    "updated_at": "2025-11-07T19:31:40Z" }
+  ]
+}
