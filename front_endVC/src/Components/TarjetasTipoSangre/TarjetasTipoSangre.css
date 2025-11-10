@@ -1,0 +1,164 @@
+/* ================================
+   CONTENEDOR GENERAL Y ENCABEZADOS
+   ================================ */
+
+.ts2-container {
+  max-width: 1200px;
+  margin: 40px auto 10px;
+  padding: 0 20px;
+  font-family: "Inter", sans-serif;
+}
+
+.ts2-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.ts2-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #c62828; /* rojo elegante */
+  margin: 0;
+}
+
+.ts2-subtitle {
+  font-size: 18px;
+  color: #546e7a; /* gris suave */
+  margin-top: 10px;
+}
+
+/* Estados de carga y error */
+.ts2-state {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  color: #607d8b;
+}
+
+/* ================================
+   GRID RESPONSIVO
+   ================================ */
+
+.ts2-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1100px) {
+  .ts2-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 820px) {
+  .ts2-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .ts2-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================
+   TARJETAS
+   ================================ */
+
+.ts2-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0; /* borde suave */
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0px 4px 16px rgba(0,0,0,0.06);
+  transition: 0.2s ease-in-out;
+}
+
+.ts2-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Header de la tarjeta */
+.ts2-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.ts2-type {
+  font-size: 42px;
+  font-weight: 700;
+  color: #d32f2f;
+  margin: 0;
+}
+
+/* ================================
+   BADGES DE FRECUENCIA
+   ================================ */
+
+.badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Común = verde */
+.badge-green {
+  background: #e7f8ed;
+  color: #2e7d32;
+}
+
+/* Poco común = amarillo */
+.badge-yellow {
+  background: #fff3c7;
+  color: #9e7b00;
+}
+
+/* Raro = naranja claro */
+.badge-orange {
+  background: #ffe4d6;
+  color: #c7511a;
+}
+
+/* Muy raro = naranja fuerte */
+.badge-orange-strong {
+  background: #ffdac8;
+  color: #b83c15;
+}
+
+/* ================================
+   CUERPO DE LA TARJETA
+   ================================ */
+
+.ts2-body {
+  margin-top: 8px;
+}
+
+.ts2-row + .ts2-row {
+  margin-top: 14px;
+}
+
+.ts2-label {
+  display: block;
+  font-size: 14px;
+  color: #78909c;
+  margin-bottom: 4px;
+}
+
+.ts2-strong {
+  font-weight: 700;
+  font-size: 15px;
+  color: #263238;
+}
+
+.ts2-text {
+  font-size: 15px;
+  color: #37474f;
+  line-height: 1.5;
+}

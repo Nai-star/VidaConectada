@@ -1,0 +1,48 @@
+.alerta-sangre {
+  max-width: 900px;           /* ancho como en la imagen */
+  margin: 40px auto;          /* centrado */
+  padding: 18px 25px;         /* espacio interno */
+  background: #ffffff;        /* fondo blanco */
+  border-radius: 12px;        /* bordes redondeados */
+  text-align: center;         /* centrar texto */
+  font-size: 17px;            /* tamaño similar */
+  line-height: 1.6;           /* más legible */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);  /* sombra suave */
+}
+
+.alerta-roja {
+  color: #d60000;             /* rojo fuerte */
+  font-weight: bold;
+}
+
+/* Parrafo ¿Sabías que? */
+.info-box {
+  background: #eef6ff;
+  border: 1px solid #d7e9ff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  max-width: 760px;
+
+  /* ✅ centrado horizontal */
+  margin: 30px auto;  
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.info-box > p {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  font-size: 18px;
+  color: #1e6ee5;
+}
+
+.info-box ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #2f3b4a;
+}
+
+.info-box li {
+  margin: 6px 0;
+  line-height: 1.6;
+}

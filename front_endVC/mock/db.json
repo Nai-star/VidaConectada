@@ -1,8 +1,75 @@
 {
-  "tipo_sangre": [
-    { "id": 1, "blood_type": "B-",  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:30:42Z" },
-    { "id": 2, "blood_type": "AB-", "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:10Z" },
-    { "id": 3, "blood_type": "O-",  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:40Z" },
-    { "id": 4, "blood_type": "A+",  "urgency": "priority", "is_active": false, "note": "Reserva",                    "updated_at": "2025-11-07T19:31:40Z" }
+  "tipo_sangre":[
+  {  
+    "id_tipo_sangre": 1,
+    "blood_type": "A+",
+    "frecuencia": "Común",
+    "poblacion": 35.7,
+    "donaA": ["A+", "AB+"],
+    "recibeDe": ["A+", "A-", "O+", "O-"]
+  },
+  {
+    "id_tipo_sangre": 2,
+    "blood_type": "A-",
+    "frecuencia": "Poco común",
+    "poblacion": 6.3,
+    "donaA": ["A+", "A-", "AB+", "AB-"],
+    "recibeDe": ["A-", "O-"]
+  },
+  {
+    "id_tipo_sangre": 3,
+    "blood_type": "B+",
+    "frecuencia": "Poco común",
+    "poblacion": 8.5,
+    "donaA": ["B+", "AB+"],
+    "recibeDe": ["B+", "B-", "O+", "O-"]
+  },
+  {
+    "id_tipo_sangre": 4,
+    "blood_type": "B-",
+    "frecuencia": "Raro",
+    "poblacion": 1.5,
+    "donaA": ["B+", "B-", "AB+", "AB-"],
+    "recibeDe": ["B-", "O-"]
+  },
+  {
+    "id_tipo_sangre": 5,
+    "blood_type": "AB+",
+    "frecuencia": "Muy raro",
+    "poblacion": 0.6,
+    "donaA": ["AB+"],
+    "recibeDe": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+  },
+  {
+    "id_tipo_sangre": 6,
+    "blood_type": "AB-",
+    "frecuencia": "Muy raro",
+    "poblacion": 0.7,
+    "donaA": ["AB+", "AB-"],
+    "recibeDe": ["A-", "B-", "AB-", "O-"]
+  },
+  {
+    "id_tipo_sangre": 7,
+    "blood_type": "O+",
+    "frecuencia": "Común",
+    "poblacion": 37.4,
+    "donaA": ["O+", "A+", "B+", "AB+"],
+    "recibeDe": ["O+", "O-"]
+  },
+  {
+    "id_tipo_sangre": 8,
+    "blood_type": "O-",
+    "frecuencia": "Raro",
+    "poblacion": 6.6,
+    "donaA": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+    "recibeDe": ["O-"]
+  }
+],
+  
+  "Urgente_Tip_Sang":[
+    { "id": 1, "id_tipo_sangre": 4,  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:30:42Z" },
+    { "id": 2, "id_tipo_sangre": 6, "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:10Z" },
+    { "id": 3, "id_tipo_sangre": 8,  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:40Z" },
+    { "id": 4, "id_tipo_sangre": 1,  "urgency": "priority", "is_active": false, "note": "Reserva",                    "updated_at": "2025-11-07T19:31:40Z" }
   ]
 }
