@@ -4,10 +4,18 @@ import Carrusel from '../../Components/Carrusel/Carrusel'
 import TiposSangreEscasez from '../../Components/TiposSangreEscasez/TiposSangreEscasez'
 import TarjetasTipoSangre from '../../Components/TarjetasTipoSangre/TarjetasTipoSangre'
 import RequisitosDonacion from '../../Components/RequisitosDonacion/RequisitosDonacion'
+import BeneficiosDonar from '../../Components/Beneficios/BeneficiosDonar'
+
+
+
 import "./Home.css";
 
-
 function Home() {
+  const stats = [
+    { id: 1, value: "10 min", label: "Duración promedio" },
+    { id: 2, value: "450 ml", label: "Cantidad donada" },
+    { id: 3, value: "3 vidas", label: "Puedes salvar" },
+  ];
 
 
   return (
@@ -26,6 +34,32 @@ function Home() {
         </ul>
         </div>
         <RequisitosDonacion/>
+        <BeneficiosDonar/>
+        <section className="cta-hero">
+          <h3 className="cta-title">¿Listo para ser un héroe?</h3>
+          <p className="cta-subtitle">
+            Miles de personas en Costa Rica necesitan transfusiones cada año. Tu donación puede
+            marcar la diferencia entre la vida y la muerte.
+          </p>
+
+          <div className="cta-stats">
+            {stats.map((s) => (
+              <div className="stat-card" key={s.id}>
+                <div className="stat-value">{s.value}</div>
+                <div className="stat-label">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <div>Campañas</div>
+
+        
+
+
+
+
+
 
     </div>
   )

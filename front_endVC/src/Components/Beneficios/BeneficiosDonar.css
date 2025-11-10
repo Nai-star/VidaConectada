@@ -1,0 +1,86 @@
+/* Contenedor y encabezados */
+.ben-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  text-align: center;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.ben-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #c62828; /* rojo del título */
+  margin-bottom: 8px;
+}
+
+.ben-subtitle {
+  color: #546e7a;
+  font-size: 18px;
+  margin-bottom: 26px;
+}
+
+/* Grid */
+.ben-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 980px) {
+  .ben-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .ben-grid { grid-template-columns: 1fr; }
+}
+
+/* Tarjeta */
+.ben-card {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 16px;
+  padding: 28px 22px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  transition: transform .22s ease, box-shadow .22s ease;
+}
+
+.ben-card:hover {
+  transform: translateY(-6px);             /* ← elevación suave */
+  box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+}
+
+/* Icono circular */
+.ben-icon-wrap {
+  width: 68px;
+  height: 68px;
+  display: grid;
+  place-items: center;
+  margin: 6px auto 18px;
+  border-radius: 999px;
+  background: #fdecec;                      /* rosa muy claro */
+  color: #c62828;                            /* rojo del trazo */
+  font-size: 26px;
+}
+
+/* Título y texto de la tarjeta */
+.ben-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f2135;
+  margin: 2px 0 10px;
+  line-height: 1.3;
+}
+
+.ben-card-text {
+  color: #3f566b;
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+/* (Opcional) Suavizar el borde al pasar el mouse */
+.ben-card:hover .ben-icon-wrap {
+  transform: translateY(-2px);
+  transition: transform .22s ease;
+}
