@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 import { Link } from "react-router-dom";
 import { HashLink } from 'react-router-hash-link';
 import { FaEllipsisH, FaTimes } from "react-icons/fa";
-import logo from "/vite.svg";
+import logo from "/logo_vidaconectada.png";
 import './Navbar.css';
 
 function Navbar() {

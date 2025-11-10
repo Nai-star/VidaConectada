@@ -65,11 +65,23 @@
     "recibeDe": ["O-"]
   }
 ],
-  
-  "Urgente_Tip_Sang":[
+   "Urgente_Tip_Sang":[
     { "id": 1, "id_tipo_sangre": 4,  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:30:42Z" },
     { "id": 2, "id_tipo_sangre": 6, "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:10Z" },
     { "id": 3, "id_tipo_sangre": 8,  "urgency": "urgent",   "is_active": true,  "note": "Se necesita con prioridad", "updated_at": "2025-11-07T19:31:40Z" },
     { "id": 4, "id_tipo_sangre": 1,  "urgency": "priority", "is_active": false, "note": "Reserva",                    "updated_at": "2025-11-07T19:31:40Z" }
+  ],
+  "requisitos": [
+    { "id": 1, "requisitos": "Tener entre 18 y 65 años de edad", "estado": true },
+    { "id": 2, "requisitos": "Gozar de buena salud general", "estado": true },
+    { "id": 3, "requisitos": "No haber donado sangre en los últimos 2 meses", "estado": true },
+    { "id": 4, "requisitos": "No estar embarazada o lactando", "estado": true },
+    { "id": 5, "requisitos": "No padecer enfermedades transmisibles por sangre", "estado": true },
+    { "id": 6, "requisitos": "Peso mínimo de 52 kilogramos", "estado": true },
+    { "id": 7, "requisitos": "Presentar documento de identidad vigente", "estado": true },
+    { "id": 8, "requisitos": "No tener tatuajes o piercings recientes (últimos 12 meses)", "estado": true },
+    { "id": 9, "requisitos": "No haber tenido cirugías recientes", "estado": true },
+    { "id": 10, "requisitos": "Haber descansado bien la noche anterior", "estado": true }
   ]
+
 }

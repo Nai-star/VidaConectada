@@ -3,8 +3,9 @@ import Navbar from '../../Components/NavBar/Navbar'
 import Carrusel from '../../Components/Carrusel/Carrusel'
 import TiposSangreEscasez from '../../Components/TiposSangreEscasez/TiposSangreEscasez'
 import TarjetasTipoSangre from '../../Components/TarjetasTipoSangre/TarjetasTipoSangre'
-
+import RequisitosDonacion from '../../Components/RequisitosDonacion/RequisitosDonacion'
 import "./Home.css";
+
 
 function Home() {
 
@@ -24,6 +25,7 @@ function Home() {
           <li>Solo el 7% de la población tiene sangre tipo O-</li>
         </ul>
         </div>
+        <RequisitosDonacion/>
 
     </div>
   )
