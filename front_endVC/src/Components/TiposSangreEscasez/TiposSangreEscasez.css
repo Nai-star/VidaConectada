@@ -1,0 +1,125 @@
+/* estilos en tiposSangreEscasez.css */
+
+/* Contenedor principal */
+.tipos-sangre-container {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #f8f8f8; /* Un fondo ligeramente gris claro */
+}
+
+/* Encabezados y subtítulo */
+.titulo-seccion {
+  font-size: 2em;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icono-alerta {
+  color: #d9534f; /* Rojo para la alerta */
+  margin-right: 10px;
+  font-size: 1.2em;
+}
+
+.subtitulo {
+  font-size: 1.1em;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+/* Contenedor de las tarjetas */
+.tarjetas-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Espacio entre las tarjetas */
+  flex-wrap: wrap; /* Para que se ajusten en pantallas pequeñas */
+}
+
+/* Estilo base de la tarjeta */
+.tarjeta-sangre {
+  background-color: white;
+  border: 1px solid #f0e0e0; /* Borde rojo muy claro */
+  border-radius: 10px;
+  padding: 30px 20px;
+  width: 200px; /* Ancho fijo para las tarjetas */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sombra suave */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto al pasar el ratón (opcional) */
+.tarjeta-sangre:hover {
+  transform: translateY(-5px);
+}
+
+/* Estilo para la gota (el círculo rojo) */
+
+.gota {
+  position: relative; /* Necesario para posicionar el pseudo-elemento */
+  width: 50px;
+  height: 50px;
+  background-color: #d9534f; /* Color rojo de la gota */
+  border-radius: 50% 50% 50% 0 / 50% 50% 50% 50%; /* Esto crea una forma más ovalada o de corazón si se ajusta bien */
+  transform: rotate(135deg); /* Rota para que la punta apunte hacia abajo */
+  margin-bottom: 30px; /* Ajusta el margen si es necesario */
+  box-shadow: 0 0 10px rgba(217, 83, 79, 0.5); /* Sombra sutil */
+}
+
+/* Con esta técnica, el border-radius ya nos da la forma de gota.
+   Si quisieras una gota más pronunciada, podrías usar un pseudo-elemento
+   como se explica a continuación, pero para una gota simple y estilizada,
+   el border-radius y rotate suelen ser suficientes.
+*/
+
+/* Tipo de sangre (B-, AB-, O-) */
+.tipo {
+  font-size: 3em; /* Letra grande */
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 10px 0;
+  line-height: 1; /* Para controlar el espacio vertical */
+}
+
+/* Etiqueta de Urgencia */
+.urgente {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #d9534f; /* Rojo fuerte */
+  padding: 5px 15px;
+  border: 1px solid #d9534f;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  background-color: #fcecec; /* Fondo muy claro para la etiqueta */
+}
+
+/* Nota de prioridad (Se necesita con prioridad) */
+.prioridad {
+  font-size: 0.9em;
+  color: #888;
+  margin: 0;
+}
+
+/* Estilos condicionales basados en el atributo data-urgency */
+
+/* Borde rojo de las tarjetas en estado de Urgencia (coincide con la imagen) */
+.tarjeta-sangre[data-urgency="urgent"] {
+  border-color: #d9534f; /* Borde rojo */
+  border-width: 2px;
+}
+
+/* Media query para hacer las tarjetas responsivas */
+@media (max-width: 768px) {
+  .tarjetas-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .tarjeta-sangre {
+    width: 80%; /* Ocupa más espacio en pantallas pequeñas */
+    max-width: 300px;
+  }
+}
