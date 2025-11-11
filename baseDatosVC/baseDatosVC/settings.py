@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     "api"#agregar
+
 ]
 
 MIDDLEWARE = [
@@ -137,17 +138,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
+import cloudinary_storage
 
 cloudinary.config( 
-  cloud_name = "dvmehfkhd", 
-  api_key = "473856749631652", 
-  api_secret = "2iDEwgT0luX8Ivh1QsZpSANhPFg", 
+  cloud_name = "duq5x9vae", 
+  api_key = "315954753774934", 
+  api_secret = "NvMNPQ6Jt-j7hdFVL-wQIaNjyvI", 
   secure = True
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# Ruta base para acceder a archivos desde el navegador
 MEDIA_URL = '/media/'
-
 MEDIA_ROOT = BASE_DIR / 'media'
+

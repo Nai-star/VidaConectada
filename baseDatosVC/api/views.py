@@ -72,17 +72,6 @@ class SangreDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 
-# ✅ Lugar publicación
-class LugarPubliListCreateView(ListCreateAPIView):
-    queryset = Lugar_publi.objects.all()
-    serializer_class = LugarPubliSerializer
-    permission_classes = [AllowAny]
-
-
-class LugarPubliDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Lugar_publi.objects.all()
-    serializer_class = LugarPubliSerializer
-    permission_classes = [AllowAny]
 
 
 # ✅ Suscritos
@@ -114,26 +103,26 @@ class LugarCampanaDetailView(RetrieveUpdateDestroyAPIView):
 # ✅ Campañas
 class CampanaListCreateView(ListCreateAPIView):
     queryset = Campana.objects.all()
-    serializer_class = CampanaSerializer
+    serializer_class = DetalleRequisitosSerializer
     permission_classes = [AllowAny]
 
 
 class CampanaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Campana.objects.all()
-    serializer_class = CampanaSerializer
+    serializer_class = DetalleRequisitosSerializer
     permission_classes = [AllowAny]
 
 
 # ✅ Imágenes de campaña
 class ImagenCampanaListCreateView(ListCreateAPIView):
     queryset = Imagen_campana.objects.all()
-    serializer_class = ImagenCampanaSerializer
+    serializer_class =Imagen_campanaSerializer
     permission_classes = [AllowAny]
 
 
 class ImagenCampanaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Imagen_campana.objects.all()
-    serializer_class = ImagenCampanaSerializer
+    serializer_class = Imagen_campanaSerializer
     permission_classes = [AllowAny]
 
 
@@ -181,3 +170,13 @@ class Imagenes_publiListCreateView(generics.ListCreateAPIView):
     queryset = Imagenes_publi.objects.all()
     serializer_class = Imagenes_publiSerializer
 
+class RequisitosDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Respuesta.objects.all()
+    serializer_class = RequisitosSerializer
+    permission_classes = [AllowAny]
+
+
+class RequisitosRetrieveUpdateDestroyAPIVieww(RetrieveUpdateDestroyAPIView):
+    queryset = Requisitos.objects.all()
+    serializer_class = RequisitosSerializer
+    permission_classes = [AllowAny]

@@ -19,10 +19,6 @@ urlpatterns = [
     path('sangre', SangreListCreateView.as_view(), name="crear y listar tipos de sangre"),
     path('sangre/<int:pk>', SangreDetailView.as_view(), name="actualizar y eliminar tipo de sangre"),
 
-    # Lugar de publicaciones
-    path('lugares-publicaciones', LugarPubliListCreateView.as_view(), name="crear y listar lugares de publicaciones"),
-    path('lugares-publicaciones/<int:pk>', LugarPubliDetailView.as_view(), name="actualizar y eliminar lugar de publicación"),
-
     # Suscritos
     path('suscritos', SuscritosListCreateView.as_view(), name="crear y listar suscritos"),
     path('suscritos/<int:pk>', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),

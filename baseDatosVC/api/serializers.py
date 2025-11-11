@@ -4,6 +4,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from .models import CustomUser
 
+#Usuarios
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
@@ -31,14 +32,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
     
 
-
-class PublicacionesSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = Publicaciones
-        fields = '__all__'
-    
-   
-
+#Publicaciones
 class ImagenesPubliSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagenes_publi
@@ -50,47 +44,48 @@ class PublicacionesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Publicaciones
-        fields = '__all__'
-    
+        fields = {'Texto','imagen','Estado'}
+
+
+#Suscritos
 class SangreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Sangre
         fields = '__all__'
 
 
-class LugarPubliSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lugar_publi
-        fields = '__all__'
-
-
 class SuscritosSerializer(serializers.ModelSerializer):
+    nombre = serializers.CharField(source='CustomUser.first_name', read_only=True)
+    apellido = serializers.CharField(source='CustomUser.last_name', read_only=True)
+    correo = serializers.EmailField(source='CustomUser.email', read_only=True)
+    tipo_sangre = serializers.CharField(source='Sangre.tipo_sangre', read_only=True)
+
     class Meta:
         model = Suscritos
-        fields = '__all__'
+        fields = ['id', 'nombre', 'apellido', 'correo', 'tipo_sangre']
 
 
-class ImagenCampanaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Imagen_campana
-        fields = '__all__'
-
+#Campaña
 
 class LugarCampanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lugar_campana
         fields = '__all__'
 
+class Imagen_campanaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Imagen_campana
+        fields = '__all__'
 
-class CampanaSerializer(serializers.ModelSerializer):
-    Imagen_campana = ImagenCampanaSerializer(many=True, read_only=True)
+class  DetalleRequisitosSerializer(serializers.ModelSerializer):
+    Imagen_campana = Imagen_campanaSerializer(many=True, read_only=True)
     Lugar_campana = serializers.PrimaryKeyRelatedField(
         queryset=Lugar_campana.objects.all()
     )
 
     class Meta:
-        model = Campana
-        fields = '__all__'
+        model =  DetalleRequisitos
+        fields =  ['Titulo', 'Descripicion', 'Fecha_incio', 'Fecha_fin', 'requistos','Lugar','Direcion','Canton','Contacto']
 
 
 class MapaSerializer(serializers.ModelSerializer):
@@ -98,7 +93,7 @@ class MapaSerializer(serializers.ModelSerializer):
         model = Mapa
         fields = '__all__'
 
-
+#Preguntas y rspuestas
 class BuzonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Buzon
@@ -111,10 +106,8 @@ class RespuestaSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
 
-from rest_framework import serializers
-from .models import Imagenes_publi
-
-class Imagenes_publiSerializer(serializers.ModelSerializer):
+#Requisitos
+class RequisitosSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Imagenes_publi
+        model = Requisitos
         fields = '__all__'

@@ -24,12 +24,12 @@ class Usuario_rol(models.Model):
 
 
 class Publicaciones(models.Model):
-    Titulo_puli = models.CharField(max_length=100)
-    Descripicion= models.CharField(max_length=300)
-    Fecha_publi = models.DateTimeField (auto_now_add=True) 
+    
+    texto=models.CharField(max_length=200)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Publicaciones")
+    Estado =models.BooleanField()
     def __str__(self):
-        return f"{self.Titulo_puli}"
+        return f"{self.texto}"
 
 class Imagenes_publi(models.Model):
     imagen = CloudinaryField('imagen_publicacion', folder='publicaciones/')
@@ -40,20 +40,29 @@ class Imagenes_publi(models.Model):
 
 class Sangre(models.Model):
     tipo_sangre  = models.CharField(max_length=3)
+    frecuencia = models.CharField(max_length=20)
+    poblacion = models.CharField(max_length=20)
+    donaA =  models.CharField(max_length=20)
+    recibeDe =  models.CharField(max_length=40)
     def __str__(self):
         return f"{self.tipo_sangre}"
-
-class Lugar_publi(models.Model):
-    Nombre_lugar = models.CharField(max_length=100)
+    
+class Urgente_Tip_Sang(models.Model):
+    Sangre = models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Urgente_Tip_Sang")
+    urgencia = models.CharField(max_length=40)
+    activo= models.BooleanField()
+    nota = models.CharField(max_length=40)
+    actualizado = models.DateTimeField
     def __str__(self):
-        return f"{self.Nombre_lugar}"
+        return f"{self.urgencia}"
+
 
 
 
 class Suscritos(models.Model):
     CustomUser= models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Suscritos")
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
-    Lugar_publi= models.ForeignKey(Lugar_publi,on_delete=models.CASCADE, related_name="Suscritos")
+    
  
 
 
@@ -68,7 +77,7 @@ class Lugar_campana(models.Model):
 
 class Campana(models.Model):
     Titulo = models.CharField(max_length=100)
-    Descripicion= models.CharField(max_length=300)
+    Descripcion= models.CharField(max_length=300)
     Fecha_inicio = models.DateTimeField (auto_now_add=False) 
     Fecha_fin = models.DateTimeField (auto_now_add=False) 
     Activo = models.BooleanField(default=True) 
@@ -110,3 +119,16 @@ class Respuesta(models.Model):
 
     def __str__(self):
         return f"{self.Respuesta_P}"
+
+class Requisitos (models.Model):
+    requisitos = models.CharField(max_length=200)
+    Estado = models.BooleanField(default=True)
+     
+    def __str__(self):
+        return f"{self.requisitos}"
+
+class DetalleRequisitos (models.Model):
+    Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="DetalleRequisito")
+    Requisitos = models.ForeignKey(Requisitos,on_delete=models.CASCADE, related_name="DetalleRequisito")
+
+
