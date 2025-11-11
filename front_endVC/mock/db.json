@@ -82,6 +82,39 @@
     { "id": 8, "requisitos": "No tener tatuajes o piercings recientes (últimos 12 meses)", "estado": true },
     { "id": 9, "requisitos": "No haber tenido cirugías recientes", "estado": true },
     { "id": 10, "requisitos": "Haber descansado bien la noche anterior", "estado": true }
-  ]
+  ],
+  "Pregunta_frecuente": [
+  {
+    "id": 1,
+    "pregunta": "¿Cuánto tiempo toma donar sangre?",
+    "respuesta": "El proceso completo toma aproximadamente 45 minutos a 1 hora, incluyendo registro, entrevista médica, la donación (8–10 minutos) y la recuperación. La extracción de sangre en sí toma unos 10 minutos.",
+    "estado": true
+  },
+  {
+    "id": 2,
+    "pregunta": "¿Es seguro donar sangre?",
+    "respuesta": "Sí. Se utilizan materiales estériles y desechables en cada donación. Además, se realiza una evaluación médica previa para garantizar la seguridad de la persona donante.",
+    "estado": true
+  },
+  {
+    "id": 3,
+    "pregunta": "¿Con qué frecuencia puedo donar?",
+    "respuesta": "Hombres: cada 3 meses. Mujeres: cada 4 meses. Siempre espera el tiempo recomendado y sigue las indicaciones del personal de salud.",
+    "estado": true
+  },
+  {
+    "id": 4,
+    "pregunta": "¿Qué debo hacer antes de donar?",
+    "respuesta": "Duerme bien, hidrátate, come ligero (evita grasas), lleva tu documento de identidad y no consumas alcohol 24 horas antes.",
+    "estado": true
+  },
+  {
+    "id": 5,
+    "pregunta": "¿Puedo donar si tengo tatuajes o piercings?",
+    "respuesta": "Sí, siempre que hayan pasado al menos 12 meses desde la realización del tatuaje o piercing y no existan complicaciones.",
+    "estado": true
+  }
+]
+
 
 }

@@ -5,10 +5,11 @@ import TiposSangreEscasez from '../../Components/TiposSangreEscasez/TiposSangreE
 import TarjetasTipoSangre from '../../Components/TarjetasTipoSangre/TarjetasTipoSangre'
 import RequisitosDonacion from '../../Components/RequisitosDonacion/RequisitosDonacion'
 import BeneficiosDonar from '../../Components/Beneficios/BeneficiosDonar'
-
+import PreguntasFrecuentes from '../../Components/FAQ/PreguntasFrecuentes'
 
 
 import "./Home.css";
+
 
 function Home() {
   const stats = [
@@ -53,6 +54,8 @@ function Home() {
         </section>
 
         <div>Campañas</div>
+
+        <PreguntasFrecuentes/>
 
         
 
