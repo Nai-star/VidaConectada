@@ -76,6 +76,7 @@ function PreguntasFrecuentes() {
           })}
         </div>
       )}
+      <p className="faq-subtitle">¿No encontraste tu respuesta? <b> Envíanos tu pregunta</b></p>
     </section>
   )
 }

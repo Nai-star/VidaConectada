@@ -6,6 +6,13 @@ import logo from "/logo_vidaconectada.png";
 import './Navbar.css';
 
 function Navbar() {
+    
+     const manejadorClick = () => {
+      cerrarMenu();     
+      onOpenSuscripcion();  // ✅ abre el modal
+    };
+
+
     const [menuAbierto, setMenuAbierto] = useState(false); // 🔥 estado menú mobile
     
     // Función para cerrar el menú al hacer clic en un enlace
@@ -43,7 +50,7 @@ function Navbar() {
        
           {/* botones */}
         <li className="navbar-btn-item">
-          <HashLink smooth to="/homepage#donar" onClick={cerrarMenu}>
+          <HashLink smooth to="/" onClick={manejadorClick}>
             <button className="btn-sucribirse">Suscribirse</button>
           </HashLink>
         </li>
