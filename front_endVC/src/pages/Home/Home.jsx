@@ -7,13 +7,13 @@ import RequisitosDonacion from '../../Components/RequisitosDonacion/RequisitosDo
 import BeneficiosDonar from '../../Components/Beneficios/BeneficiosDonar'
 import PreguntasFrecuentes from '../../Components/FAQ/PreguntasFrecuentes'
 import BuzonPreguntas from '../../Components/Buzon/BuzonPreguntas'
-import ModalSuscripcion from "../../Components/Suscripciones/ModalSuscripcion";
+
 
 import "./Home.css";
 
 
 function Home() {
-  const [openSub, setOpenSub] = useState(false);
+
 
   const stats = [
     { id: 1, value: "10 min", label: "Duración promedio" },
@@ -24,7 +24,7 @@ function Home() {
 
   return (
     <div>
-        <Navbar onOpenSuscripcion={() => setOpenSub(true)}/>
+        <Navbar />
         <Carrusel/>
         <TiposSangreEscasez/>
         <p className="alerta-sangre"><b className="alerta-roja">¡Tu ayuda es crucial!</b> Estos tipos de sangre tienen niveles críticos en los bancos de sangre de Costa Rica. Una donación puede salvar vidas hoy mismo.</p>
@@ -67,7 +67,6 @@ function Home() {
 
 
 
-    <ModalSuscripcion isOpen={openSub} onClose={() => setOpenSub(false)} />
     </div>
   )
 }

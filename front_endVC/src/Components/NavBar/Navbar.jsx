@@ -4,21 +4,24 @@ import { HashLink } from 'react-router-hash-link';
 import { FaEllipsisH, FaTimes } from "react-icons/fa";
 import logo from "/logo_vidaconectada.png";
 import './Navbar.css';
+import ModalSuscripcion from "../../Components/Suscripciones/ModalSuscripcion";
+
+
+
 
 function Navbar() {
-    
-     const manejadorClick = () => {
-      cerrarMenu();     
-      onOpenSuscripcion();  // ✅ abre el modal
-    };
+
+        const [showModal, setShowModal] = useState(false);
+        const handleOpenModal = () => setShowModal(true);
+        const handleCloseModal = () => setShowModal(false);
+
+        const [menuAbierto, setMenuAbierto] = useState(false);
+        const cerrarMenu = () => setMenuAbierto(false);
 
 
-    const [menuAbierto, setMenuAbierto] = useState(false); // 🔥 estado menú mobile
     
-    // Función para cerrar el menú al hacer clic en un enlace
-    const cerrarMenu = () => {
-    setMenuAbierto(false);
-  }
+    
+    
 
   return (
     <nav className="navbar-container">
@@ -50,9 +53,9 @@ function Navbar() {
        
           {/* botones */}
         <li className="navbar-btn-item">
-          <HashLink smooth to="/" onClick={manejadorClick}>
-            <button className="btn-sucribirse">Suscribirse</button>
-          </HashLink>
+          
+            <button className="btn-sucribirse" onClick={handleOpenModal}>Suscribirse</button>
+        
         </li>
         <li className="navbar-btn-item">
           <HashLink smooth to="/homepage#donar" onClick={cerrarMenu}>
@@ -61,7 +64,7 @@ function Navbar() {
         </li>
        
         </ul>
-
+      <ModalSuscripcion isOpen={showModal} onClose={handleCloseModal} />
         
 
     </nav>
