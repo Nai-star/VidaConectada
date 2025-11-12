@@ -280,14 +280,23 @@
     }
   ],
   "suscripciones": [
-  {
-    "id": 1,
-    "nombre": "Ana",
-    "apellido": "Soto",
-    "correo": "ana@example.com",
-    "tipo_sangre": "O+",
-    "estado": "activo",
-    "created_at": "2025-11-11T14:00:00Z"
-  }
-]
+    {
+      "id": "1",
+      "nombre": "Ana",
+      "apellido": "Soto",
+      "correo": "ana@example.com",
+      "tipo_sangre": "O+",
+      "estado": "activo",
+      "created_at": "2025-11-11T14:00:00Z"
+    },
+    {
+      "id": "737e",
+      "nombre": "Reychel",
+      "apellido": "Fallas",
+      "correo": "reychel@gmail.com",
+      "tipo_sangre": "B+",
+      "estado": "activo",
+      "created_at": "2025-11-12T15:04:44.817Z"
+    }
+  ]
 }
