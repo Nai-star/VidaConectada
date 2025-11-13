@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./tiposSangreEscasez.css";
 import { FaExclamationCircle } from "react-icons/fa";
-import { obtenerTiposSangre } from "../../services/Servicio_TS"; 
+import { obtenerTiposSangreUrgentes } from "../../services/Servicio_TS"; 
 // ⚠️ Este servicio debe devolver cada item con: 
 // { id, id_tipo_sangre, blood_type, urgency, is_active, note, updated_at }
 
@@ -19,7 +19,9 @@ const TiposSangreEscasez = () => {
   useEffect(() => {
     (async () => {
       try {
-        const data = await obtenerTiposSangre(); // ya filtrado is_active !== false
+        const data = await obtenerTiposSangreUrgentes(); // ya filtrado is_active !== false}
+           console.log("🩸 Datos recibidos en TiposSangreEscasez:", data);
+     
         setItems(Array.isArray(data) ? data : []);
       } catch (e) {
         setErr(e?.message || "No se pudo cargar la información");
@@ -72,13 +74,17 @@ const TiposSangreEscasez = () => {
       </p>
 
       <div className="tarjetas-container">
-        {items.map((it) => (
-          <div
-            className="tarjeta-sangre"
-            key={it.id ?? `${it.id_tipo_sangre}-${it.updated_at}`}
-            data-urgency={it.urgency}     // Útil para CSS: [data-urgency="urgent"] { ... }
-            aria-label={`Tipo ${it.blood_type} - ${urgencyLabel[it.urgency] || "Urgente"}`}
-          >
+       {items.map((it, index) => (
+  <div
+    className="tarjeta-sangre"
+    key={
+      it.id ??
+      `${it.blood_type ?? "unknown"}-${it.urgency ?? "urgent"}-${index}`
+    }
+    data-urgency={it.urgency}
+    aria-label={`Tipo ${it.blood_type} - ${urgencyLabel[it.urgency] || "Urgente"}`}
+  >
+
             <div className="gota" aria-hidden="true"></div>
 
             <h3 className="tipo">{it.blood_type || "—"}</h3>

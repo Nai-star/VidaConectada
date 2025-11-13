@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = "http://127.0.0.1:8000/api";
 
 export async function crearSuscripcion({ nombre, apellido, correo, tipo_sangre }) {
   const payload = {
@@ -10,7 +10,7 @@ export async function crearSuscripcion({ nombre, apellido, correo, tipo_sangre }
     created_at: new Date().toISOString(),
   };
 
-  const res = await fetch(`${API_URL}/suscripciones`, {
+  const res = await fetch(`${API_URL}/suscritos/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

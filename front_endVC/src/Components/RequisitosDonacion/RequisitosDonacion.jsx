@@ -30,8 +30,8 @@ function RequisitosDonacion() {
       {!loading && !err && (
         <div className="req-card">
           <div className="req-grid">
-            {requisitos.map((r) => (
-              <div key={r.id} className="req-item">
+            {requisitos.map((r, index) => (
+              <div key={r.id?? index} className="req-item">
                 <FaCheckCircle className="req-check" />
                 <span>{r.requisitos}</span>
               </div>
