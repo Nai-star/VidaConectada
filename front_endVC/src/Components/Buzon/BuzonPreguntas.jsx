@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./BuzonPreguntas.css";
-import { crearConsultaBuzon } from "../../services/servicioBuzon";
+import { crearConsultaBuzon } from "../../services/ServicioBuzon";
 import { FiMessageSquare } from "react-icons/fi";
 
 

@@ -1,68 +1,73 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+const API_URL = "http://127.0.0.1:8000/api";
 
 /**
  * Une Urgente_Tip_Sang con tipo_sangre usando id_tipo_sangre.
  * Filtra solo los activos.
  */
-export async function obtenerTiposSangre() {
+export async function obtenerTiposSangreUrgentes() {
   try {
-    // 1) Obtener urgencias
-    const rUrg = await fetch(`${API_URL}/Urgente_Tip_Sang`);
+    // 1️⃣ Obtener las urgencias
+    const rUrg = await fetch(`${API_URL}/urgente_tip_sang/`);
     if (!rUrg.ok) throw new Error("Error al obtener Urgente_Tip_Sang");
     const urgentes = await rUrg.json();
 
-    // Filtrar activos
-    const activos = urgentes.filter((u) => u.is_active !== false);
+    // 2️⃣ Filtrar los registros activos (usa 'activo' según tu modelo)
+    const urgentesActivos = urgentes.filter((u) => u.activo === true);
 
-    // 2) Obtener catálogo de tipos de sangre
-    const rTipos = await fetch(`${API_URL}/tipo_sangre`);
+    // 3️⃣ Obtener el catálogo de tipos de sangre
+    const rTipos = await fetch(`${API_URL}/sangre/`);
     if (!rTipos.ok) throw new Error("Error al obtener tipo_sangre");
     const tipos = await rTipos.json();
 
-    // 3) Crear índice por id_tipo_sangre
-    const indexTipos = new Map(
-      tipos.map((t) => [Number(t.id_tipo_sangre), t])
-    );
+    // 4️⃣ Crear un índice por ID de sangre
+    const indexTipos = new Map(tipos.map((t) => [Number(t.id), t]));
 
-    // 4) Unión real SIN fallback
-    const resultado = activos.map((u) => {
-      const tipo = indexTipos.get(Number(u.id_tipo_sangre));
+    // 5️⃣ Unir los datos
+    const resultado = urgentesActivos
+      .map((u) => {
+        const tipo = indexTipos.get(Number(u.Sangre));
+        if (!tipo) return null;
+        return {
+          blood_type: tipo.tipo_sangre, // datos del tipo de sangre
+          urgencia: u.urgencia,
+          nota: u.nota,
+          actualizado: u.actualizado,
+        };
+      })
+      .filter(Boolean);
 
-      // Si no encuentra coincidencia, es un error en el JSON
-      if (!tipo) {
-        console.error(
-          `❌ No se encontró el tipo de sangre con id_tipo_sangre = ${u.id_tipo_sangre}`
-        );
-        return u; 
-      }
-
-      return {
-        ...u,
-        ...tipo, // aquí llega blood_type, frecuencia, donaA, etc.
-      };
-    });
-
-    console.log("✅ Resultado final:", resultado);
+    console.log("✅ Resultado final (solo urgentes):", resultado);
     return resultado;
   } catch (error) {
-    console.error("❌ Error obteniendo tipos de sangre:", error);
+    console.error("❌ Error obteniendo tipos de sangre urgentes:", error);
     throw error;
   }
 }
-
 
 /**
  * Servicio que obtiene todos los tipos de sangre del JSON Server.
  */
 export async function GetTiposSangre() {
   try {
-    const response = await fetch(`${API_URL}/tipo_sangre`);
+    const response = await fetch(`${API_URL}/sangre/`);
     if (!response.ok) {
       throw new Error("Error al obtener los tipos de sangre");
     }
 
     const data = await response.json();
-    return Array.isArray(data) ? data : [];
+
+    // Mapeo de los nombres del backend a los que usa el frontend
+    const adaptado = data.map((t) => ({
+      id_tipo_sangre: t.id,
+      blood_type: t.tipo_sangre,
+      frecuencia: t.frecuencia,
+      poblacion: t.poblacion,
+      donaA: t.donaA,
+      recibeDe: t.recibeDe,
+    }));
+
+    console.log("✅ Resultado final:", adaptado);
+    return adaptado;
   } catch (error) {
     console.error("❌ Error cargando tipos de sangre:", error);
     throw error;

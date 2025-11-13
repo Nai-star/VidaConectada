@@ -4,8 +4,8 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework import generics
-from .models import Imagenes_publi
-from .serializers import Imagenes_publiSerializer
+
+
 
 
 
@@ -47,16 +47,6 @@ class PublicacionesDetailView(RetrieveUpdateDestroyAPIView):
 
 
 # ✅ Imágenes de publicaciones
-class ImagenesPubliListCreateView(ListCreateAPIView):
-    queryset = Imagenes_publi.objects.all()
-    serializer_class = ImagenesPubliSerializer
-    permission_classes = [AllowAny]
-
-
-class ImagenesPubliDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Imagenes_publi.objects.all()
-    serializer_class = ImagenesPubliSerializer
-    permission_classes = [AllowAny]
 
 
 # ✅ Sangre
@@ -140,10 +130,23 @@ class MapaDetailView(RetrieveUpdateDestroyAPIView):
 
 
 # ✅ Buzón
+from rest_framework.response import Response
+
 class BuzonListCreateView(ListCreateAPIView):
     queryset = Buzon.objects.all()
     serializer_class = BuzonSerializer
     permission_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        print("📩 Datos recibidos en la API:", request.data)
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("❌ Errores de validación:", serializer.errors)
+            return Response(serializer.errors, status=400)
+        self.perform_create(serializer)
+        print("✅ Datos guardados correctamente:", serializer.data)
+        return Response(serializer.data, status=201)
+
 
 
 class BuzonDetailView(RetrieveUpdateDestroyAPIView):
@@ -166,10 +169,6 @@ class RespuestaDetailView(RetrieveUpdateDestroyAPIView):
 
 
 
-class Imagenes_publiListCreateView(generics.ListCreateAPIView):
-    queryset = Imagenes_publi.objects.all()
-    serializer_class = Imagenes_publiSerializer
-
 class RequisitosDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Respuesta.objects.all()
     serializer_class = RequisitosSerializer
@@ -179,4 +178,31 @@ class RequisitosDetailView(RetrieveUpdateDestroyAPIView):
 class RequisitosRetrieveUpdateDestroyAPIVieww(RetrieveUpdateDestroyAPIView):
     queryset = Requisitos.objects.all()
     serializer_class = RequisitosSerializer
+    permission_classes = [AllowAny]
+
+
+
+
+
+class Urgente_Tip_SangListCreateView(ListCreateAPIView):
+    queryset = Urgente_Tip_Sang.objects.all()
+    serializer_class = Urgente_Tip_SangSerializer
+    permission_classes = [AllowAny]
+
+
+class Urgente_Tip_SangRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Urgente_Tip_Sang.objects.all()
+    serializer_class = Urgente_Tip_SangSerializer
+    permission_classes = [AllowAny]
+
+
+class RequisitosListCreateView(ListCreateAPIView):
+    queryset =  Requisitos.objects.all()
+    serializer_class =  RequisitosSerializer
+    permission_classes = [AllowAny]
+
+
+class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset =  Requisitos.objects.all()
+    serializer_class =  RequisitosSerializer
     permission_classes = [AllowAny]

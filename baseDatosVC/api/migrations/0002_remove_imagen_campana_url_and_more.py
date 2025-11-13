@@ -11,30 +11,18 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='imagen_campana',
-            name='Url',
-        ),
-        migrations.RemoveField(
-            model_name='imagenes_publi',
-            name='Url_publi',
-        ),
-        migrations.AddField(
-            model_name='buzon',
-            name='Pregunta',
-            field=models.TextField(default=''),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='imagen_campana',
-            name='imagen',
-            field=cloudinary.models.CloudinaryField(default='', max_length=255, verbose_name='imagen_campana'),
-            preserve_default=False,
-        ),
-        migrations.AddField(
-            model_name='imagenes_publi',
-            name='imagen',
-            field=cloudinary.models.CloudinaryField(default='', max_length=255, verbose_name='imagen_publicacion'),
-            preserve_default=False,
-        ),
+       
+        
+        #migrations.AddField(
+           # model_name='imagen_campana',
+           # name='imagen',
+           # field=cloudinary.models.CloudinaryField(default='', max_length=255, verbose_name='imagen_campana'),
+           # preserve_default=False,
+      #  ),
+       # migrations.AddField(
+          #  model_name='imagenes_publi',
+            #name='imagen',
+           # field=cloudinary.models.CloudinaryField(default='', max_length=255, verbose_name='imagen_publicacion'),
+            #preserve_default=False,
+       # ),
     ]

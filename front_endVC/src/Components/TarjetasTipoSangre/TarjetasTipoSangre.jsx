@@ -44,35 +44,39 @@ function TarjetasTipoSangre() {
       {/* Tarjetas */}
       {!loading && !err && (
         <div className="ts2-grid">
-          {tipos.map((t) => (
-            <article key={t.id_tipo_sangre} className="ts2-card">
-              <header className="ts2-card-top">
-                <h3 className="ts2-type">{t.blood_type}</h3>
-                <span className={badgeClass(t.frecuencia)}>{t.frecuencia}</span>
-              </header>
+         {tipos.map((t, index) => (
+  <article 
+    key={t.id_tipo_sangre || `tipo-${index}`} 
+    className="ts2-card"
+  >
+    <header className="ts2-card-top">
+      <h3 className="ts2-type">{t.blood_type}</h3>
+      <span className={badgeClass(t.frecuencia)}>{t.frecuencia}</span>
+    </header>
 
-              <div className="ts2-body">
-                <div className="ts2-row">
-                  <span className="ts2-label">Población</span>
-                  <span className="ts2-strong">
-                    {typeof t.poblacion === "number"
-                      ? `${t.poblacion}%`
-                      : t.poblacion}
-                  </span>
-                </div>
+    <div className="ts2-body">
+      <div className="ts2-row">
+        <span className="ts2-label">Población</span>
+        <span className="ts2-strong">
+          {typeof t.poblacion === "number"
+            ? `${t.poblacion}%`
+            : t.poblacion}
+        </span>
+      </div>
 
-                <div className="ts2-row">
-                  <span className="ts2-label">Puede donar a:</span>
-                  <span className="ts2-text">{t.donaA.join(", ")}</span>
-                </div>
+      <div className="ts2-row">
+        <span className="ts2-label">Puede donar a:</span>
+        <span className="ts2-text">{t.donaA}</span>
+      </div>
 
-                <div className="ts2-row">
-                  <span className="ts2-label">Puede recibir de:</span>
-                  <span className="ts2-text">{t.recibeDe.join(", ")}</span>
-                </div>
-              </div>
-            </article>
-          ))}
+      <div className="ts2-row">
+        <span className="ts2-label">Puede recibir de:</span>
+        <span className="ts2-text">{t.recibeDe}</span>
+      </div>
+    </div>
+  </article>
+))}
+
         </div>
       )}
     </section>

@@ -4,8 +4,8 @@ from cloudinary.models import CloudinaryField
 
 class CustomUser(AbstractUser):
    
-    Telefono = models.IntegerField( unique=True  )
-    Edad = models.IntegerField()
+    Telefono = models.IntegerField( unique=True, null=True, blank=True)
+    Edad = models.IntegerField(null=True, blank=True)
  
     def __str__(self):
         return f"{self.Telefono}"
@@ -42,7 +42,7 @@ class Sangre(models.Model):
     tipo_sangre  = models.CharField(max_length=3)
     frecuencia = models.CharField(max_length=20)
     poblacion = models.CharField(max_length=20)
-    donaA =  models.CharField(max_length=20)
+    donaA =  models.CharField(max_length=30)
     recibeDe =  models.CharField(max_length=40)
     def __str__(self):
         return f"{self.tipo_sangre}"
@@ -52,7 +52,7 @@ class Urgente_Tip_Sang(models.Model):
     urgencia = models.CharField(max_length=40)
     activo= models.BooleanField()
     nota = models.CharField(max_length=40)
-    actualizado = models.DateTimeField
+    actualizado = models.DateTimeField()
     def __str__(self):
         return f"{self.urgencia}"
 
@@ -62,6 +62,8 @@ class Urgente_Tip_Sang(models.Model):
 class Suscritos(models.Model):
     CustomUser= models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Suscritos")
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
+    Fecha = models.DateTimeField(auto_now_add=True)
+
     
  
 
@@ -105,10 +107,13 @@ class Mapa (models.Model):
         return f"{self.latitud}"
 
 
+
 class Buzon(models.Model):
-    Nombre_persona = models.CharField(max_length=100)
-    Correo = models.CharField(max_length=50, unique=True)
-    Pregunta = models.TextField()
+    Nombre_persona = models.CharField(max_length=100,null=True )
+    correo = models.CharField(max_length=50,null=True  )
+    pregunta = models.TextField(null=True )
+    estado = models.CharField(max_length=20,default="Pendiente")
+    fecha = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.Nombre_persona}"
 
@@ -116,6 +121,8 @@ class Respuesta(models.Model):
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Respuesta")
     Buzon = models.ForeignKey(Buzon,on_delete=models.CASCADE, related_name="Respuesta")
     Respuesta_P = models.TextField()
+    estado = models.BooleanField(default=False)
+    Fecha = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.Respuesta_P}"

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from .models import CustomUser
+from .models import Buzon
 
 #Usuarios
 class GroupSerializer(serializers.ModelSerializer):
@@ -54,15 +55,33 @@ class SangreSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# serializers.py
 class SuscritosSerializer(serializers.ModelSerializer):
-    nombre = serializers.CharField(source='CustomUser.first_name', read_only=True)
-    apellido = serializers.CharField(source='CustomUser.last_name', read_only=True)
-    correo = serializers.EmailField(source='CustomUser.email', read_only=True)
-    tipo_sangre = serializers.CharField(source='Sangre.tipo_sangre', read_only=True)
+    nombre = serializers.CharField(write_only=True)
+    apellido = serializers.CharField(write_only=True)
+    correo = serializers.EmailField(write_only=True)
+    tipo_sangre = serializers.CharField(write_only=True)
 
     class Meta:
         model = Suscritos
-        fields = ['id', 'nombre', 'apellido', 'correo', 'tipo_sangre']
+        fields = ['id', 'nombre', 'apellido', 'correo', 'tipo_sangre', 'Fecha']
+
+    def create(self, validated_data):
+        # Crear o buscar usuario
+        user, _ = CustomUser.objects.get_or_create(
+            email=validated_data['correo'],
+            defaults={
+                'first_name': validated_data['nombre'],
+                'last_name': validated_data['apellido']
+            }
+        )
+        # Buscar tipo de sangre
+        sangre = Sangre.objects.get(tipo_sangre=validated_data['tipo_sangre'])
+
+        # Crear suscrito
+        suscrito = Suscritos.objects.create(CustomUser=user, Sangre=sangre)
+        return suscrito
+
 
 
 #Campaña
@@ -94,10 +113,21 @@ class MapaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 #Preguntas y rspuestas
+
 class BuzonSerializer(serializers.ModelSerializer):
+    estado_texto = serializers.SerializerMethodField()
+
     class Meta:
         model = Buzon
-        fields = '__all__'
+        fields = ['id', 'Nombre_persona', 'correo', 'pregunta', 'estado', 'estado_texto', 'fecha']
+        read_only_fields = ['estado', 'fecha']
+
+    def get_estado_texto(self, obj):
+        return "pendiente" if not obj.estado else "respondido"
+
+    def create(self, validated_data):
+        validated_data['estado'] = "Pendiente"  # siempre pendiente al crear
+        return super().create(validated_data)
 
 
 class RespuestaSerializer(serializers.ModelSerializer):
@@ -110,4 +140,12 @@ class RespuestaSerializer(serializers.ModelSerializer):
 class RequisitosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Requisitos
+        fields = '__all__'
+
+
+
+#Requisitos
+class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Urgente_Tip_Sang
         fields = '__all__'
