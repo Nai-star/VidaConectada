@@ -1,0 +1,89 @@
+:root {
+  /* altura del mini navbar; úsala para posicionar tu navbar principal si también es fixed */
+  --mini-topbar-h: 44px;
+}
+
+/* Barra fija arriba */
+.mini-topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--mini-topbar-h);
+  background: #e60751;              /* cian brillante similar a la imagen */
+  color: #ffffff;
+  z-index: 1002;                     /* > que tu navbar principal */
+  display: flex;
+  align-items: center;
+  transition: transform .28s ease, opacity .28s ease;
+  box-shadow: 0 1px 0 rgba(255,255,255,.08) inset;
+}
+
+/* Ocultar cuando se hace scroll down */
+.mini-topbar.is-hidden {
+  transform: translateY(-100%);
+  opacity: .0;
+}
+
+/* Contenido centrado y fluido */
+.mini-wrap {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* Ítems */
+.mini-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #eaf9ff;
+  text-decoration: none;
+  font-size: 14px;
+  line-height: 1;
+  padding: 8px 6px;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.mini-item:hover {
+  opacity: .95;
+  transform: translateY(-1px);
+}
+
+.mini-ic {
+  font-size: 16px;
+  opacity: .95;
+}
+
+/* Divisor fino vertical */
+.mini-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,.35);
+  margin: 0 2px;
+}
+
+/* Responsivo */
+@media (max-width: 840px) {
+  .mini-wrap { gap: 10px; }
+  .mini-item span { font-size: 13px; }
+  .mini-ic { font-size: 15px; }
+}
+
+@media (max-width: 620px) {
+  /* Oculta algunos textos para no romper el layout en móviles muy pequeños */
+  .mini-item:nth-of-type(5) span,   /* Encuesta */
+  .mini-item:nth-of-type(7) span {  /* Quejas */
+    display: none;
+  }
+}
+
+
+:root {
+  --mini-topbar-h: 44px;
+  --mini-offset: var(--mini-topbar-h);
+}

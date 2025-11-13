@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Routing from './Routes/Routing'
+import "./variables.css"
 
 
 

@@ -1,0 +1,274 @@
+/* Contenedor general */
+.contacto {
+  padding: 48px 6% 64px;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: #202939;
+}
+
+/* “Contactenos” pequeño arriba */
+.contacto > p:first-of-type {
+  text-align: center;
+  color: #64748b;                 /* gris medio */
+  font-size: 14px;
+  letter-spacing: .6px;
+  margin: 6px 0 6px;
+}
+
+/* Título principal */
+.contacto h1 {
+  text-align: center;
+  font-weight: 700;
+  font-size: 28px;
+  color: #0f172a;                 /* gris muy oscuro */
+  margin: 0 0 10px;
+}
+
+/* Línea azul decorativa centrada */
+.contacto hr {
+  width: 56px;
+  height: 3px;
+  background: #1976d2;            /* azul */
+  border: 0;
+  border-radius: 999px;
+  margin: 10px auto 28px;
+}
+
+/* “Sede” etiqueta pequeña */
+.contacto > p:nth-of-type(2) {
+  text-align: left;
+  color: #64748b;
+  font-size: 13px;
+  margin: 16px 0 4px;
+}
+
+/* Subtítulos */
+.contacto h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.contacto h3 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Grid para mapas / tarjetas de contacto */
+.datos-contacto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+/* Tarjeta del mapa */
+.datos-contacto iframe {
+  width: 100%;
+  height: 260px;                  /* más alto como en la imagen */
+  border: 0;
+  border-radius: 10px;
+  box-shadow: 0 10px 24px rgba(2, 6, 23, .08);
+  outline: 1px solid rgba(15, 23, 42, .06); /* borde sutil */
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* Interacción suave */
+.datos-contacto iframe:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(2, 6, 23, .12);
+}
+
+/* Responsivo fino */
+@media (max-width: 520px) {
+  .contacto h1 { font-size: 24px; }
+  .datos-contacto iframe { height: 220px; }
+}
+
+
+
+/* Grid de 3 columnas */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 22px;
+}
+
+.info-col h4 {
+  color: #1f2a44;
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.info-col .subline {
+  width: 36px;
+  height: 3px;
+  background: #1e63da;    /* azul */
+  display: inline-block;
+  border-radius: 999px;
+  margin-bottom: 12px;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #39475a;
+  font-size: 14px;
+}
+
+.info-list li {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: start;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.ic {
+  font-size: 18px;
+  color: #1e63da;
+  margin-top: 2px;
+}
+
+/* Tabla de red de bancos */
+.tabla-title {
+  margin: 34px 0 10px;
+  font-size: 20px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.tabla-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e6ebf3;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, .06);
+}
+
+.hosp-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px; /* para scroll horizontal en móviles si hace falta */
+}
+
+.hosp-table thead th {
+  background: #f6f9ff;
+  color: #1f2a44;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e6ebf3;
+}
+
+.hosp-table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f3f7;
+  font-size: 14px;
+  color: #334155;
+  vertical-align: top;
+}
+
+.hosp-table tbody tr:hover {
+  background: #fbfdff;
+}
+
+.ic-sm {
+  color: #1e63da;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* Tabla responsive estilo “cards” en móviles */
+@media (max-width: 720px) {
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  .hosp-table, .hosp-table thead {
+    display: block;
+  }
+  .hosp-table thead {
+    position: absolute;
+    height: 0; width: 0; overflow: hidden;
+  }
+  .hosp-table tbody tr {
+    display: grid;
+    gap: 6px;
+    padding: 12px 12px 8px;
+    border-bottom: 1px solid #e6ebf3;
+  }
+  .hosp-table tbody td {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    border: 0;
+    padding: 6px 0;
+  }
+  .hosp-table tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #1f2a44;
+    padding-right: 10px;
+  }
+}
+
+/* --------- */
+
+/* Cabecera del bloque con el botón a la derecha */
+.tabla-header {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-end;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.btn-toggle-tabla {
+  background: #da1e47;
+  color: #fff;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
+  box-shadow: 0 6px 14px rgba(30, 99, 218, .22);
+}
+
+.btn-toggle-tabla:hover {
+  background: #184fb0;
+  transform: translateY(-1px);
+}
+
+.btn-toggle-tabla:active {
+  transform: translateY(0);
+}
+
+/* Contenedor colapsable con transición suave */
+.tabla-collapsible {
+  overflow: hidden;
+  max-height: 0;          /* cerrado */
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height .45s ease, opacity .25s ease, transform .25s ease;
+}
+
+/* Cuando está abierto */
+.tabla-collapsible.open {
+  max-height: 1200px;     /* lo suficiente para la tabla; ajusta si hace falta */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* (opcional) en móviles separa un poco más */
+@media (max-width: 720px) {
+  .tabla-header { margin-top: 26px; }
+}

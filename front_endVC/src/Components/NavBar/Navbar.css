@@ -18,10 +18,11 @@
   
   /* --- REQUISITO: Fijo en la parte de arriba --- */
   position: fixed;
-  top: 0;
-  left: 0;
+  top: var(--mini-offset);  
+  left: 0; right: 0;
   width: 100%;
-  z-index: 1000; /* Asegura que esté por encima de otro contenido */
+  z-index: 1001; /* Asegura que esté por encima de otro contenido */
+  transition: top .28s ease; 
   
   /* Sombra sutil para separarlo del contenido */
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -166,3 +167,4 @@
     display: none;
   }
 }
+

@@ -1,0 +1,137 @@
+.footer {
+  background: #0b1220;
+  color: #f1f1f1;
+  padding: 3rem 8%;
+  transition: background 0.5s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+/* Logo */
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.footer-logo img {
+  width: 35px;
+  transition: transform 0.3s ease;
+}
+
+.footer-logo:hover img {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.footer-accent {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+/* Títulos */
+.footer-section h4 {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 0.8rem;
+  font-weight: 600;
+}
+
+.footer-section h5 {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #cfcfcf;
+}
+
+/* Enlaces */
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-section a {
+  color: #bfbfbf;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+  color: #d32f2f;
+  text-decoration: underline;
+}
+
+/* Social icons */
+.footer-social {
+  display: flex;
+  gap: 0.8rem;
+  margin-top: 0.6rem;
+}
+
+.footer-social a {
+  background: #111a2c;
+  color: #fff;
+  padding: 0.5rem;
+  border-radius: 50%;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.footer-social a:hover {
+  background: #d32f2f;
+  transform: translateY(-3px);
+}
+
+/* Línea divisora */
+.footer-divider {
+  border: 0;
+  border-top: 1px solid #1e2a3d;
+  margin: 1.5rem 0;
+}
+
+/* Parte inferior */
+.footer-bottom {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #bcbcbc;
+}
+
+.footer-made {
+  margin: 0.6rem 0;
+}
+
+.heart {
+  color: #d32f2f;
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Enlaces inferiores */
+.footer-links {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.footer-links a {
+  color: #bfbfbf;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #fff;
+}

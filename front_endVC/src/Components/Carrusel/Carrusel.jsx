@@ -39,7 +39,7 @@ function Carrusel({ cerrarMenu = () => {} }) {
   
 
   return (
-    <div className="banner-container">
+    <div id='inicio' className="banner-container">
       {/* Carrusel de imágenes */}
       <Slider {...settings} className="banner-slider">
         <div className="slide">
@@ -65,11 +65,6 @@ function Carrusel({ cerrarMenu = () => {} }) {
       {/* Logo fijo al centro */}
       <div key={fraseIndex} className="banner-frases">
         <span>{frases[fraseIndex]}</span>
-        <HashLink smooth to="/homepage#donar" onClick={cerrarMenu}>
-          <button type="button" className="btn-participar" aria-label="Ir a donar">
-            Quiero Donar
-          </button>
-        </HashLink>
       </div>
     </div>
   );

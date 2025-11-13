@@ -29,7 +29,7 @@ function PreguntasFrecuentes() {
 
   return (
     <section className="faq-wrap" id="faq">
-      <h2 className="faq-title">
+      <h2 id="faq" className="faq-title">
         <FaQuestionCircle className="faq-icon" /> Preguntas Frecuentes
       </h2>
       <p className="faq-subtitle">

@@ -1,10 +1,11 @@
-import React, { useState} from 'react';
-import { Link } from "react-router-dom";
-import { HashLink } from 'react-router-hash-link';
-import { FaEllipsisH, FaTimes } from "react-icons/fa";
-import logo from "/logo_vidaconectada.png";
-import './Navbar.css';
-import ModalSuscripcion from "../../Components/Suscripciones/ModalSuscripcion";
+import React, { useState} from 'react'
+import { Link } from "react-router-dom"
+import { HashLink } from 'react-router-hash-link'
+import { FaEllipsisH, FaTimes } from "react-icons/fa"
+import logo from "/logo_vidaconectada.png"
+import "../BarraInfo/barrainfo.css"
+import './Navbar.css'
+import ModalSuscripcion from "../../Components/Suscripciones/ModalSuscripcion"
 
 
 
@@ -44,12 +45,12 @@ function Navbar() {
 
         {/* Enlaces */}
         <ul className={`navbar-links ${menuAbierto ? "open" : ""}`}>
-          <li><HashLink smooth to="/homepage#id" onClick={() => setMenuAbierto(false)}>Inicio</HashLink></li>
-          <li><HashLink smooth to="/homepage#id" onClick={() => setMenuAbierto(false)}>Requisitos</HashLink></li>
-          <li><HashLink smooth to="/homepage#id" onClick={() => setMenuAbierto(false)}>Campañas</HashLink></li>
-          <li><HashLink smooth to="/homepage#id" onClick={() => setMenuAbierto(false)}>Información</HashLink></li>
-          <li><HashLink smooth to="/homepage#id" onClick={() => setMenuAbierto(false)}>FAQ</HashLink></li>
-          <li><HashLink smooth to="/homepage#id" onClick={() => setMenuAbierto(false)}>Contacto</HashLink></li>
+          <li><HashLink smooth to="/home#inicio" onClick={() => setMenuAbierto(false)}>Inicio</HashLink></li>
+          <li><HashLink smooth to="/home#requisitos" onClick={() => setMenuAbierto(false)}>Requisitos</HashLink></li>
+          <li><HashLink smooth to="/home#id" onClick={() => setMenuAbierto(false)}>Campañas</HashLink></li>
+          <li><HashLink smooth to="/home#info" onClick={() => setMenuAbierto(false)}>Información</HashLink></li>
+          <li><HashLink smooth to="/home#faq" onClick={() => setMenuAbierto(false)}>FAQ</HashLink></li>
+          <li><HashLink smooth to="/home#buzon" onClick={() => setMenuAbierto(false)}>Contacto</HashLink></li>
        
           {/* botones */}
         <li className="navbar-btn-item">
