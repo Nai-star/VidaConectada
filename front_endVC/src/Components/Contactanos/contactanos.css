@@ -27,7 +27,7 @@
 .contacto hr {
   width: 56px;
   height: 3px;
-  background: #1976d2;            /* azul */
+  background: #b30021;           /* azul */
   border: 0;
   border-radius: 999px;
   margin: 10px auto 28px;
@@ -107,7 +107,7 @@
 .info-col .subline {
   width: 36px;
   height: 3px;
-  background: #1e63da;    /* azul */
+  background:#b30021;   /* azul */
   display: inline-block;
   border-radius: 999px;
   margin-bottom: 12px;
@@ -131,7 +131,7 @@
 
 .ic {
   font-size: 18px;
-  color: #1e63da;
+  color: #b30021;;
   margin-top: 2px;
 }
 
@@ -146,7 +146,7 @@
 .tabla-wrap {
   width: 100%;
   overflow-x: auto;
-  border: 1px solid #e6ebf3;
+  border: 1px solid #f3e6e6;
   border-radius: 10px;
   background: #fff;
   box-shadow: 0 8px 24px rgba(15, 23, 42, .06);
@@ -159,29 +159,29 @@
 }
 
 .hosp-table thead th {
-  background: #f6f9ff;
-  color: #1f2a44;
+  background: #fff6f8;
+  color: #441f22;
   font-weight: 700;
   font-size: 14px;
   text-align: left;
   padding: 12px 14px;
-  border-bottom: 1px solid #e6ebf3;
+  border-bottom: 1px solid #ecd5d5;
 }
 
 .hosp-table tbody td {
   padding: 12px 14px;
-  border-bottom: 1px solid #f1f3f7;
+  border-bottom: 1px solid #f7f1f2;
   font-size: 14px;
-  color: #334155;
+  color: #553333;
   vertical-align: top;
 }
 
 .hosp-table tbody tr:hover {
-  background: #fbfdff;
+  background: #fffbfb;
 }
 
 .ic-sm {
-  color: #1e63da;
+  color: #b30021;;
   margin-right: 6px;
   vertical-align: middle;
 }
@@ -202,7 +202,7 @@
     display: grid;
     gap: 6px;
     padding: 12px 12px 8px;
-    border-bottom: 1px solid #e6ebf3;
+    border-bottom: 1px solid #f3e6e7;
   }
   .hosp-table tbody td {
     display: grid;
@@ -213,7 +213,7 @@
   .hosp-table tbody td::before {
     content: attr(data-label);
     font-weight: 600;
-    color: #1f2a44;
+    color: #441f22;
     padding-right: 10px;
   }
 }
@@ -244,7 +244,7 @@
 }
 
 .btn-toggle-tabla:hover {
-  background: #184fb0;
+  background: #6e071a;;
   transform: translateY(-1px);
 }
 

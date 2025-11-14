@@ -31,6 +31,6 @@ c
 - python manage.py migrate
 - python manage.py runserver ( levanta Back-end )
 - deactivate (Desactivar el venv cuando termines)
-
+- pip install djangorestframework-simplejwt
 
 

@@ -143,6 +143,9 @@ class carusel (models.Model):
     imagen = CloudinaryField('imagen_carusel', folder='carusel/')
     texto  = models.CharField(max_length=100)
     estado = models.BooleanField(default=True)
+    # NUEVOS CAMPOS
+    filtro_oscuro = models.BooleanField(default=False)
+    mostrar_texto = models.BooleanField(default=True)
      
     def __str__(self):
         return f"{self.imagen}"

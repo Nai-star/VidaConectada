@@ -148,7 +148,11 @@ class CaruselSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = carusel
-        fields = "__all__"
+        fields = [
+            "id", "imagen", "texto", "estado",
+            "filtro_oscuro", "mostrar_texto",
+        ]
+        #fields = "__all__"
 
     def validate(self, data):
         # Si el estado viene como True (activo)

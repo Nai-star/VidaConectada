@@ -1,22 +1,60 @@
-import React, { useState} from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { HashLink } from 'react-router-hash-link';
 import "./carrusel.css";
-
+import { obtenerCarruselActivos } from "../../services/ServicioCarrusel.js";
 
 function Carrusel({ cerrarMenu = () => {} }) {
+  const [slides, setSlides] = useState([]);
+  const [idx, setIdx] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState("");
 
-  const frases = [
-    "Donar sangre es donar vida.",
-    "Tu gota cuenta: salva a alguien hoy.",
-    "Sé el héroe anónimo de una familia.",
-    "VidaConectada: juntos hacemos la diferencia.",
-    "Un pequeño acto, un gran impacto.",
-  ];
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const items = await obtenerCarruselActivos();
+        if (!alive) return;
+        setSlides(items);
+      } catch (e) {
+        if (!alive) return;
+        setErr("No se pudo cargar el carrusel.");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
-  const [fraseIndex, setFraseIndex] = useState(0);
+  // fallback si no hay datos
+  const data = useMemo(() => {
+    if (slides.length) return slides;
+    return [
+      {
+        id: "local-1",
+        image: "/banner-1.jpg",
+        text: "Donar sangre es donar vida.",
+        active: true,
+        darkFilter: true,
+        showText: true,
+      },
+      {
+        id: "local-2",
+        image: "/banner-2.jpg",
+        text: "Tu gota cuenta: salva a alguien hoy.",
+        active: true,
+        darkFilter: true,
+        showText: true,
+      },
+    ];
+  }, [slides]);
+
+  const frases = useMemo(
+    () => data.map(d => d.text || "").filter(Boolean),
+    [data]
+  );
 
   const settings = {
     dots: true,
@@ -25,47 +63,59 @@ function Carrusel({ cerrarMenu = () => {} }) {
     autoplaySpeed: 4000,
     slidesToShow: 1,
     slidesToScroll: 1,
-    arrows: false, // sin flechas, solo dots
-    fade: true,     // efecto de desvanecido entre imágenes
-    
-    // cada vez que cambia el slide, rotamos la frase
-    beforeChange: (_current, next) => {
-      setFraseIndex(next % frases.length);
-    },
+    arrows: false,
+    fade: true,
+    beforeChange: (_current, next) => setIdx(next % Math.max(frases.length, 1)),
     swipeToSlide: true,
     pauseOnHover: false,
   };
 
-  
+  if (loading) {
+    return (
+      <div className="banner-container">
+        <div className="banner-loading">Cargando…</div>
+      </div>
+    );
+  }
+
+  if (err && !data.length) {
+    return (
+      <div className="banner-container">
+        <div className="banner-error">{err}</div>
+      </div>
+    );
+  }
+
+  // Slide actual (para decidir filtro/mostrar texto)
+  const current = data[idx] ?? data[0];
 
   return (
-    <div id='inicio' className="banner-container">
-      {/* Carrusel de imágenes */}
+    <div id="inicio" className="banner-container">
       <Slider {...settings} className="banner-slider">
-        <div className="slide">
-          <img src="/banner-1.jpg" alt="Campaña de donación 1" loading="eager" />
-        </div>
-        <div className="slide">
-          <img src="/banner-4.jpg" alt="Campaña de donación 2" loading="lazy" />
-        </div>
-        <div className="slide">
-          <img src="/banner-2.jpg" alt="Campaña de donación 3" loading="lazy" />
-        </div>
-        <div className="slide">
-          <img src="/banner-3.jpg" alt="Campaña de donación 4" loading="lazy" />
-        </div>
-        <div className="slide">
-          <img src="/banner-5.jpg" alt="Campaña de donación 5" loading="lazy" />
-        </div>
+        {data.map(item => (
+          <div className="slide" key={item.id}>
+            <img
+              src={item.image}
+              alt={item.text || "Banner"}
+              loading="lazy"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        ))}
       </Slider>
 
-      {/* Capa oscura */}
-      <div className="banner-overlay"></div>
+      {/* Filtro oscuro controlado por admin (por slide) */}
+      <div
+        className={`banner-overlay ${current?.darkFilter ? "on" : "off"}`}
+        aria-hidden="true"
+      />
 
-      {/* Logo fijo al centro */}
-      <div key={fraseIndex} className="banner-frases">
-        <span>{frases[fraseIndex]}</span>
-      </div>
+      {/* Texto controlado por admin */}
+      {current?.showText && (current?.text || frases.length) ? (
+        <div key={idx} className="banner-frases">
+          <span>{frases[idx] || current?.text}</span>
+        </div>
+      ) : null}
     </div>
   );
 }

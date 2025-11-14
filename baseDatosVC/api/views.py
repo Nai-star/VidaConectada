@@ -200,7 +200,7 @@ class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     
 class CaruselListCreateView(ListCreateAPIView):
-    queryset = carusel.objects.all()
+    queryset = carusel.objects.all().order_by("id")
     serializer_class = CaruselSerializer
 
     
@@ -221,3 +221,4 @@ class CampanasinfoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
 			serializer_class = CustomTokenObtainPairSerializer
+
