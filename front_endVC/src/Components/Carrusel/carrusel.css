@@ -117,3 +117,28 @@
   .banner-frases span { font-size: clamp(1.6rem, 6vw, 2.4rem); }
   .banner-frases .btn-participar { padding: 10px 22px; font-size: 0.95rem; }
 }
+
+/* overlay con modo on/off */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.banner-overlay.on  { background: rgba(0,0,0,.55); opacity: 1; }
+.banner-overlay.off { background: rgba(0,0,0,0);   opacity: 0; }
+
+/* estados de carga/error (opcionales) */
+.banner-loading,
+.banner-error {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  color: #fff;
+  background: rgba(0,0,0,.35);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}

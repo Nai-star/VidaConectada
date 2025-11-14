@@ -169,16 +169,7 @@ class RespuestaDetailView(RetrieveUpdateDestroyAPIView):
 
 
 
-class RequisitosDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Respuesta.objects.all()
-    serializer_class = RequisitosSerializer
-    permission_classes = [AllowAny]
 
-
-class RequisitosRetrieveUpdateDestroyAPIVieww(RetrieveUpdateDestroyAPIView):
-    queryset = Requisitos.objects.all()
-    serializer_class = RequisitosSerializer
-    permission_classes = [AllowAny]
 
 
 
@@ -206,3 +197,14 @@ class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
     permission_classes = [AllowAny]
+
+    
+class CaruselListCreateView(ListCreateAPIView):
+    queryset = carusel.objects.all().order_by("id")
+    serializer_class = CaruselSerializer
+
+    
+class CaruselRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = carusel.objects.all()
+    serializer_class = CaruselSerializer
+

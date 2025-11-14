@@ -70,11 +70,7 @@
   box-shadow: 0 0 10px rgba(217, 83, 79, 0.5); /* Sombra sutil */
 }
 
-/* Con esta técnica, el border-radius ya nos da la forma de gota.
-   Si quisieras una gota más pronunciada, podrías usar un pseudo-elemento
-   como se explica a continuación, pero para una gota simple y estilizada,
-   el border-radius y rotate suelen ser suficientes.
-*/
+
 
 /* Tipo de sangre (B-, AB-, O-) */
 .tipo {
