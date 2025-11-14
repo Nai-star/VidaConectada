@@ -86,7 +86,7 @@ class Campana(models.Model):
     Contacto = models.CharField(max_length=50)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Campana")
     Lugar_campana = models.ForeignKey(Lugar_campana,on_delete=models.CASCADE, related_name="Campana")
-
+    
     def __str__(self):
         return f"{self.Titulo}"
 
@@ -139,3 +139,10 @@ class DetalleRequisitos (models.Model):
     Requisitos = models.ForeignKey(Requisitos,on_delete=models.CASCADE, related_name="DetalleRequisito")
 
 
+class carusel (models.Model):
+    imagen = CloudinaryField('imagen_carusel', folder='carusel/')
+    texto  = models.CharField(max_length=100)
+    estado = models.BooleanField(default=True)
+     
+    def __str__(self):
+        return f"{self.imagen}"

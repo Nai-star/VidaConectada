@@ -115,26 +115,17 @@ class MapaSerializer(serializers.ModelSerializer):
 #Preguntas y rspuestas
 
 class BuzonSerializer(serializers.ModelSerializer):
-    estado_texto = serializers.SerializerMethodField()
-
     class Meta:
         model = Buzon
-        fields = ['id', 'Nombre_persona', 'correo', 'pregunta', 'estado', 'estado_texto', 'fecha']
-        read_only_fields = ['estado', 'fecha']
-
-    def get_estado_texto(self, obj):
-        return "pendiente" if not obj.estado else "respondido"
-
-    def create(self, validated_data):
-        validated_data['estado'] = "Pendiente"  # siempre pendiente al crear
-        return super().create(validated_data)
-
+        fields = ['id', 'Nombre_persona', 'correo', 'pregunta', 'estado', 'fecha']
 
 class RespuestaSerializer(serializers.ModelSerializer):
+    Buzon = BuzonSerializer(read_only=True)  # ⚡ Aquí se anida el buzón
+
     class Meta:
         model = Respuesta
-        fields = '__all__'
-    
+        fields = ['id', 'Respuesta_P', 'estado', 'Fecha', 'CustomUser', 'Buzon']
+
 
 #Requisitos
 class RequisitosSerializer(serializers.ModelSerializer):
@@ -149,3 +140,30 @@ class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
     class Meta:
         model = Urgente_Tip_Sang
         fields = '__all__'
+
+
+
+
+class CaruselSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = carusel
+        fields = "__all__"
+
+    def validate(self, data):
+        # Si el estado viene como True (activo)
+        nuevo_estado = data.get("estado", True)
+
+        if nuevo_estado:
+            # Contar registros activos
+            activos = carusel.objects.filter(estado=True)
+
+            # Si es actualización, excluir el mismo registro
+            if self.instance:
+                activos = activos.exclude(pk=self.instance.pk)
+
+            if activos.count() >= 5:
+                raise serializers.ValidationError(
+                    "Solo se permiten 5 imágenes activas en el carrusel."
+                )
+        return data

@@ -1,5 +1,12 @@
 from django.urls import path
 from .views import *
+from rest_framework_simplejwt.views import ( TokenObtainPairView,TokenRefreshView,)
+
+urlpatterns = [
+    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+]
+
 
 
 urlpatterns = [
@@ -44,13 +51,14 @@ urlpatterns = [
 
     # Respuestas
     path('respuestas/', RespuestaListCreateView.as_view(), name="crear y listar respuestas"),
-    path('respuestas/<int:pk>', RespuestaDetailView.as_view(), name="actualizar y eliminar respuestas"),
+    path('respuesta/<int:pk>', RespuestaDetailView.as_view(), name="actualizar y eliminar respuestas"),
     
 path('urgente_tip_sang/', Urgente_Tip_SangListCreateView.as_view(), name="crear y listar urgentes"),
 path('urgente_tip_sang/<int:pk>/', Urgente_Tip_SangRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
 
-path('requisitos/', RequisitosListCreateView.as_view(), name="crear y listar urgentes"),
-path('requisitos/<int:pk>/', RequisitosRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
+
+path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
+path('carusel/<int:pk>/', CaruselRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
 
     
 ]
