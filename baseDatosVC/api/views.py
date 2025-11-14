@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -190,14 +191,13 @@ class Urgente_Tip_SangRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView)
 class RequisitosListCreateView(ListCreateAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
-    permission_classes = [AllowAny]
-
+    permission_classes = [IsAuthenticated]
     
 class CaruselListCreateView(ListCreateAPIView):
     queryset = carusel.objects.all()
@@ -207,3 +207,17 @@ class CaruselListCreateView(ListCreateAPIView):
 class CaruselRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = carusel.objects.all()
     serializer_class = CaruselSerializer
+
+class CampanasinfoListCreateView(ListCreateAPIView):
+    queryset = Campana.objects.all()
+    serializer_class = CampanaCreateSerializer
+
+
+    
+class CampanasinfoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Campana.objects.all()
+    serializer_class = CampanaCreateSerializer
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+class CustomTokenObtainPairView(TokenObtainPairView):
+			serializer_class = CustomTokenObtainPairSerializer

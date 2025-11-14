@@ -167,3 +167,54 @@ class CaruselSerializer(serializers.ModelSerializer):
                     "Solo se permiten 5 imágenes activas en el carrusel."
                 )
         return data
+
+class CampanaCreateSerializer(serializers.ModelSerializer):
+    Lugar_campana = LugarCampanaSerializer()
+    Imagen_campana = Imagen_campanaSerializer(many=True)
+
+    class Meta:
+        model = Campana
+        fields = [
+            'Titulo',
+            'Descripcion',
+            'Fecha_inicio',
+            'Fecha_fin',
+            'Activo',
+            'Contacto',
+            'CustomUser',
+            'Lugar_campana',
+            'Imagen_campana'
+        ]
+
+    def create(self, validated_data):
+        # Extraer datos anidados
+        lugar_data = validated_data.pop('Lugar_campana')
+        imagenes_data = validated_data.pop('Imagen_campana')
+
+        # Crear el lugar
+        lugar = Lugar_campana.objects.create(**lugar_data)
+
+        # Crear campaña
+        campana = Campana.objects.create(Lugar_campana=lugar, **validated_data)
+
+        # Crear imágenes
+        for img in imagenes_data:
+            Imagen_campana.objects.create(Campana=campana, **img)
+
+        return campana
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+			def validate(self, attrs):
+				data = super().validate(attrs)
+
+				# Obtener el grupo del usuario (rol)
+				groups = self.user.groups.values_list('name', flat=True)
+				user = self.user.groups.values_list('name', flat=True)
+
+				# Agrega el primer grupo como 'role'
+				data['role'] = groups[0] if groups else None
+				data['id'] = self.user.id 
+
+				return data
