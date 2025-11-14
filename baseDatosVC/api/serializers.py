@@ -89,7 +89,10 @@ class SuscritosSerializer(serializers.ModelSerializer):
 class LugarCampanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lugar_campana
-        fields = '__all__'
+        fields = ["id",
+            "Nombre_lugar",
+            "Canton",
+            "Direcion",]
 
 class Imagen_campanaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -131,7 +134,7 @@ class RespuestaSerializer(serializers.ModelSerializer):
 class RequisitosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Requisitos
-        fields = '__all__'
+        fields = ["requisitos","Estado"]
 
 
 
@@ -172,40 +175,61 @@ class CaruselSerializer(serializers.ModelSerializer):
                 )
         return data
 
-class CampanaCreateSerializer(serializers.ModelSerializer):
-    Lugar_campana = LugarCampanaSerializer()
-    Imagen_campana = Imagen_campanaSerializer(many=True)
+class CampanaInfoSerializer(serializers.ModelSerializer):
+    # Mostrar imágenes asociadas
+    Imagen_campana = Imagen_campanaSerializer(many=True, read_only=True)
+
+    # Mostrar datos del lugar
+    lugar_campana = LugarCampanaSerializer(read_only=True)
+
+    # Para la creación
+    lugar_campana_id = serializers.IntegerField(write_only=True)
+    requisitos_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
+
+    # Para mostrar requisitos en GET
+    requisitos = serializers.SerializerMethodField()
 
     class Meta:
         model = Campana
         fields = [
-            'Titulo',
-            'Descripcion',
-            'Fecha_inicio',
-            'Fecha_fin',
-            'Activo',
-            'Contacto',
-            'CustomUser',
-            'Lugar_campana',
-            'Imagen_campana'
+            "id",
+            "Titulo",
+            "Descripcion",
+            "Fecha_inicio",
+            "Fecha_fin",
+            "Activo",
+            "Contacto",
+            "CustomUser",
+            "lugar_campana",
+            "lugar_campana_id",
+            "Imagen_campana",
+            "requisitos_ids",
+            "requisitos",
         ]
 
+    def get_requisitos(self, obj):
+        detalles = obj.DetalleRequisito.all()
+        return [{"id": d.Requisitos.id, "nombre": d.Requisitos.requisitos} for d in detalles]
+
     def create(self, validated_data):
-        # Extraer datos anidados
-        lugar_data = validated_data.pop('Lugar_campana')
-        imagenes_data = validated_data.pop('Imagen_campana')
+        lugar_id = validated_data.pop("lugar_campana_id")
+        requisitos_ids = validated_data.pop("requisitos_ids", [])
 
-        # Crear el lugar
-        lugar = Lugar_campana.objects.create(**lugar_data)
+        lugar = Lugar_campana.objects.get(id=lugar_id)
+        validated_data["Lugar_campana"] = lugar
 
-        # Crear campaña
-        campana = Campana.objects.create(Lugar_campana=lugar, **validated_data)
+        campana = Campana.objects.create(**validated_data)
 
-        # Crear imágenes
-        for img in imagenes_data:
-            Imagen_campana.objects.create(Campana=campana, **img)
+        # Crear DetalleRequisitos
+        for req_id in requisitos_ids:
+            DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=req_id)
 
         return campana
+
+
+
+
+
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
