@@ -19,6 +19,9 @@ function Routing() {
         {/* Rutas públicas */}
         <Route path='/' element={<Home/>}/>
         <Route path='/home' element={<Home/>}/>
+        
+
+
 
 
         {/* Rutas anidadas del panel de administración */}

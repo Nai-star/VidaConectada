@@ -16,3 +16,21 @@ c
 - npm run mock(levanta el json)
 
 
+## Back-end 
+-  pip install django      
+- pip install pymysql  
+- pip install django-cors-headers     
+- pip install cloudinary   
+- python -m pip install djangorestframework    
+- python manage.py makemigrations  
+- python -m venv venv (esto es para crear la carpeta pero ya esta creada)
+- .\venv\Scripts\activate ( esto activa la carpeta )
+- python -m pip install --upgrade pip setuptools wheel ( estos actualiza la carpeta )
+- python -m pip install django djangorestframework PyMySQL cryptography ( esto instala todo de una vez en la carpeta )
+- python manage.py makemigrations                                
+- python manage.py migrate
+- python manage.py runserver ( levanta Back-end )
+- deactivate (Desactivar el venv cuando termines)
+
+
+

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from "react"
 import Navbar from '../../Components/NavBar/Navbar'
 import Carrusel from '../../Components/Carrusel/Carrusel'
 import TiposSangreEscasez from '../../Components/TiposSangreEscasez/TiposSangreEscasez'
@@ -7,9 +7,14 @@ import RequisitosDonacion from '../../Components/RequisitosDonacion/RequisitosDo
 import BeneficiosDonar from '../../Components/Beneficios/BeneficiosDonar'
 import PreguntasFrecuentes from '../../Components/FAQ/PreguntasFrecuentes'
 import BuzonPreguntas from '../../Components/Buzon/BuzonPreguntas'
+import Footer from "../../Components/Footer/Footer"
+import Barrainfo from "../../Components/BarraInfo/Barrainfo"
+import Contactanos from "../../Components/Contactanos/Contactanos"
 
 
-import "./Home.css";
+import "./Home.css"
+
+
 
 
 function Home() {
@@ -24,11 +29,19 @@ function Home() {
 
   return (
     <div>
+        <Barrainfo/>
         <Navbar />
         <Carrusel/>
+        
         <TiposSangreEscasez/>
+
         <p className="alerta-sangre"><b className="alerta-roja">¡Tu ayuda es crucial!</b> Estos tipos de sangre tienen niveles críticos en los bancos de sangre de Costa Rica. Una donación puede salvar vidas hoy mismo.</p>
+        
+        <div>Testimoninos</div>
+
+
         <TarjetasTipoSangre/>
+
         <div className="info-box">
         <p>¿Sabías que?</p>
         <ul>
@@ -37,8 +50,11 @@ function Home() {
           <li>Solo el 7% de la población tiene sangre tipo O-</li>
         </ul>
         </div>
-        <RequisitosDonacion/>
+   
+        <RequisitosDonacion />
+
         <BeneficiosDonar/>
+
         <section className="cta-hero">
           <h3 className="cta-title">¿Listo para ser un héroe?</h3>
           <p className="cta-subtitle">
@@ -58,15 +74,20 @@ function Home() {
 
         <div>Campañas</div>
 
+        <div>Galeria</div>
+
         <PreguntasFrecuentes/>
         <BuzonPreguntas/>
         
+
+        <Contactanos/>
+        
         
 
 
 
 
-
+        <Footer/>
     </div>
   )
 }

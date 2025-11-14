@@ -1,0 +1,9 @@
+:root {
+  --mini-topbar-h: 44px;
+  --mini-offset: var(--mini-topbar-h);
+  --color-rojo-principal: #D90429;
+  --color-rojo-oscuro: #b30021;
+  --color-texto-oscuro: #333;
+  --color-fondo: #fff;
+  --altura-navbar: 70px;
+}

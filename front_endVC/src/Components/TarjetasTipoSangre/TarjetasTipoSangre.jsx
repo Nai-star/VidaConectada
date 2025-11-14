@@ -29,8 +29,8 @@ function TarjetasTipoSangre() {
 
   return (
  
-    <section className="ts2-container" id="tipos-sangre">
-      <div className="ts2-header">
+    <section  className="ts2-container" id="tipos-sangre">
+      <div id="info"  className="ts2-header">
         <h2 className="ts2-title">🩸 Tipos de Sangre</h2>
         <p className="ts2-subtitle">
           Conoce los diferentes tipos sanguíneos y sus compatibilidades

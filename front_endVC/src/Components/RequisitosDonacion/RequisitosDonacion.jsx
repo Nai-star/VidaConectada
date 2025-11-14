@@ -16,7 +16,7 @@ function RequisitosDonacion() {
   }, []);
 
   return (
-    <section className="req-container">
+    <section id="requisitos" className="req-container">
       <h2 className="req-title">
         <FaClipboardList className="req-icon" /> Requisitos para Donar
       </h2>
