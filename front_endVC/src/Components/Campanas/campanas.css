@@ -1,0 +1,209 @@
+/* Contenedor */
+.cmp-wrap {
+  padding: 42px 16px 54px;
+  background: #f4f8ff;
+}
+
+.cmp-title {
+  text-align: center;
+  color: #c92a2a;
+  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+  margin: 0;
+  font-weight: 800;
+}
+
+.cmp-subtitle {
+  text-align: center;
+  color: #6b7280;
+  margin: 6px 0 18px;
+  font-size: 0.98rem;
+}
+
+/* Grid de tarjetas */
+.cmp-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .cmp-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Estados */
+.cmp-skeleton,
+.cmp-error,
+.cmp-empty {
+  max-width: 980px;
+  margin: 14px auto;
+  background: #fff;
+  border: 1px solid #e9eef8;
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #334155;
+  text-align: center;
+}
+
+/* Tarjeta */
+.cmp-card {
+  background: #fff;
+  border: 1px solid #e8e8ee;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease;
+}
+
+.cmp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(0,0,0,.08);
+}
+
+/* Urgencia (solo variaciones sutiles) */
+.cmp-card.urgente { border-color: #f3c1c1; }
+.cmp-card.media   { border-color: #f4e4ba; }
+
+/* Header */
+.cmp-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.cmp-card-title {
+  font-size: 1.05rem;
+  color: #1f2937;
+  margin: 0;
+  font-weight: 700;
+}
+
+.cmp-badge {
+  font-size: 0.74rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: #eef2ff;
+  color: #334155;
+}
+
+.cmp-badge.urgente {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.cmp-badge.media {
+  background: #fff7cc;
+  color: #a16207;
+  border-color: #fde68a;
+}
+
+/* Meta (fecha/hora/lugar) */
+.cmp-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #404c5a;
+  padding: 4px 0;
+  font-size: 0.95rem;
+}
+
+.ic { font-size: 18px; color: #c92a2a; }
+
+/* Barra de progreso */
+.cmp-progress {
+  height: 7px;
+  background: #eceff5;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 8px 0 12px;
+}
+
+.cmp-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #d90429, #f87171);
+  width: 0%;
+  transition: width .6s ease;
+}
+
+/* Detalles colapsables */
+.cmp-details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-6px);
+  transition: max-height .45s ease, opacity .28s ease, transform .28s ease;
+}
+
+.cmp-details.open {
+  max-height: 520px; /* suficiente para el contenido */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.cmp-section h4 {
+  margin: 10px 0 6px;
+  font-size: 0.95rem;
+  color: #1f2937;
+}
+
+.cmp-section p {
+  margin: 0 0 8px;
+  color: #4b5563;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.cmp-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  color: #4b5563;
+  font-size: 0.95rem;
+}
+
+/* Acciones */
+.cmp-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.cmp-btn {
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform .12s ease, box-shadow .2s ease, background .22s ease, color .22s ease, border-color .22s ease;
+}
+
+.cmp-btn.primary {
+  background: #d90429;
+  color: #fff;
+  border-color: #d90429;
+  box-shadow: 0 10px 22px rgba(217,4,41,.18);
+}
+.cmp-btn.primary:hover {
+  background: #b30021; border-color: #b30021; transform: translateY(-1px);
+}
+
+.cmp-btn.ghost {
+  background: #fff; color: #c92a2a; border-color: #c92a2a;
+}
+.cmp-btn.ghost:hover {
+  background: #fff5f5; transform: translateY(-1px);
+}

@@ -29,7 +29,7 @@ function Footer() {
           <ul>
             <li><HashLink smooth to="/home#inicio">Inicio</HashLink></li>
             <li><HashLink smooth to="/home#requisitos">Requisitos</HashLink></li>
-            <li><HashLink smooth to="/home# ">Campañas</HashLink></li>
+            <li><HashLink smooth to="/home#campanas">Campañas</HashLink></li>
             <li><HashLink smooth to="/home#info">Información</HashLink></li>
           </ul>
         </div>
