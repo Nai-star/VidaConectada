@@ -86,28 +86,108 @@ class SuscritosSerializer(serializers.ModelSerializer):
 
 #Campaña
 
+class RequisitosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requisitos
+        fields = ["requisitos","Estado"]
+
+
 class LugarCampanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lugar_campana
-        fields = ["id",
+        fields = [
+            "id",
             "Nombre_lugar",
             "Canton",
-            "Direcion",]
+            "Direcion",
+        ]
+
 
 class Imagen_campanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagen_campana
-        fields = '__all__'
+        fields = ["id", "imagen"]   # ← CORREGIDO
 
-class  DetalleRequisitosSerializer(serializers.ModelSerializer):
-    Imagen_campana = Imagen_campanaSerializer(many=True, read_only=True)
-    Lugar_campana = serializers.PrimaryKeyRelatedField(
-        queryset=Lugar_campana.objects.all()
+
+
+
+class RequisitosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requisitos
+        fields = ["id", "requisitos", "Estado"]
+
+
+class LugarCampanaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lugar_campana
+        fields = ["id", "Nombre_lugar", "Canton", "Direcion"]
+
+
+class ImagenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Imagen_campana
+        fields = ["id", "imagen"]
+
+
+class CampanaCreateSerializer(serializers.Serializer):
+    Titulo = serializers.CharField()
+    Descripcion = serializers.CharField()
+    Fecha_inicio = serializers.DateTimeField()
+    Fecha_fin = serializers.DateTimeField()
+    Contacto = serializers.CharField()
+
+    CustomUser = serializers.JSONField()  # porque envías un objeto
+
+    # Datos del lugar
+    Nombre_lugar = serializers.CharField()
+    Canton = serializers.CharField()
+    Direccion = serializers.CharField()
+
+    # Imágenes
+    imagenes = serializers.ListField(
+        child=serializers.ImageField(),
+        required=True
     )
 
-    class Meta:
-        model =  DetalleRequisitos
-        fields =  ['Titulo', 'Descripicion', 'Fecha_incio', 'Fecha_fin', 'requistos','Lugar','Direcion','Canton','Contacto']
+    # Requisitos (IDs)
+    requisitos = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=True
+    )
+
+    def create(self, validated_data):
+        custom_user_id = validated_data["CustomUser"]["id"]
+
+        lugar = Lugar_campana.objects.create(
+            Nombre_lugar=validated_data["Nombre_lugar"],
+            Canton=validated_data["Canton"],
+            Direcion=validated_data["Direccion"],
+        )
+
+        campana = Campana.objects.create(
+            Titulo=validated_data["Titulo"],
+            Descripcion=validated_data["Descripcion"],
+            Fecha_inicio=validated_data["Fecha_inicio"],
+            Fecha_fin=validated_data["Fecha_fin"],
+            Contacto=validated_data["Contacto"],
+            CustomUser_id=custom_user_id,
+            Lugar_campana=lugar
+        )
+
+        for img in validated_data["imagenes"]:
+            Imagen_campana.objects.create(
+                imagen=img,
+                Campana=campana
+            )
+
+        for req_id in validated_data["requisitos"]:
+            DetalleRequisitos.objects.create(
+                Campana=campana,
+                Requisitos_id=req_id
+            )
+
+        return campana
+
 
 
 class MapaSerializer(serializers.ModelSerializer):
@@ -130,15 +210,11 @@ class RespuestaSerializer(serializers.ModelSerializer):
         fields = ['id', 'Respuesta_P', 'estado', 'Fecha', 'CustomUser', 'Buzon']
 
 
-#Requisitos
-class RequisitosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Requisitos
-        fields = ["requisitos","Estado"]
 
 
 
-#Requisitos
+
+#sangre urgente
 class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
     class Meta:
         model = Urgente_Tip_Sang
@@ -175,56 +251,29 @@ class CaruselSerializer(serializers.ModelSerializer):
                 )
         return data
 
-class CampanaInfoSerializer(serializers.ModelSerializer):
-    # Mostrar imágenes asociadas
-    Imagen_campana = Imagen_campanaSerializer(many=True, read_only=True)
 
-    # Mostrar datos del lugar
-    lugar_campana = LugarCampanaSerializer(read_only=True)
 
-    # Para la creación
-    lugar_campana_id = serializers.IntegerField(write_only=True)
-    requisitos_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
 
-    # Para mostrar requisitos en GET
-    requisitos = serializers.SerializerMethodField()
+    # Para mostrar requisitos correctamente
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
 
-    class Meta:
-        model = Campana
-        fields = [
-            "id",
-            "Titulo",
-            "Descripcion",
-            "Fecha_inicio",
-            "Fecha_fin",
-            "Activo",
-            "Contacto",
-            "CustomUser",
-            "lugar_campana",
-            "lugar_campana_id",
-            "Imagen_campana",
-            "requisitos_ids",
-            "requisitos",
+        rep["requisitos"] = [
+            {
+                "id": d.Requisitos.id,
+                "requisitos": d.Requisitos.requisitos,
+                "Estado": d.Requisitos.Estado
+            }
+            for d in instance.DetalleRequisito.all()
         ]
 
-    def get_requisitos(self, obj):
-        detalles = obj.DetalleRequisito.all()
-        return [{"id": d.Requisitos.id, "nombre": d.Requisitos.requisitos} for d in detalles]
+        # Mostrar imágenes
+        rep["Imagen_campana"] = [
+            img.imagen.url for img in instance.Imagen_campana.all()
+        ]
 
-    def create(self, validated_data):
-        lugar_id = validated_data.pop("lugar_campana_id")
-        requisitos_ids = validated_data.pop("requisitos_ids", [])
+        return rep
 
-        lugar = Lugar_campana.objects.get(id=lugar_id)
-        validated_data["Lugar_campana"] = lugar
-
-        campana = Campana.objects.create(**validated_data)
-
-        # Crear DetalleRequisitos
-        for req_id in requisitos_ids:
-            DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=req_id)
-
-        return campana
 
 
 

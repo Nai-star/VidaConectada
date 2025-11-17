@@ -92,7 +92,7 @@ class Campana(models.Model):
 
 
 class Imagen_campana(models.Model):
-    imagen = CloudinaryField('imagen_campana', folder='campanas/')
+    imagen = CloudinaryField('imagen_campana', folder='campanas')
     Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="Imagen_campana")
 
     def __str__(self):
@@ -140,7 +140,7 @@ class DetalleRequisitos (models.Model):
 
 
 class carusel (models.Model):
-    imagen = CloudinaryField('imagen_carusel', folder='carusel/')
+    imagen = CloudinaryField('imagen_carusel', folder='carusel')
     texto  = models.CharField(max_length=100)
     estado = models.BooleanField(default=True)
     # NUEVOS CAMPOS

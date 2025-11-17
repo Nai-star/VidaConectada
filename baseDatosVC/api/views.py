@@ -95,13 +95,13 @@ class LugarCampanaDetailView(RetrieveUpdateDestroyAPIView):
 # ✅ Campañas
 class CampanaListCreateView(ListCreateAPIView):
     queryset = Campana.objects.all()
-    serializer_class = DetalleRequisitosSerializer
+    serializer_class = CampanaCreateSerializer
     permission_classes = [AllowAny]
 
 
 class CampanaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Campana.objects.all()
-    serializer_class = DetalleRequisitosSerializer
+    serializer_class = CampanaCreateSerializer
     permission_classes = [AllowAny]
 
 
@@ -210,16 +210,6 @@ class CaruselListCreateView(ListCreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
-class CampanasinfoListCreateView(ListCreateAPIView):
-    queryset = Campana.objects.all()
-    serializer_class = CampanaInfoSerializer
- 
-
-
-    
-class CampanasinfoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Campana.objects.all()
-    serializer_class = CampanaInfoSerializer
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
