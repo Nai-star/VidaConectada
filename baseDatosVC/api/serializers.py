@@ -86,28 +86,117 @@ class SuscritosSerializer(serializers.ModelSerializer):
 
 #Campaña
 
+class RequisitosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requisitos
+        fields = ["requisitos","Estado"]
+
+
 class LugarCampanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lugar_campana
-        fields = ["id",
+        fields = [
+            "id",
             "Nombre_lugar",
             "Canton",
-            "Direcion",]
+            "Direcion",
+        ]
+
 
 class Imagen_campanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagen_campana
-        fields = '__all__'
+        fields = ["id", "imagen"]   # ← CORREGIDO
 
-class  DetalleRequisitosSerializer(serializers.ModelSerializer):
-    Imagen_campana = Imagen_campanaSerializer(many=True, read_only=True)
-    Lugar_campana = serializers.PrimaryKeyRelatedField(
-        queryset=Lugar_campana.objects.all()
+
+
+
+class RequisitosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Requisitos
+        fields = ["id", "requisitos", "Estado"]
+
+
+class LugarCampanaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lugar_campana
+        fields = ["id", "Nombre_lugar", "Canton", "Direcion"]
+
+
+class ImagenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Imagen_campana
+        fields = ["id", "imagen"]
+
+
+class CampanaCreateSerializer(serializers.ModelSerializer):
+
+    # Lugar y requisitos vienen del request
+    Nombre_lugar = serializers.CharField(write_only=True)
+    Canton = serializers.CharField(write_only=True)
+    Direcion = serializers.CharField(write_only=True)
+
+    requisitos = serializers.ListField(
+        child=serializers.IntegerField(),
+        write_only=True
+    )
+
+    imagen = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True
     )
 
     class Meta:
-        model =  DetalleRequisitos
-        fields =  ['Titulo', 'Descripicion', 'Fecha_incio', 'Fecha_fin', 'requistos','Lugar','Direcion','Canton','Contacto']
+        model = Campana
+        fields = [
+            "Titulo",
+            "Descripcion",
+            "Fecha_inicio",
+            "Fecha_fin",
+            "Contacto",
+            "CustomUser",
+            "Nombre_lugar",
+            "Canton",
+            "Direcion",
+            "imagen",
+            "requisitos",
+        ]
+
+    def create(self, validated_data):
+
+        nombre_lugar = validated_data.pop("Nombre_lugar")
+        canton = validated_data.pop("Canton")
+        direccion = validated_data.pop("Direcion")
+
+        imagenes = validated_data.pop("imagen")
+        requisitos = validated_data.pop("requisitos")
+
+        # Crear campaña
+        campana = Campana.objects.create(**validated_data)
+
+        # Crear lugar
+        Lugar_campana.objects.create(
+            Campana=campana,
+            Nombre_lugar=nombre_lugar,
+            Canton=canton,
+            Direcion=direccion
+        )
+
+        # Crear imágenes
+        for img in imagenes:
+            Imagen_campana.objects.create(
+                Campana=campana,
+                imagen=img
+            )
+
+        # Crear requisitos
+        for req in requisitos:
+            DetalleRequisitos.objects.create(
+                Campana=campana,
+                Requisitos_id=req
+            )
+
+        return campana
 
 
 class MapaSerializer(serializers.ModelSerializer):
@@ -130,15 +219,11 @@ class RespuestaSerializer(serializers.ModelSerializer):
         fields = ['id', 'Respuesta_P', 'estado', 'Fecha', 'CustomUser', 'Buzon']
 
 
-#Requisitos
-class RequisitosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Requisitos
-        fields = ["requisitos","Estado"]
 
 
 
-#Requisitos
+
+#sangre urgente
 class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
     class Meta:
         model = Urgente_Tip_Sang
@@ -155,17 +240,13 @@ class CaruselSerializer(serializers.ModelSerializer):
             "id", "imagen", "texto", "estado",
             "filtro_oscuro", "mostrar_texto",
         ]
-        #fields = "__all__"
 
     def validate(self, data):
-        # Si el estado viene como True (activo)
         nuevo_estado = data.get("estado", True)
 
         if nuevo_estado:
-            # Contar registros activos
             activos = carusel.objects.filter(estado=True)
 
-            # Si es actualización, excluir el mismo registro
             if self.instance:
                 activos = activos.exclude(pk=self.instance.pk)
 
@@ -175,56 +256,33 @@ class CaruselSerializer(serializers.ModelSerializer):
                 )
         return data
 
-class CampanaInfoSerializer(serializers.ModelSerializer):
-    # Mostrar imágenes asociadas
-    Imagen_campana = Imagen_campanaSerializer(many=True, read_only=True)
+    # 🔥 to_representation limpio (SIN campos inexistentes)
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        return rep
 
-    # Mostrar datos del lugar
-    lugar_campana = LugarCampanaSerializer(read_only=True)
 
-    # Para la creación
-    lugar_campana_id = serializers.IntegerField(write_only=True)
-    requisitos_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True)
 
-    # Para mostrar requisitos en GET
-    requisitos = serializers.SerializerMethodField()
+    # Para mostrar requisitos correctamente
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
 
-    class Meta:
-        model = Campana
-        fields = [
-            "id",
-            "Titulo",
-            "Descripcion",
-            "Fecha_inicio",
-            "Fecha_fin",
-            "Activo",
-            "Contacto",
-            "CustomUser",
-            "lugar_campana",
-            "lugar_campana_id",
-            "Imagen_campana",
-            "requisitos_ids",
-            "requisitos",
+        rep["requisitos"] = [
+            {
+                "id": d.Requisitos.id,
+                "requisitos": d.Requisitos.requisitos,
+                "Estado": d.Requisitos.Estado
+            }
+            for d in instance.DetalleRequisito.all()
         ]
 
-    def get_requisitos(self, obj):
-        detalles = obj.DetalleRequisito.all()
-        return [{"id": d.Requisitos.id, "nombre": d.Requisitos.requisitos} for d in detalles]
+        # Mostrar imágenes
+        rep["Imagen_campana"] = [
+            img.imagen.url for img in instance.Imagen_campana.all()
+        ]
 
-    def create(self, validated_data):
-        lugar_id = validated_data.pop("lugar_campana_id")
-        requisitos_ids = validated_data.pop("requisitos_ids", [])
+        return rep
 
-        lugar = Lugar_campana.objects.get(id=lugar_id)
-        validated_data["Lugar_campana"] = lugar
-
-        campana = Campana.objects.create(**validated_data)
-
-        # Crear DetalleRequisitos
-        for req_id in requisitos_ids:
-            DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=req_id)
-
-        return campana
 
 
 

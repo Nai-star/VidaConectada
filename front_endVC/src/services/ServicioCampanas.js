@@ -1,6 +1,9 @@
+
 import { authorizedFetch } from "./auth";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+
+const CLOUDINARY_BASE = import.meta.env.VITE_CLOUDINARY_BASE || "https://res.cloudinary.com/dfhdzszjp/";
 
 /** Formatea fecha/hora en es-CR */
 function fmtFecha(date) {
@@ -123,3 +126,6 @@ export async function eliminarCampana(id) {
   if (!res.ok) throw new Error(await res.text());
   return true;
 }
+
+
+

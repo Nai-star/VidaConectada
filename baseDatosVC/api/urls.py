@@ -54,8 +54,7 @@ urlpatterns = [
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
   
 
-    path('Campanainfo/', CampanasinfoListCreateView.as_view(), name="crear y listar urgentes"),
-    path('campanainfo/<int:pk>/',CampanasinfoRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
+    
 
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
