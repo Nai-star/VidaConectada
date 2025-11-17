@@ -64,17 +64,6 @@ class Suscritos(models.Model):
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
     Fecha = models.DateTimeField(auto_now_add=True)
 
-    
- 
-
-
-class Lugar_campana(models.Model):
-
-    Nombre_lugar = models.CharField(max_length=100)
-    Canton = models.CharField(max_length=100)
-    Direcion = models.CharField(max_length=200)
-    def __str__(self):
-        return f"{self.Nombre_lugar}"
 
 
 class Campana(models.Model):
@@ -85,11 +74,19 @@ class Campana(models.Model):
     Activo = models.BooleanField(default=True) 
     Contacto = models.CharField(max_length=50)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Campana")
-    Lugar_campana = models.ForeignKey(Lugar_campana,on_delete=models.CASCADE, related_name="Campana")
+    
     
     def __str__(self):
         return f"{self.Titulo}"
 
+class Lugar_campana(models.Model):
+
+    Nombre_lugar = models.CharField(max_length=100)
+    Canton = models.CharField(max_length=100)
+    Direcion = models.CharField(max_length=200)
+    Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="Lugar_campana")
+    def __str__(self):
+        return f"{self.Nombre_lugar}"
 
 class Imagen_campana(models.Model):
     imagen = CloudinaryField('imagen_campana', folder='campanas')
@@ -149,3 +146,10 @@ class carusel (models.Model):
      
     def __str__(self):
         return f"{self.imagen}"
+    
+class Galeria(models.Model):
+    imagen_g = CloudinaryField('imagen_g', folder='galeria')
+
+
+    def __str__(self):
+        return f"{self.  imagen_g}"

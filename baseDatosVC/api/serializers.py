@@ -129,65 +129,74 @@ class ImagenSerializer(serializers.ModelSerializer):
         fields = ["id", "imagen"]
 
 
-class CampanaCreateSerializer(serializers.Serializer):
-    Titulo = serializers.CharField()
-    Descripcion = serializers.CharField()
-    Fecha_inicio = serializers.DateTimeField()
-    Fecha_fin = serializers.DateTimeField()
-    Contacto = serializers.CharField()
+class CampanaCreateSerializer(serializers.ModelSerializer):
 
-    CustomUser = serializers.JSONField()  # porque envías un objeto
+    # Lugar y requisitos vienen del request
+    Nombre_lugar = serializers.CharField(write_only=True)
+    Canton = serializers.CharField(write_only=True)
+    Direcion = serializers.CharField(write_only=True)
 
-    # Datos del lugar
-    Nombre_lugar = serializers.CharField()
-    Canton = serializers.CharField()
-    Direccion = serializers.CharField()
-
-    # Imágenes
-    imagenes = serializers.ListField(
-        child=serializers.ImageField(),
-        required=True
-    )
-
-    # Requisitos (IDs)
     requisitos = serializers.ListField(
         child=serializers.IntegerField(),
-        required=True
+        write_only=True
     )
 
+    imagen = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True
+    )
+
+    class Meta:
+        model = Campana
+        fields = [
+            "Titulo",
+            "Descripcion",
+            "Fecha_inicio",
+            "Fecha_fin",
+            "Contacto",
+            "CustomUser",
+            "Nombre_lugar",
+            "Canton",
+            "Direcion",
+            "imagen",
+            "requisitos",
+        ]
+
     def create(self, validated_data):
-        custom_user_id = validated_data["CustomUser"]["id"]
 
-        lugar = Lugar_campana.objects.create(
-            Nombre_lugar=validated_data["Nombre_lugar"],
-            Canton=validated_data["Canton"],
-            Direcion=validated_data["Direccion"],
+        nombre_lugar = validated_data.pop("Nombre_lugar")
+        canton = validated_data.pop("Canton")
+        direccion = validated_data.pop("Direcion")
+
+        imagenes = validated_data.pop("imagen")
+        requisitos = validated_data.pop("requisitos")
+
+        # Crear campaña
+        campana = Campana.objects.create(**validated_data)
+
+        # Crear lugar
+        Lugar_campana.objects.create(
+            Campana=campana,
+            Nombre_lugar=nombre_lugar,
+            Canton=canton,
+            Direcion=direccion
         )
 
-        campana = Campana.objects.create(
-            Titulo=validated_data["Titulo"],
-            Descripcion=validated_data["Descripcion"],
-            Fecha_inicio=validated_data["Fecha_inicio"],
-            Fecha_fin=validated_data["Fecha_fin"],
-            Contacto=validated_data["Contacto"],
-            CustomUser_id=custom_user_id,
-            Lugar_campana=lugar
-        )
-
-        for img in validated_data["imagenes"]:
+        # Crear imágenes
+        for img in imagenes:
             Imagen_campana.objects.create(
-                imagen=img,
-                Campana=campana
+                Campana=campana,
+                imagen=img
             )
 
-        for req_id in validated_data["requisitos"]:
+        # Crear requisitos
+        for req in requisitos:
             DetalleRequisitos.objects.create(
                 Campana=campana,
-                Requisitos_id=req_id
+                Requisitos_id=req
             )
 
         return campana
-
 
 
 class MapaSerializer(serializers.ModelSerializer):
@@ -231,17 +240,13 @@ class CaruselSerializer(serializers.ModelSerializer):
             "id", "imagen", "texto", "estado",
             "filtro_oscuro", "mostrar_texto",
         ]
-        #fields = "__all__"
 
     def validate(self, data):
-        # Si el estado viene como True (activo)
         nuevo_estado = data.get("estado", True)
 
         if nuevo_estado:
-            # Contar registros activos
             activos = carusel.objects.filter(estado=True)
 
-            # Si es actualización, excluir el mismo registro
             if self.instance:
                 activos = activos.exclude(pk=self.instance.pk)
 
@@ -251,6 +256,10 @@ class CaruselSerializer(serializers.ModelSerializer):
                 )
         return data
 
+    # 🔥 to_representation limpio (SIN campos inexistentes)
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        return rep
 
 
 
