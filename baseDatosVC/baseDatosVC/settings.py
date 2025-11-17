@@ -141,9 +141,9 @@ import cloudinary.api
 import cloudinary_storage
 
 cloudinary.config( 
-  cloud_name = "duq5x9vae", 
-  api_key = "315954753774934", 
-  api_secret = "NvMNPQ6Jt-j7hdFVL-wQIaNjyvI", 
+  cloud_name = "dfhdzszjp", 
+  api_key = "756294734517976", 
+  api_secret = "afQPVezXkifYQiVTKVVbG8pYf0s", 
   secure = True
 )
 

@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
@@ -202,21 +203,23 @@ class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 class CaruselListCreateView(ListCreateAPIView):
     queryset = carusel.objects.all().order_by("id")
     serializer_class = CaruselSerializer
+    parser_classes = (MultiPartParser, FormParser)
 
-    
-class CaruselRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = carusel.objects.all()
-    serializer_class = CaruselSerializer
+    def create(self, request, *args, **kwargs):
+        print("FILES:", request.FILES)
+        return super().create(request, *args, **kwargs)
+
 
 class CampanasinfoListCreateView(ListCreateAPIView):
     queryset = Campana.objects.all()
-    serializer_class = CampanaCreateSerializer
+    serializer_class = CampanaInfoSerializer
+ 
 
 
     
 class CampanasinfoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = Campana.objects.all()
-    serializer_class = CampanaCreateSerializer
+    serializer_class = CampanaInfoSerializer
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):

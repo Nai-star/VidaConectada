@@ -28,7 +28,7 @@ urlpatterns = [
     path('lugares-campana/<int:pk>', LugarCampanaDetailView.as_view(), name="actualizar y eliminar lugar de campaña"),
 
     # Campañas
-    path('campanas', CampanaListCreateView.as_view(), name="crear y listar campañas"),
+    path('campanas/', CampanaListCreateView.as_view(), name="crear y listar campañas"),
     path('campanas/<int:pk>', CampanaDetailView.as_view(), name="actualizar y eliminar campañas"),
 
     # Imágenes de campaña
@@ -52,8 +52,7 @@ urlpatterns = [
 
 
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
-    path('carusel/<int:pk>/', CaruselRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
-
+  
 
     path('Campanainfo/', CampanasinfoListCreateView.as_view(), name="crear y listar urgentes"),
     path('campanainfo/<int:pk>/',CampanasinfoRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
