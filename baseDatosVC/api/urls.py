@@ -54,6 +54,9 @@ urlpatterns = [
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
   
 
+    path("requisitos/", RequisitosListCreateView.as_view(), name="requisitos-list-create"),
+    path("requisitos/<int:pk>/", RequisitosRetrieveUpdateDestroyAPIView.as_view(), name="requisitos-detail"),
+
     
 
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
@@ -192,7 +193,7 @@ class Urgente_Tip_SangRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView)
 class RequisitosListCreateView(ListCreateAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny] #[IsAuthenticatedOrReadOnly] cambiar despues
 
 
 class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
