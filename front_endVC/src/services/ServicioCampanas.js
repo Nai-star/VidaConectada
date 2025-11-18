@@ -164,6 +164,8 @@ export async function obtenerCampanasActivas() {
   const url = `${API_URL}/api/campanas/`;
   const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
   const res = await fetcher(url, { method: "GET" });
+  console.log(res);
+  
 
   if (!res.ok) {
     const msg = await res.text().catch(() => "");

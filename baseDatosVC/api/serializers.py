@@ -93,6 +93,17 @@ class RequisitosSerializer(serializers.ModelSerializer):
 
 
 
+""" class LugarCampanaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Lugar_campana
+        fields = [
+            "id",
+            "Nombre_lugar",
+            "Canton",
+            "Direcion",
+        ]
+ """
+
 
 class Imagen_campanaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -160,7 +171,15 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
         # Crear campaña
         campana = Campana.objects.create(**validated_data)
 
-      
+
+        # Crear lugar
+        """ Lugar_campana.objects.create(
+            Campana=campana,
+            Nombre_lugar=nombre_lugar,
+            Canton=canton,
+            Direcion=direccion
+        ) """
+
 
         # Crear imágenes
         for img in imagenes:

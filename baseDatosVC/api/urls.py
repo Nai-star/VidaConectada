@@ -22,7 +22,7 @@ urlpatterns = [
     path('suscritos/<int:pk>', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),
 
     # Lugar de campaña
-   
+
 
     # Campañas
     path('campanas/', CampanaListCreateView.as_view(), name="crear y listar campañas"),

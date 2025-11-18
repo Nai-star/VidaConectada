@@ -57,18 +57,7 @@ class Urgente_Tip_Sang(models.Model):
         return f"{self.urgencia}"
 
 
-class Provincia(models.Model):
-    nombre_p = models.CharField(max_length=100)
 
-    def __str__(self):
-        return f"{self.nombre_p}"
-    
-class Cantones(models.Model):
-    nombre_canton = models.CharField(max_length=100)
-    Provincia= models.ForeignKey( Provincia,on_delete=models.CASCADE, related_name="Cantones")
-
-    def __str__(self):
-        return f"{self. nombre_canton}"
 
 
 
@@ -78,27 +67,52 @@ class Suscritos(models.Model):
     Fecha = models.DateTimeField(auto_now_add=True)
 
 
+class Provincia(models.Model):
+    nombre_p = models.CharField(max_length=100)
+    def __str__(self):
+        return f"{self.nombre_p}"
+class Cantones(models.Model):
+    nombre_canton = models.CharField(max_length=100)
+    Provincia= models.ForeignKey( Provincia,on_delete=models.CASCADE, related_name="Cantones")
+    def __str__(self):
+        return f"{self. nombre_canton}"
 
+
+#campañas
 class Campana(models.Model):
     Titulo = models.CharField(max_length=100)
     Descripcion= models.CharField(max_length=300)
-    Fecha_inicio = models.DateTimeField (auto_now_add=False) 
-    Fecha_fin = models.DateTimeField (auto_now_add=False) 
-    Activo = models.BooleanField(default=True) 
+    Fecha_inicio = models.DateTimeField (auto_now_add=False)
+    Fecha_fin = models.DateTimeField (auto_now_add=False)
+    Activo = models.BooleanField(default=True)
     Contacto = models.CharField(max_length=50)
     direccion_exacta=models.CharField(max_length=300)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Campana")
     Cantones= models.ForeignKey( Cantones,on_delete=models.CASCADE, related_name="Campana",null=True, blank=True)
-    
-    
+
     def __str__(self):
         return f"{self.Titulo}"
+    
+    
+
 
 
 """ 
 class detalle_lugar_campana(models.Model):
  
  Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana") """  
+
+
+
+
+""" class Lugar_campana(models.Model):
+
+    Nombre_lugar = models.CharField(max_length=100)
+    Canton = models.CharField(max_length=100)
+    Direcion = models.CharField(max_length=200)
+    Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="Lugar_campana")
+    def __str__(self):
+        return f"{self.Nombre_lugar}" """
 
 
 class Imagen_campana(models.Model):
@@ -144,14 +158,18 @@ class Requisitos (models.Model):
     def __str__(self):
         return f"{self.requisitos}"
 
+
 class DetalleRequisitos (models.Model):
     Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="DetalleRequisito")
     Requisitos = models.ForeignKey(Requisitos,on_delete=models.CASCADE, related_name="DetalleRequisito")
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="DetalleRequisito")
     Estado =models.BooleanField()
 
+
     def __str__(self):
         return f"{self.Estado}"
+
+    
 
 
 class carusel (models.Model):
