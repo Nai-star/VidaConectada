@@ -117,17 +117,12 @@ class RequisitosSerializer(serializers.ModelSerializer):
         fields = ["id", "requisitos", "Estado"]
 
 
-class LugarCampanaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lugar_campana
-        fields = ["id", "Nombre_lugar", "Canton", "Direcion"]
 
-
-class ImagenSerializer(serializers.ModelSerializer):
+""" class ImagenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagen_campana
         fields = ["id", "imagen"]
-
+ """
 
 class CampanaCreateSerializer(serializers.ModelSerializer):
 
@@ -231,14 +226,16 @@ class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
 
 
 
-
 class CaruselSerializer(serializers.ModelSerializer):
+    requisitos = serializers.SerializerMethodField()
+    imagenes = serializers.SerializerMethodField()
 
     class Meta:
         model = carusel
         fields = [
             "id", "imagen", "texto", "estado",
             "filtro_oscuro", "mostrar_texto",
+            "requisitos", "imagenes",
         ]
 
     def validate(self, data):
@@ -256,38 +253,91 @@ class CaruselSerializer(serializers.ModelSerializer):
                 )
         return data
 
-    # 🔥 to_representation limpio (SIN campos inexistentes)
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        return rep
-
-
-
-    # Para mostrar requisitos correctamente
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-
-        rep["requisitos"] = [
-            {
-                "id": d.Requisitos.id,
-                "requisitos": d.Requisitos.requisitos,
-                "Estado": d.Requisitos.Estado
-            }
-            for d in instance.DetalleRequisito.all()
+    def get_requisitos(self, instance):
+        """
+        Intenta localizar el related manager que contiene detalles de requisitos.
+        Soporta varios nombres comunes y devuelve lista segura.
+        """
+        # posibles nombres que podrías tener como related_name o atributo
+        candidates = [
+            "DetalleRequisito",
+            "detalle_requisito",
+            "detalle_requisitos",
+            "detalle_requisito_set",
+            "detalle",
+            "requisitos_detalle",
         ]
 
-        # Mostrar imágenes
-        rep["Imagen_campana"] = [
-            img.imagen.url for img in instance.Imagen_campana.all()
+        rel = None
+        for name in candidates:
+            if hasattr(instance, name):
+                rel = getattr(instance, name)
+                break
+
+        if rel is None:
+            # no hay relation con esos nombres -> devolver vacío
+            return []
+
+        # si es un manager/queryset, iterar; si es un iterable simple también sirve
+        items = []
+        try:
+            iterable = rel.all() if hasattr(rel, "all") else rel
+            for d in iterable:
+                # el objeto 'd' puede apuntar a otra relación (por ejemplo d.Requisitos)
+                req_obj = getattr(d, "Requisitos", None) or getattr(d, "requisito", None) or getattr(d, "requisitos", None) or d
+
+                items.append({
+                    "id": getattr(req_obj, "id", None),
+                    "requisitos": getattr(req_obj, "requisitos", getattr(req_obj, "texto", None)) or "",
+                    "estado": getattr(req_obj, "Estado", getattr(req_obj, "estado", None)),
+                })
+        except Exception:
+            # si algo sale mal, devolvemos lista vacía en vez de romper (evita 500)
+            return []
+
+        return items
+
+    def get_imagenes(self, instance):
+        """
+        Busca colecciones de imágenes asociadas y devuelve sus URLs (o cadenas).
+        """
+        candidates = [
+            "Imagen_campana",
+            "imagen_campana",
+            "imagenes",
+            "imagen_set",
+            "imagen_carrusel",
+            "imagenes_carrusel",
         ]
 
-        return rep
+        rel = None
+        for name in candidates:
+            if hasattr(instance, name):
+                rel = getattr(instance, name)
+                break
 
+        if rel is None:
+            return []
 
+        urls = []
+        try:
+            iterable = rel.all() if hasattr(rel, "all") else rel
+            for img in iterable:
+                # intenta obtener .imagen.url, .url o str(obj)
+                url = None
+                # si img.imagen es CloudinaryField u otro campo con .url
+                if hasattr(img, "imagen"):
+                    imagen_attr = getattr(img, "imagen")
+                    url = getattr(imagen_attr, "url", None) or str(imagen_attr) if imagen_attr is not None else None
+                # si directamente el objeto tiene 'url' o 'secure_url'
+                if not url:
+                    url = getattr(img, "url", None) or getattr(img, "secure_url", None)
+                if url:
+                    urls.append(url)
+        except Exception:
+            return []
 
-
-
-
+        return urls
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 

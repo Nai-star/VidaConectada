@@ -1,3 +1,12 @@
+@font-face {
+  font-family: "slick";
+  src: url("/slick.woff") format("woff"),
+       url("/slick.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 /* --- Contenedor Principal --- */
 .banner-container {
   position: relative;

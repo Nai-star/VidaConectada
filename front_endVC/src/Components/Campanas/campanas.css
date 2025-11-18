@@ -1,37 +1,22 @@
 /* Contenedor */
 .cmp-wrap {
   padding: 42px 16px 54px;
-  background: #f4f8ff;
+  background: linear-gradient(180deg, #f8fbff 0%, #f1f7ff 100%);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
 
+/* Título */
 .cmp-title {
   text-align: center;
   color: #c92a2a;
-  font-size: clamp(1.6rem, 3.2vw, 2.1rem);
+  font-size: 2rem;
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
 }
-
 .cmp-subtitle {
   text-align: center;
   color: #6b7280;
-  margin: 6px 0 18px;
-  font-size: 0.98rem;
-}
-
-/* Grid de tarjetas */
-.cmp-grid {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: grid;
-  gap: 18px;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 900px) {
-  .cmp-grid {
-    grid-template-columns: 1fr 1fr;
-  }
+  margin: 6px 0 24px;
 }
 
 /* Estados */
@@ -48,89 +33,84 @@
   text-align: center;
 }
 
-/* Tarjeta */
+/* Grid */
+.cmp-grid {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 920px) {
+  .cmp-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Card */
 .cmp-card {
   background: #fff;
   border: 1px solid #e8e8ee;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 8px 22px rgba(14,30,37,0.04);
   transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease;
+  display: flex;
+  flex-direction: column;
 }
+.cmp-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(2,6,23,0.08); }
 
-.cmp-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 34px rgba(0,0,0,.08);
-}
-
-/* Urgencia (solo variaciones sutiles) */
-.cmp-card.urgente { border-color: #f3c1c1; }
-.cmp-card.media   { border-color: #f4e4ba; }
+/* Urgency border style when card has class e.g. .urgente or .media */
+.cmp-card.urgente { border-color: #f9d5d5; }
+.cmp-card.media { border-color: #feF7dc; }
 
 /* Header */
 .cmp-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
-
 .cmp-card-title {
   font-size: 1.05rem;
-  color: #1f2937;
+  color: #111827;
   margin: 0;
   font-weight: 700;
 }
-
 .cmp-badge {
-  font-size: 0.74rem;
-  padding: 4px 8px;
+  font-size: 0.75rem;
+  padding: 6px 10px;
   border-radius: 999px;
+  background: #fff7f7;
+  color: #a33;
   border: 1px solid transparent;
-  background: #eef2ff;
-  color: #334155;
 }
+.cmp-badge.urgente { background: #feecec; color: #b91c1c; border-color: #fecaca; }
+.cmp-badge.media { background: #fff7cc; color: #a16207; border-color: #fde68a; }
 
-.cmp-badge.urgente {
-  background: #fee2e2;
-  color: #b91c1c;
-  border-color: #fecaca;
-}
-
-.cmp-badge.media {
-  background: #fff7cc;
-  color: #a16207;
-  border-color: #fde68a;
-}
-
-/* Meta (fecha/hora/lugar) */
+/* Meta */
 .cmp-meta {
   list-style: none;
   padding: 0;
-  margin: 0 0 10px;
+  margin: 4px 0 12px;
 }
-
 .meta-item {
   display: flex;
-  align-items: center;
   gap: 8px;
-  color: #404c5a;
+  align-items: center;
+  color: #475569;
   padding: 4px 0;
   font-size: 0.95rem;
 }
+.meta-item .ic { color: #c92a2a; font-size: 18px; }
 
-.ic { font-size: 18px; color: #c92a2a; }
-
-/* Barra de progreso */
+/* Progress bar */
 .cmp-progress {
-  height: 7px;
+  height: 8px;
   background: #eceff5;
   border-radius: 999px;
   overflow: hidden;
-  margin: 8px 0 12px;
+  margin: 10px 0 12px;
 }
-
 .cmp-progress-bar {
   height: 100%;
   background: linear-gradient(90deg, #d90429, #f87171);
@@ -138,72 +118,75 @@
   transition: width .6s ease;
 }
 
-/* Detalles colapsables */
+/* Details collapse (animated) */
 .cmp-details {
   max-height: 0;
-  opacity: 0;
   overflow: hidden;
+  opacity: 0;
   transform: translateY(-6px);
   transition: max-height .45s ease, opacity .28s ease, transform .28s ease;
+  border-top: 1px solid #f1f3f5;
+  padding-top: 0;
+  margin-top: 0;
 }
-
 .cmp-details.open {
-  max-height: 520px; /* suficiente para el contenido */
+  max-height: 800px; /* suficiente para el contenido */
   opacity: 1;
   transform: translateY(0);
+  padding-top: 12px;
+  margin-top: 12px;
 }
-
 .cmp-section h4 {
-  margin: 10px 0 6px;
+  margin: 6px 0 6px;
   font-size: 0.95rem;
-  color: #1f2937;
+  color: #0f172a;
 }
+.cmp-section p { margin: 0 0 8px; color: #4b5563; line-height: 1.45; }
+.cmp-list { margin: 6px 0 0; padding-left: 16px; color: #4b5563; }
 
-.cmp-section p {
-  margin: 0 0 8px;
-  color: #4b5563;
-  font-size: 0.95rem;
-  line-height: 1.45;
-}
-
-.cmp-list {
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-  color: #4b5563;
-  font-size: 0.95rem;
-}
-
-/* Acciones */
+/* Actions */
 .cmp-actions {
+  margin-top: 12px;
   display: flex;
   gap: 10px;
-  margin-top: 12px;
+  align-items: center;
   flex-wrap: wrap;
 }
-
 .cmp-btn {
   border-radius: 8px;
   padding: 10px 14px;
   font-weight: 700;
   cursor: pointer;
   border: 2px solid transparent;
-  transition: transform .12s ease, box-shadow .2s ease, background .22s ease, color .22s ease, border-color .22s ease;
+  transition: transform .12s ease, box-shadow .2s ease, background .22s;
 }
-
 .cmp-btn.primary {
   background: #d90429;
   color: #fff;
   border-color: #d90429;
-  box-shadow: 0 10px 22px rgba(217,4,41,.18);
+  box-shadow: 0 10px 22px rgba(217,4,41,.16);
 }
-.cmp-btn.primary:hover {
-  background: #b30021; border-color: #b30021; transform: translateY(-1px);
+.cmp-btn.primary:hover { background: #b30021; transform: translateY(-1px); }
+.cmp-btn.ghost {
+  background: #fff;
+  color: #d90429;
+  border-color: #d90429;
+}
+.cmp-btn.ghost:hover { background: #fff5f5; transform: translateY(-1px); }
+
+/* Small utilities */
+.cmp-card img.placeholder {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
-.cmp-btn.ghost {
-  background: #fff; color: #c92a2a; border-color: #c92a2a;
-}
-.cmp-btn.ghost:hover {
-  background: #fff5f5; transform: translateY(-1px);
+/* Responsive tweaks */
+@media (max-width: 640px) {
+  .cmp-card { padding: 14px; }
+  .cmp-progress { height: 6px; }
+  .cmp-actions { flex-direction: column-reverse; align-items: stretch; }
+  .cmp-btn { width: 100%; }
 }
