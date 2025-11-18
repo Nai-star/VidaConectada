@@ -81,7 +81,7 @@ class SuscritosDetailView(RetrieveUpdateDestroyAPIView):
 
 
 # ✅ Lugar campaña
-class LugarCampanaListCreateView(ListCreateAPIView):
+""" class LugarCampanaListCreateView(ListCreateAPIView):
     queryset = Lugar_campana.objects.all()
     serializer_class = LugarCampanaSerializer
     permission_classes = [AllowAny]
@@ -91,7 +91,7 @@ class LugarCampanaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Lugar_campana.objects.all()
     serializer_class = LugarCampanaSerializer
     permission_classes = [AllowAny]
-
+ """
 
 # ✅ Campañas
 class CampanaListCreateView(ListCreateAPIView):
