@@ -57,6 +57,19 @@ class Urgente_Tip_Sang(models.Model):
         return f"{self.urgencia}"
 
 
+class Provincia(models.Model):
+    nombre_p = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.nombre_p}"
+    
+class Cantones(models.Model):
+    nombre_canton = models.CharField(max_length=100)
+    Provincia= models.ForeignKey( Provincia,on_delete=models.CASCADE, related_name="Cantones")
+
+    def __str__(self):
+        return f"{self. nombre_canton}"
+
 
 
 class Suscritos(models.Model):
@@ -73,24 +86,19 @@ class Campana(models.Model):
     Fecha_fin = models.DateTimeField (auto_now_add=False) 
     Activo = models.BooleanField(default=True) 
     Contacto = models.CharField(max_length=50)
+    direccion_exacta=models.CharField(max_length=300)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Campana")
+    Cantones= models.ForeignKey( Cantones,on_delete=models.CASCADE, related_name="Campana",null=True, blank=True)
     
     
     def __str__(self):
         return f"{self.Titulo}"
 
-class Lugar_campana(models.Model):
 
-    Nombre_lugar = models.CharField(max_length=100)
-    Canton = models.CharField(max_length=100)
-    Direcion = models.CharField(max_length=200)
-    Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="Lugar_campana")
-    def __str__(self):
-        return f"{self.Nombre_lugar}"
-
+""" 
 class detalle_lugar_campana(models.Model):
- Lugar_campana = models.ForeignKey( Lugar_campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana")
- Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana")  
+ 
+ Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana") """  
 
 
 class Imagen_campana(models.Model):
@@ -139,7 +147,11 @@ class Requisitos (models.Model):
 class DetalleRequisitos (models.Model):
     Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="DetalleRequisito")
     Requisitos = models.ForeignKey(Requisitos,on_delete=models.CASCADE, related_name="DetalleRequisito")
+    CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="DetalleRequisito")
     Estado =models.BooleanField()
+
+    def __str__(self):
+        return f"{self.Estado}"
 
 
 class carusel (models.Model):
