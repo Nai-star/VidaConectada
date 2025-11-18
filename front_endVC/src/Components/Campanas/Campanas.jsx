@@ -2,12 +2,17 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./campanas.css";
 import { obtenerCampanasActivas, obtenerLugaresCampana } from "../../services/ServicioCampanas";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
+import ParticiparModal from '../../Components/ParticiparModal/ParticiparModal'; // Importa el nuevo modal
 
 function Campanas() {
   const [campanas, setCampanas] = useState([]);
-  const [openId, setOpenId] = useState(null);
+  const [openId, setOpenId] = useState(null); 
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  
+  // Nuevo estado para el modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCampaign, setSelectedCampaign] = useState(null); // Para pasar la campaña al modal
 
   useEffect(() => {
     let alive = true;
@@ -15,29 +20,25 @@ function Campanas() {
     (async () => {
       try {
         setLoading(true);
-        // Traer campañas y lugares en paralelo
         const [campanasRaw, lugares] = await Promise.all([
-          obtenerCampanasActivas(), // devuelve campañas normalizadas
-          obtenerLugaresCampana(),  // devuelve lugares con campanaId (Campana_id)
+          obtenerCampanasActivas(),
+          obtenerLugaresCampana(),
         ]);
 
         if (!alive) return;
 
-        // Agrupar lugares por campanaId (numérico si es posible)
         const lugaresPorCampana = {};
         for (const l of lugares || []) {
-          const cid = Number(l.campanaId);
-          if (!Number.isFinite(cid) || cid <= 0) continue;
+          const cid = String(l.campanaId);
+          if (!cid || cid === "0") continue;
           if (!lugaresPorCampana[cid]) lugaresPorCampana[cid] = [];
           lugaresPorCampana[cid].push(l);
         }
 
-        // Fusionar: añadir campo .lugares (array) a cada campaña
         const fused = (campanasRaw || []).map((c) => {
-          const cid = Number(c.id);
-          const asociados = Number.isFinite(cid) && cid > 0 ? (lugaresPorCampana[cid] ?? []) : [];
+          const cid = String(c.id); 
+          const asociados = cid && cid !== "0" ? (lugaresPorCampana[cid] ?? []) : [];
 
-          // fallback progreso si no existe
           const progresoFallback =
             typeof c.progreso === "number"
               ? c.progreso
@@ -49,7 +50,6 @@ function Campanas() {
                 )
               : 0;
 
-          // construir texto de la primera ubicacion si existe
           let ubicacionTexto = c.ubicacion ?? "Ubicación por confirmar";
           if (asociados.length) {
             const L = asociados[0];
@@ -83,6 +83,28 @@ function Campanas() {
 
   const vacias = useMemo(() => !loading && !err && campanas.length === 0, [loading, err, campanas]);
 
+  // Función para abrir el modal
+  const handleOpenModal = (campaign) => {
+    setSelectedCampaign(campaign);
+    setIsModalOpen(true);
+  };
+
+  // Función para cerrar el modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedCampaign(null);
+  };
+
+  // Función que se ejecuta cuando la participación es exitosa en el modal
+  const handleParticipationSuccess = (participatedCampaign) => {
+    // Puedes hacer algo aquí si necesitas actualizar el estado de la campaña en Campanas.jsx
+    // Por ejemplo, marcarla como "ya participado" o refrescar datos.
+    console.log(`Participación exitosa en: ${participatedCampaign.titulo}`);
+    // Opcional: Cierra también los detalles de la tarjeta.
+    setOpenId(null); 
+  };
+
+
   return (
     <section className="cmp-wrap" id="campanas">
       <h2 className="cmp-title">Campañas Activas</h2>
@@ -94,9 +116,10 @@ function Campanas() {
 
       <div className="cmp-grid">
         {campanas.map((c, index) => {
-          const abierta = openId === c.id;
-          // key seguro: si no existe id, usar índice con prefijo
-          const cardKey = c?.id != null ? `camp-${c.id}` : `camp-fallback-${index}`;
+          const keyForToggle = String(c.id != null ? c.id : `fallback-${index}`); 
+          const abierta = openId === keyForToggle;
+
+          const cardKey = `camp-${keyForToggle}`;
 
           return (
             <article key={cardKey} className={`cmp-card ${c.urgencyClass ?? ""}`}>
@@ -129,7 +152,7 @@ function Campanas() {
 
               {/* Detalles colapsables */}
               <div
-                id={`detalles-${c.id ?? index}`}
+                id={`detalles-${keyForToggle}`}
                 className={`cmp-details ${abierta ? "open" : ""}`}
                 aria-expanded={abierta}
               >
@@ -143,8 +166,7 @@ function Campanas() {
                     <h4>Requisitos</h4>
                     <ul className="cmp-list">
                       {c.requisitos.map((r, i) => (
-                        // para requisitos usamos índice (son estáticos por campaña)
-                        <li key={`req-${c.id ?? index}-${i}`}>• {r}</li>
+                        <li key={`req-${keyForToggle}-${i}`}>• {r}</li>
                       ))}
                     </ul>
                   </div>
@@ -155,13 +177,12 @@ function Campanas() {
                   <p>{c.contacto}</p>
                 </div>
 
-                {/* Mostrar todos los lugares asociados (si hay más de uno) */}
-                {c.lugares?.length ? (
+                {/* {c.lugares?.length ? (
                   <div className="cmp-section">
                     <h4>Lugar(es) asociado(s)</h4>
                     <ul className="cmp-list">
                       {c.lugares.map((L, lugarIdx) => {
-                        const lugarKey = L?.id != null ? `lug-${L.id}` : `lug-${index}-${lugarIdx}`;
+                        const lugarKey = L?.id != null ? `lug-${L.id}` : `lug-${keyForToggle}-${lugarIdx}`;
                         return (
                           <li key={lugarKey}>
                             <strong>{L.nombre || "Lugar sin nombre"}</strong>
@@ -172,36 +193,39 @@ function Campanas() {
                       })}
                     </ul>
                   </div>
-                ) : null}
+                ) : null} */}
               </div>
 
-              {/* Acciones */}
+              {/* ÚNICO BOTÓN INTELIGENTE */}
               <div className="cmp-actions">
                 <button
-                  className="cmp-btn ghost"
+                  className={`cmp-btn ${abierta ? "primary" : "ghost"} full-width`} 
                   onClick={() => {
-                    // si c.id nunca existe, usar índice como referencia para toggle
-                    const keyForToggle = c.id != null ? c.id : `fallback-${index}`;
-                    setOpenId((p) => (p === keyForToggle ? null : keyForToggle));
-                    // opcional: scroll al abrir
-                    // setTimeout(() => document.getElementById(`detalles-${c.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 200);
+                    if (abierta) {
+                      // Si el botón ya dice "Participar", abre el modal.
+                      handleOpenModal(c);
+                    } else {
+                      // Si no está abierta, abre los detalles de la tarjeta.
+                      setOpenId(keyForToggle);
+                    }
                   }}
-                  aria-controls={`detalles-${c.id ?? index}`}
+                  aria-controls={`detalles-${keyForToggle}`}
                 >
-                  {abierta ? "Ocultar Detalles" : "Ver Detalles"}
-                </button>
-
-                <button
-                  className="cmp-btn primary"
-                  onClick={() => alert("¡Gracias por participar! (aquí enlazas tu flujo)")}
-                >
-                  Participar en esta Campaña
+                  {abierta ? "Participar en esta Campaña" : "Ver Detalles"}
                 </button>
               </div>
             </article>
           );
         })}
       </div>
+
+      {/* Renderizar el Modal aquí */}
+      <ParticiparModal 
+        isOpen={isModalOpen} 
+        onClose={handleCloseModal} 
+        campaign={selectedCampaign} // Pasa la campaña seleccionada al modal
+        onParticipateSuccess={handleParticipationSuccess}
+      />
     </section>
   );
 }

@@ -1,192 +1,287 @@
-/* Contenedor */
-.cmp-wrap {
-  padding: 42px 16px 54px;
-  background: linear-gradient(180deg, #f8fbff 0%, #f1f7ff 100%);
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+/* campanas.css
+   Estilos para el componente Campanas
+   Usa variables para fácil personalización.
+*/
+
+:root{
+  --bg: #f5f9fc;
+  --card-bg: #ffffff;
+  --muted: #8b98a6;
+  --accent: #b92a26; /* rojo principal */
+  --accent-dark: #9b2220;
+  --accent-soft: #f7eaea;
+  --success: #22a663;
+  --border: #e6e9ec;
+  --shadow: 0 6px 18px rgba(13,34,56,0.06);
+  --radius: 12px;
+  --gap: 24px;
+  --max-width: 1180px;
+  --text: #222;
+  --card-padding: 20px;
 }
 
-/* Título */
-.cmp-title {
-  text-align: center;
-  color: #c92a2a;
-  font-size: 2rem;
+/* Estructura general */
+.cmp-wrap{
+  background: linear-gradient(180deg, #f7fbfd 0%, var(--bg) 100%);
+  padding: 56px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cmp-title{
+  color: var(--accent);
   margin: 0;
-  font-weight: 700;
-}
-.cmp-subtitle {
-  text-align: center;
-  color: #6b7280;
-  margin: 6px 0 24px;
-}
-
-/* Estados */
-.cmp-skeleton,
-.cmp-error,
-.cmp-empty {
-  max-width: 980px;
-  margin: 14px auto;
-  background: #fff;
-  border: 1px solid #e9eef8;
-  border-radius: 12px;
-  padding: 14px 16px;
-  color: #334155;
+  font-size: 30px;
+  font-weight: 600;
   text-align: center;
 }
 
-/* Grid */
-.cmp-grid {
-  max-width: 1120px;
-  margin: 0 auto;
+.cmp-subtitle{
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 14px;
+  text-align: center;
+  max-width: 720px;
+}
+
+/* mensajes de carga / error / vacío */
+.cmp-skeleton, .cmp-error, .cmp-empty{
+  margin: 18px 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  max-width: var(--max-width);
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.cmp-skeleton{ background: linear-gradient(90deg,#f0f2f4,#eef4f8,#f0f2f4); color: transparent; }
+.cmp-error{ background: #fff1f0; color: #7a1f1b; border: 1px solid #ffd6d4; }
+.cmp-empty{ background: #fff; color: var(--muted); border: 1px dashed var(--border); }
+
+/* Grid de tarjetas */
+.cmp-grid{
   display: grid;
-  gap: 20px;
-  grid-template-columns: 1fr;
-}
-@media (min-width: 920px) {
-  .cmp-grid { grid-template-columns: 1fr 1fr; }
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--gap);
+  width: 100%;
+  max-width: var(--max-width);
+  margin-top: 28px;
+  box-sizing: border-box;
+  align-items: flex-start;
 }
 
 /* Card */
-.cmp-card {
-  background: #fff;
-  border: 1px solid #e8e8ee;
-  border-radius: 12px;
-  padding: 18px;
-  box-shadow: 0 8px 22px rgba(14,30,37,0.04);
-  transition: transform .18s ease, box-shadow .22s ease, border-color .22s ease;
+.cmp-card{
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--card-padding);
+  border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  gap: 12px;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  position: relative;
+  overflow: visible;
 }
-.cmp-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(2,6,23,0.08); }
 
-/* Urgency border style when card has class e.g. .urgente or .media */
-.cmp-card.urgente { border-color: #f9d5d5; }
-.cmp-card.media { border-color: #feF7dc; }
+/* Emphasis on hover (opcional) */
+.cmp-card:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(13,34,56,0.09);
+}
+
+/* Variant classes (urgency) - usa los nombres que lleves desde el backend (ej: "urgent", "medium") */
+.cmp-card.urgent { border-color: rgba(185,42,38,0.18); }
+.cmp-card.medium { border-color: rgba(255,165,0,0.14); }
 
 /* Header */
-.cmp-head {
+.cmp-head{
   display: flex;
-  align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 10px;
+  align-items: start;
+  gap: 12px;
 }
-.cmp-card-title {
-  font-size: 1.05rem;
-  color: #111827;
+
+.cmp-card-title{
   margin: 0;
-  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+  font-weight: 600;
 }
-.cmp-badge {
-  font-size: 0.75rem;
+
+/* Badge */
+.cmp-badge{
   padding: 6px 10px;
   border-radius: 999px;
-  background: #fff7f7;
-  color: #a33;
-  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+  white-space: nowrap;
+  margin-left: 8px;
+  align-self: flex-start;
+  border: 1px solid rgba(0,0,0,0.04);
 }
-.cmp-badge.urgente { background: #feecec; color: #b91c1c; border-color: #fecaca; }
-.cmp-badge.media { background: #fff7cc; color: #a16207; border-color: #fde68a; }
+.cmp-badge.urgent { background: var(--accent); color: #fff; box-shadow: 0 3px 10px rgba(185,42,38,0.08); }
+.cmp-badge.medium { background: #ffb84d; color: #3f2a00; }
 
-/* Meta */
-.cmp-meta {
+/* Meta list (fecha, hora, ubicacion) */
+.cmp-meta{
   list-style: none;
   padding: 0;
-  margin: 4px 0 12px;
-}
-.meta-item {
+  margin: 0;
   display: flex;
+  flex-direction: column;
   gap: 8px;
-  align-items: center;
-  color: #475569;
-  padding: 4px 0;
-  font-size: 0.95rem;
+  color: var(--muted);
+  font-size: 14px;
 }
-.meta-item .ic { color: #c92a2a; font-size: 18px; }
+
+.meta-item{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ic{
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: var(--accent);
+}
 
 /* Progress bar */
-.cmp-progress {
-  height: 8px;
-  background: #eceff5;
+.cmp-progress{
+  height: 10px;
+  background: linear-gradient(90deg, #f0f0f0, #f7f7f7);
   border-radius: 999px;
   overflow: hidden;
-  margin: 10px 0 12px;
+  border: 1px solid rgba(0,0,0,0.03);
+  margin-top: 6px;
 }
-.cmp-progress-bar {
+
+.cmp-progress-bar{
   height: 100%;
-  background: linear-gradient(90deg, #d90429, #f87171);
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
   width: 0%;
-  transition: width .6s ease;
+  transition: width 600ms cubic-bezier(.2,.9,.2,1);
+  box-shadow: inset 0 -2px 6px rgba(0,0,0,0.06);
 }
 
-/* Details collapse (animated) */
-.cmp-details {
-  max-height: 0;
+/* Detalles colapsables */
+.cmp-details{
   overflow: hidden;
+  max-height: 0;
+  transition: max-height 360ms cubic-bezier(.2,.9,.2,1), opacity 240ms ease;
   opacity: 0;
-  transform: translateY(-6px);
-  transition: max-height .45s ease, opacity .28s ease, transform .28s ease;
-  border-top: 1px solid #f1f3f5;
-  padding-top: 0;
-  margin-top: 0;
+  padding: 0 var(--card-padding);
+  margin: 0 calc(var(--card-padding) * -1);
+  box-sizing: border-box;
+  border-top: 1px solid var(--border);
 }
-.cmp-details.open {
-  max-height: 800px; /* suficiente para el contenido */
+
+.cmp-details.open{
   opacity: 1;
-  transform: translateY(0);
-  padding-top: 12px;
-  margin-top: 12px;
+  /* max-height grande para permitir contenido variable; ajusta si necesitas más */
+  max-height: 1000px;
+  padding: 16px var(--card-padding);
 }
-.cmp-section h4 {
-  margin: 6px 0 6px;
-  font-size: 0.95rem;
-  color: #0f172a;
-}
-.cmp-section p { margin: 0 0 8px; color: #4b5563; line-height: 1.45; }
-.cmp-list { margin: 6px 0 0; padding-left: 16px; color: #4b5563; }
 
-/* Actions */
-.cmp-actions {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  flex-wrap: wrap;
+/* Secciones dentro de detalles */
+.cmp-section{
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 14px;
 }
-.cmp-btn {
-  border-radius: 8px;
-  padding: 10px 14px;
+
+.cmp-section h4{
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  color: #333;
   font-weight: 700;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: transform .12s ease, box-shadow .2s ease, background .22s;
 }
-.cmp-btn.primary {
-  background: #d90429;
-  color: #fff;
-  border-color: #d90429;
-  box-shadow: 0 10px 22px rgba(217,4,41,.16);
-}
-.cmp-btn.primary:hover { background: #b30021; transform: translateY(-1px); }
-.cmp-btn.ghost {
-  background: #fff;
-  color: #d90429;
-  border-color: #d90429;
-}
-.cmp-btn.ghost:hover { background: #fff5f5; transform: translateY(-1px); }
 
-/* Small utilities */
-.cmp-card img.placeholder {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
+.cmp-section p{ margin: 0; color: var(--muted); line-height: 1.45; }
+
+.cmp-list{
+  margin: 0;
+  padding-left: 12px;
+}
+
+/* Lista simple para lugares / requisitos */
+.cmp-list li{
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Lugar fuerte */
+.cmp-list strong{ color: var(--text); }
+
+/* Acciones / botones */
+.cmp-actions{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+/* Botones */
+.cmp-btn{
+  border: 1px solid var(--border);
+  padding: 10px 14px;
   border-radius: 8px;
-  margin-bottom: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  background: white;
+  min-width: 100%;
+  box-shadow: none;
+  transition: background .12s ease, transform .08s ease, box-shadow .12s ease;
 }
 
-/* Responsive tweaks */
-@media (max-width: 640px) {
-  .cmp-card { padding: 14px; }
-  .cmp-progress { height: 6px; }
-  .cmp-actions { flex-direction: column-reverse; align-items: stretch; }
-  .cmp-btn { width: 100%; }
+.cmp-btn.ghost{
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(185,42,38,0.14);
 }
+
+.cmp-btn.ghost:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(13,34,56,0.06);
+}
+
+.cmp-btn.primary{
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent-dark);
+  box-shadow: 0 6px 18px rgba(185,42,38,0.08);
+}
+
+.cmp-btn.primary:hover{
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 900px){
+  .cmp-actions{ flex-direction: column; align-items: stretch; gap: 10px; }
+  .cmp-btn{ width: 100%; min-width: 0; }
+  .cmp-grid{ gap: 18px; }
+}
+
+/* Accesibilidad: enfocar botones con outline visible */
+.cmp-btn:focus{
+  outline: 3px solid rgba(185,42,38,0.12);
+  outline-offset: 2px;
+  border-color: var(--accent-dark);
+}
+
+/* Ajustes visuales extra para tarjetas "destacadas" */
+.cmp-card.urgent .cmp-badge{ background: var(--accent); color: #fff; }
+.cmp-card.urgent .cmp-btn.primary{ background: var(--accent-dark); border-color: var(--accent-dark); }
+
+/* Pequeños pits: evitar anchos de texto raros */
+.cmp-card-title, .cmp-meta span{ overflow-wrap: anywhere; word-break: break-word; }
