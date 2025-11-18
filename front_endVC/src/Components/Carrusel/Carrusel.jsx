@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./carrusel.css";
 import { obtenerCarruselActivos } from "../../services/ServicioCarrusel.js";
+import llamados from "../../services/Servicios_imagenes.jsx"
 
 function Carrusel({ cerrarMenu = () => {} }) {
   const [slides, setSlides] = useState([]);
@@ -15,7 +16,9 @@ function Carrusel({ cerrarMenu = () => {} }) {
     let alive = true;
     (async () => {
       try {
-        const items = await obtenerCarruselActivos();
+        const items = await llamados.getCarusel();
+        console.log(items);
+        
         if (!alive) return;
         setSlides(items);
       } catch (e) {
@@ -92,9 +95,12 @@ function Carrusel({ cerrarMenu = () => {} }) {
   return (
     <div id="inicio" className="banner-container">
       <Slider {...settings} className="banner-slider">
-        {data.map(item => (
+        {slides.map(item => (
           <div className="slide" key={item.id}>
+      
+
             <img
+            
               src={item.image}
               alt={item.text || "Banner"}
               loading="lazy"

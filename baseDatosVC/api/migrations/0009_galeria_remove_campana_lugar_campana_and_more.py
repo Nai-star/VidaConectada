@@ -12,10 +12,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='lugar_campana',
-            name='Campana',
-            field=models.ForeignKey(default='', on_delete=django.db.models.deletion.CASCADE, related_name='Lugar_campana', to='api.campana'),
-            preserve_default=False,
-        ),
+      
+        
     ]

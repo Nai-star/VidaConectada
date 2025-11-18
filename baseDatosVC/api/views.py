@@ -209,6 +209,18 @@ class CaruselListCreateView(ListCreateAPIView):
         print("FILES:", request.FILES)
         return super().create(request, *args, **kwargs)
 
+#galeria
+
+class GaleriaListCreateView(ListCreateAPIView):
+    queryset =  Galeria.objects.all()
+    serializer_class =  GaleriaSerializer
+    permission_classes = [AllowAny]
+
+
+class  GaleriaRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset =  Galeria.objects.all()
+    serializer_class =  GaleriaSerializer
+    permission_classes = [AllowAny]
 
 
 from rest_framework_simplejwt.views import TokenObtainPairView

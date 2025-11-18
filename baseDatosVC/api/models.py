@@ -88,6 +88,11 @@ class Lugar_campana(models.Model):
     def __str__(self):
         return f"{self.Nombre_lugar}"
 
+class detalle_lugar_campana(models.Model):
+ Lugar_campana = models.ForeignKey( Lugar_campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana")
+ Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana")  
+
+
 class Imagen_campana(models.Model):
     imagen = CloudinaryField('imagen_campana', folder='campanas')
     Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="Imagen_campana")
@@ -134,6 +139,7 @@ class Requisitos (models.Model):
 class DetalleRequisitos (models.Model):
     Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="DetalleRequisito")
     Requisitos = models.ForeignKey(Requisitos,on_delete=models.CASCADE, related_name="DetalleRequisito")
+    Estado =models.BooleanField()
 
 
 class carusel (models.Model):
@@ -149,7 +155,12 @@ class carusel (models.Model):
     
 class Galeria(models.Model):
     imagen_g = CloudinaryField('imagen_g', folder='galeria')
+    descripcion = models.TextField(blank=True, null=True)
+    video_url = models.URLField(blank=True, null=True)
+    fecha_publicacion = models.DateTimeField(auto_now_add=True)
+    activo = models.BooleanField(default=True)
+    CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Galeria")
 
 
     def __str__(self):
-        return f"{self.  imagen_g}"
+        return f"{self.imagen_g}"

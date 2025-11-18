@@ -267,23 +267,19 @@ class CaruselSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        rep["requisitos"] = [
-            {
-                "id": d.Requisitos.id,
-                "requisitos": d.Requisitos.requisitos,
-                "Estado": d.Requisitos.Estado
-            }
-            for d in instance.DetalleRequisito.all()
-        ]
-
         # Mostrar imágenes
-        rep["Imagen_campana"] = [
-            img.imagen.url for img in instance.Imagen_campana.all()
+        rep["carusel"] = [
+            img.imagen.url for img in instance.carusel.all()
         ]
 
         return rep
+    
 
 
+class GaleriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Galeria
+        fields = '__all__'
 
 
 

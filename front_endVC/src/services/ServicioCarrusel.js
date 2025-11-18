@@ -56,8 +56,9 @@ function mapItem(raw) {
 export async function obtenerCarruselActivos() {
   const url = `${API_URL}/api/carusel/`;
   // Si no tienes authorizedFetch (auth), reemplaza por fetch(url)
-  const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
-
+  //const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
+  //console.log(fetcher);
+  
   const res = await fetcher(url, { method: "GET" });
 
   if (!res.ok) {
