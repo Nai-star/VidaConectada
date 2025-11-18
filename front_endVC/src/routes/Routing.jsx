@@ -6,6 +6,7 @@ import Home from '../Pages/Home/Home'
 
 
 import Private_routing from "./Private_routing";
+import GaleriaVermas from '../Components/Galeria/GaleriaVermas';
 
 
 function Routing() {
@@ -19,6 +20,7 @@ function Routing() {
         {/* Rutas públicas */}
         <Route path='/' element={<Home/>}/>
         <Route path='/home' element={<Home/>}/>
+        <Route path='/galeriavermas' element={<GaleriaVermas/>}/>
         
 
 

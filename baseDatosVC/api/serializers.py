@@ -117,17 +117,12 @@ class RequisitosSerializer(serializers.ModelSerializer):
         fields = ["id", "requisitos", "Estado"]
 
 
-class LugarCampanaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lugar_campana
-        fields = ["id", "Nombre_lugar", "Canton", "Direcion"]
 
-
-class ImagenSerializer(serializers.ModelSerializer):
+""" class ImagenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagen_campana
         fields = ["id", "imagen"]
-
+ """
 
 class CampanaCreateSerializer(serializers.ModelSerializer):
 
@@ -231,14 +226,16 @@ class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
 
 
 
-
 class CaruselSerializer(serializers.ModelSerializer):
+    requisitos = serializers.SerializerMethodField()
+    imagenes = serializers.SerializerMethodField()
 
     class Meta:
         model = carusel
         fields = [
             "id", "imagen", "texto", "estado",
             "filtro_oscuro", "mostrar_texto",
+            "requisitos", "imagenes",
         ]
 
     def validate(self, data):
@@ -267,19 +264,23 @@ class CaruselSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
+        rep["requisitos"] = [
+            {
+                "id": d.Requisitos.id,
+                "requisitos": d.Requisitos.requisitos,
+                "Estado": d.Requisitos.Estado
+            }
+            for d in instance.DetalleRequisito.all()
+        ]
+
         # Mostrar imágenes
-        rep["carusel"] = [
-            img.imagen.url for img in instance.carusel.all()
+        rep["Imagen_campana"] = [
+            img.imagen.url for img in instance.Imagen_campana.all()
         ]
 
         return rep
-    
 
 
-class GaleriaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Galeria
-        fields = '__all__'
 
 
 

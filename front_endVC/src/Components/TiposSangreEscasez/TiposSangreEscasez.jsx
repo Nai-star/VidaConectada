@@ -20,8 +20,8 @@ const TiposSangreEscasez = () => {
     (async () => {
       try {
         const data = await obtenerTiposSangreUrgentes(); // ya filtrado is_active !== false}
-           console.log("🩸 Datos recibidos en TiposSangreEscasez:", data);
-     
+           /* console.log("🩸 Datos recibidos en TiposSangreEscasez:", data);
+      */
         setItems(Array.isArray(data) ? data : []);
       } catch (e) {
         setErr(e?.message || "No se pudo cargar la información");

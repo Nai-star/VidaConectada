@@ -1,0 +1,222 @@
+/* Colores y fuentes base, asegúrate de que coincidan con tus variables principales */
+:root {
+  --modal-primary-color: #A00000;
+  --modal-text-color: #333333;
+  --modal-light-text: #666666;
+  --modal-background: #FFFFFF;
+  --modal-border-color: #E0E0E0;
+  --modal-input-border: #CCCCCC;
+  --modal-input-focus: #A00000; /* O un azul para foco */
+  --modal-success-bg: #D4EDDA;
+  --modal-success-text: #155724;
+  --modal-error-bg: #F8D7DA;
+  --modal-error-text: #721C24;
+  --modal-info-bg: #CCE5FF;
+  --modal-info-text: #004085;
+  --modal-button-primary: #185ADB; /* Un azul para el botón de participar/suscribir */
+  --modal-button-primary-hover: #0F49B8;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que esté por encima de todo */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-backdrop.open { /* Esta clase se agregaría si usas un manejador de clases en el padre */
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-content {
+  background-color: var(--modal-background);
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  max-width: 500px;
+  width: 90%; /* Responsive */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transform: translateY(-20px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Animación de entrada */
+.modal-backdrop.open .modal-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  color: var(--modal-light-text);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: var(--modal-primary-color);
+}
+
+.modal-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.modal-icon {
+  font-size: 3em;
+  color: var(--modal-primary-color);
+  margin-bottom: 10px;
+}
+
+.modal-title {
+  font-size: 1.8em;
+  color: var(--modal-primary-color);
+  margin: 0 0 5px 0;
+  font-weight: bold;
+}
+
+.modal-subtitle {
+  font-size: 1em;
+  color: var(--modal-light-text);
+  margin: 0;
+}
+
+/* Mensajes de estado (éxito, error, info) */
+.modal-message {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 0.95em;
+  text-align: center;
+  border: 1px solid transparent;
+}
+.modal-message--success {
+  background-color: var(--modal-success-bg);
+  color: var(--modal-success-text);
+  border-color: darken(var(--modal-success-bg), 10%);
+}
+.modal-message--error {
+  background-color: var(--modal-error-bg);
+  color: var(--modal-error-text);
+  border-color: darken(var(--modal-error-bg), 10%);
+}
+.modal-message--info {
+  background-color: var(--modal-info-bg);
+  color: var(--modal-info-text);
+  border-color: darken(var(--modal-info-bg), 10%);
+}
+
+
+.modal-form {
+  margin-bottom: 20px;
+}
+
+.form-group-inline {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-group-inline .form-group {
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group:last-of-type {
+  margin-bottom: 20px; /* Más espacio antes del botón */
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.9em;
+  color: var(--modal-text-color);
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.modal-form input[type="text"],
+.modal-form input[type="email"],
+.modal-form select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid var(--modal-input-border);
+  border-radius: 8px;
+  font-size: 1em;
+  color: var(--modal-text-color);
+  box-sizing: border-box; /* Incluye padding en el ancho total */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-form input::placeholder,
+.modal-form select option[value=""] {
+    color: #999;
+}
+
+.modal-form input:focus,
+.modal-form select:focus {
+  border-color: var(--modal-input-focus);
+  box-shadow: 0 0 0 3px rgba(var(--modal-input-focus), 0.2);
+  outline: none;
+}
+
+.modal-form input:disabled,
+.modal-form select:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  color: #888;
+}
+
+.modal-submit-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background-color: var(--modal-button-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.modal-submit-btn:hover:not(:disabled) {
+  background-color: var(--modal-button-primary-hover);
+}
+
+.modal-submit-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.modal-footer {
+  text-align: center;
+  font-size: 0.85em;
+  color: var(--modal-light-text);
+  line-height: 1.4;
+}
+
+.modal-footer p {
+  margin-bottom: 5px;
+}

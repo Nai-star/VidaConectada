@@ -36,7 +36,7 @@ export async function obtenerTiposSangreUrgentes() {
       })
       .filter(Boolean);
 
-    console.log("✅ Resultado final (solo urgentes):", resultado);
+   /*  console.log("✅ Resultado final (solo urgentes):", resultado); */
     return resultado;
   } catch (error) {
     console.error("❌ Error obteniendo tipos de sangre urgentes:", error);
@@ -66,7 +66,7 @@ export async function GetTiposSangre() {
       recibeDe: t.recibeDe,
     }));
 
-    console.log("✅ Resultado final:", adaptado);
+    /* console.log("✅ Resultado final:", adaptado); */
     return adaptado;
   } catch (error) {
     console.error("❌ Error cargando tipos de sangre:", error);

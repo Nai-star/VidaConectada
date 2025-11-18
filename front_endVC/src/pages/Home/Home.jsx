@@ -10,9 +10,14 @@ import BuzonPreguntas from '../../Components/Buzon/BuzonPreguntas'
 import Footer from "../../Components/Footer/Footer"
 import Barrainfo from "../../Components/BarraInfo/Barrainfo"
 import Contactanos from "../../Components/Contactanos/Contactanos"
+import Campanas from "../../Components/Campanas/Campanas"
+import Galeria from "../../Components/Galeria/Galeria"
+
 
 
 import "./Home.css"
+
+
 
 
 
@@ -72,9 +77,9 @@ function Home() {
           </div>
         </section>
 
-        <div>Campañas</div>
+        <Campanas/>
 
-        <div>Galeria</div>
+        <Galeria/>
 
         <PreguntasFrecuentes/>
         <BuzonPreguntas/>

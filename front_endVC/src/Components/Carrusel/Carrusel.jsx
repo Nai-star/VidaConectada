@@ -1,12 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./carrusel.css";
 import { obtenerCarruselActivos } from "../../services/ServicioCarrusel.js";
-import llamados from "../../services/Servicios_imagenes.jsx"
 
-function Carrusel({ cerrarMenu = () => {} }) {
+function Carrusel({ cerrarMenu = () => {}, frases = [] }) {
   const [slides, setSlides] = useState([]);
   const [idx, setIdx] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -16,59 +15,33 @@ function Carrusel({ cerrarMenu = () => {} }) {
     let alive = true;
     (async () => {
       try {
-        const items = await llamados.getCarusel();
-        console.log(items);
-        
+        const items = await obtenerCarruselActivos();
         if (!alive) return;
-        setSlides(items);
+        setSlides(Array.isArray(items) ? items : []);
       } catch (e) {
         if (!alive) return;
+        console.error("Carrusel: error al cargar slides", e);
         setErr("No se pudo cargar el carrusel.");
       } finally {
         if (alive) setLoading(false);
       }
     })();
-    return () => { alive = false; };
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  // fallback si no hay datos
-  const data = useMemo(() => {
-    if (slides.length) return slides;
-    return [
-      {
-        id: "local-1",
-        image: "/banner-1.jpg",
-        text: "Donar sangre es donar vida.",
-        active: true,
-        darkFilter: true,
-        showText: true,
-      },
-      {
-        id: "local-2",
-        image: "/banner-2.jpg",
-        text: "Tu gota cuenta: salva a alguien hoy.",
-        active: true,
-        darkFilter: true,
-        showText: true,
-      },
-    ];
-  }, [slides]);
-
-  const frases = useMemo(
-    () => data.map(d => d.text || "").filter(Boolean),
-    [data]
-  );
-
+  // settings del slider: antes de cambiar actualizamos idx correctamente
   const settings = {
     dots: true,
-    infinite: true,
-    autoplay: true,
+    infinite: slides.length > 1,
+    autoplay: slides.length > 1,
     autoplaySpeed: 4000,
     slidesToShow: 1,
     slidesToScroll: 1,
     arrows: false,
     fade: true,
-    beforeChange: (_current, next) => setIdx(next % Math.max(frases.length, 1)),
+    beforeChange: (_current, next) => setIdx(next),
     swipeToSlide: true,
     pauseOnHover: false,
   };
@@ -81,7 +54,8 @@ function Carrusel({ cerrarMenu = () => {} }) {
     );
   }
 
-  if (err && !data.length) {
+  // si hay error y no hay slides, mostramos mensaje
+  if (err && slides.length === 0) {
     return (
       <div className="banner-container">
         <div className="banner-error">{err}</div>
@@ -89,23 +63,24 @@ function Carrusel({ cerrarMenu = () => {} }) {
     );
   }
 
-  // Slide actual (para decidir filtro/mostrar texto)
-  const current = data[idx] ?? data[0];
+  // slide actual (seguro)
+  const current = slides.length ? slides[idx] ?? slides[0] : null;
 
   return (
-    <div id="inicio" className="banner-container">
+    <div id="inicio" className="banner-container" onClick={cerrarMenu}>
       <Slider {...settings} className="banner-slider">
-        {slides.map(item => (
-          <div className="slide" key={item.id}>
-      
-
-            <img
-            
-              src={item.image}
-              alt={item.text || "Banner"}
-              loading="lazy"
-              referrerPolicy="no-referrer"
-            />
+        {slides.map((item) => (
+          <div className="slide" key={item.id ?? Math.random()}>
+            {item.image ? (
+              <img
+                src={item.image}
+                alt={item.text || "Banner"}
+                loading="lazy"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <div className="slide-placeholder">Sin imagen</div>
+            )}
           </div>
         ))}
       </Slider>
@@ -116,8 +91,8 @@ function Carrusel({ cerrarMenu = () => {} }) {
         aria-hidden="true"
       />
 
-      {/* Texto controlado por admin */}
-      {current?.showText && (current?.text || frases.length) ? (
+      {/* Texto controlado por admin o lista de frases */}
+      {current?.showText && (current?.text || frases.length > 0) ? (
         <div key={idx} className="banner-frases">
           <span>{frases[idx] || current?.text}</span>
         </div>

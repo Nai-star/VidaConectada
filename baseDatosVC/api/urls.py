@@ -51,7 +51,12 @@ urlpatterns = [
 
     #carrusel
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
-    
+  
+
+    path("requisitos/", RequisitosListCreateView.as_view(), name="requisitos-list-create"),
+    path("requisitos/<int:pk>/", RequisitosRetrieveUpdateDestroyAPIView.as_view(), name="requisitos-detail"),
+
+
     #Galeria
     path('galeria/', GaleriaListCreateView.as_view(), name='token_obtain_pair'),
     path('galeria2/', GaleriaRetrieveUpdateDestroyAPIView.as_view(), name='token_refresh'),
@@ -61,12 +66,3 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
 ]
-
-
-
-
-    
-
-
-
-
