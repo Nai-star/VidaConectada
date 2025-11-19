@@ -19,7 +19,9 @@ from .serializers import *
 class CustomUserListCreateView(ListCreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+    filterset_fields = ['correo']  # Esto permite ?correo=...
     permission_classes = [AllowAny]
+
 
     def perform_create(self, serializer):
         password = serializer.validated_data.get('password')

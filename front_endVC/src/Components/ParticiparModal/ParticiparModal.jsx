@@ -1,217 +1,250 @@
-import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom'; // Para crear el modal fuera del DOM principal
-import './ParticiparModal.css'; // Estilos para el modal
-import { FiX, FiBell } from 'react-icons/fi'; // Iconos de cierre y campana
+import React, { useEffect, useState } from "react";
+import "../Suscripciones/modalSuscripcion.css";
+import { registerParticipante } from "../../services/ServicioParticipacion";
+import { checkCustomUser } from "../../services/ServicioCustomUser";
+import { GetTiposSangre } from "../../services/Servicio_TS"; 
 
-// Asumiendo que tienes un servicio para interactuar con tu API
-import { 
-  checkSuscripcion,      // Verifica si el correo ya está suscrito
-  registerParticipante   // Registra un nuevo participante
-} from '../../services/ServicioParticipacion'; // Ajusta la ruta a tu archivo de servicios
+import { FiBell } from "react-icons/fi";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
 function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
-  const [nombre, setNombre] = useState('');
-  const [apellido, setApellido] = useState('');
-  const [correo, setCorreo] = useState('');
-  const [tipoSangre, setTipoSangre] = useState('');
-  const [message, setMessage] = useState(null); // Para mensajes de éxito/error
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubscribedUser, setIsSubscribedUser] = useState(false); // Para mostrar "Lo esperamos..."
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ nombre: "", apellido: "", correo: "", tipo_sangre: "" });
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState({ type: "", text: "" });
+  const [isSubscribedUser, setIsSubscribedUser] = useState(false);
 
-  // Limpiar el estado cada vez que el modal se abre para una nueva campaña o se cierra
   useEffect(() => {
     if (isOpen) {
-      setNombre('');
-      setApellido('');
-      setCorreo('');
-      setTipoSangre('');
-      setMessage(null);
-      setIsLoading(false);
+      setStep(1);
+      setForm({ nombre: "", apellido: "", correo: "", tipo_sangre: "" });
       setIsSubscribedUser(false);
+      setMsg({ type: "", text: "" });
+      setLoading(false);
     }
   }, [isOpen]);
 
-  // Función para manejar la verificación y el formulario
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+
+    // Si cambia el correo volvemos a paso 1 y borramos estado de suscripción
+    if (name === "correo") {
+      setIsSubscribedUser(false);
+      setStep(1);
+      setMsg({ type: "", text: "" });
+    }
+  };
+
+  const validarCorreo = () => {
+    const c = (form.correo || "").trim();
+    if (!c) return "Ingrese un correo";
+    if (!emailRegex.test(c)) return "Correo inválido";
+    return "";
+  };
+
+  const validarFormulario = () => {
+    if (!form.nombre.trim()) return "El nombre es requerido";
+    if (!form.apellido.trim()) return "El apellido es requerido";
+    if (!form.tipo_sangre) return "Selecciona tu tipo de sangre";
+    return "";
+  };
+
+  const handleNextStep = async (e) => {
+    e.preventDefault();
+    setMsg({ type: "", text: "" });
+
+    const error = validarCorreo();
+    if (error) return setMsg({ type: "error", text: error });
+
+    setLoading(true);
+    try {
+      // Consulta a la API (ServicioCustomUser)
+      const usuario = await checkCustomUser(form.correo);
+
+      // Si no hay usuario -> paso 2 (registro completo)
+      if (!usuario) {
+        setStep(2);
+        setIsSubscribedUser(false);
+        setMsg({ type: "", text: "" });
+        return;
+      }
+
+      // Si hay usuario: verificar campos de verificación (varios nombres posibles)
+      // Normalizamos nombres/flags posibles
+      const userObj = usuario;
+      const nombre = userObj.nombre ?? userObj.first_name ?? "";
+      const apellido = userObj.apellido ?? userObj.last_name ?? "";
+      const correo = (userObj.correo ?? userObj.email ?? form.correo).toString();
+      const tipo_sangre = userObj.tipo_sangre ?? userObj.blood_type ?? "";
+
+      // Detectar si tiene flag de verificación/activación
+      const verifiedFlag = userObj.is_verified ?? userObj.verified ?? userObj.email_verified;
+      const activeFlag = userObj.is_active ?? userObj.active; // en Django suele ser is_active
+      const isVerified = verifiedFlag === true || activeFlag === true || verifiedFlag === undefined && activeFlag === undefined;
+
+      // Si el usuario existe pero NO está verificado -> tratar como no suscrito
+      if (!isVerified) {
+        // No marcar como suscrito; pasar a step 2 para que el usuario complete/reenvíe datos
+        setForm((f) => ({ ...f, correo })); // pre-llenamos correo al menos
+        setStep(2);
+        setIsSubscribedUser(false);
+        setMsg({ type: "info", text: "Se encontró un registro con ese correo, pero no está verificado. Completa los datos para registrarte/actualizar." });
+        return;
+      }
+
+      // Usuario existe y parece verificado -> precargar y permitir confirmación
+      setForm({ nombre, apellido, correo, tipo_sangre });
+      setIsSubscribedUser(true);
+      setStep(2);
+      setMsg({ type: "info", text: `¡Hola de nuevo, ${nombre} ${apellido}! Confirma tu participación.` });
+    } catch (err) {
+      console.error("Error en checkCustomUser:", err);
+      // Si la petición falla, no pasamos info; mejor mostrar mensaje y permitir que continúe manualmente
+      setMsg({ type: "error", text: "Error al verificar el correo. Intenta nuevamente." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage(null);
+    setMsg({ type: "", text: "" });
 
-    // Si ya sabemos que es un usuario suscrito y solo está confirmando su participación
     if (isSubscribedUser) {
-        try {
-            // Aquí solo registramos la participación sin pedir los datos de nuevo
-            await registerParticipante({
-                nombre: nombre, // Usamos el nombre que ya sabemos del usuario suscrito
-                apellido: apellido,
-                correo: correo,
-                tipoSangre: tipoSangre, // Si el servicio lo necesita, o se puede omitir
-                campaignId: campaign.id,
-            });
-            setMessage({ type: 'success', text: `¡Gracias, ${nombre}! Tu participación en "${campaign.titulo}" ha sido registrada.` });
-            onParticipateSuccess(campaign); // Llama al callback de éxito
-            setTimeout(onClose, 3000); // Cierra el modal después de 3 segundos
-        } catch (error) {
-            console.error('Error al registrar participación:', error);
-            setMessage({ type: 'error', text: 'Error al registrar tu participación. Intenta de nuevo.' });
-        } finally {
-            setIsLoading(false);
-        }
-        return;
+      // confirmar participación para usuario verificado
+      try {
+        setLoading(true);
+        await registerParticipante({
+          nombre: form.nombre,
+          apellido: form.apellido,
+          correo: form.correo,
+          tipo_sangre: form.tipo_sangre,
+          campaignId: campaign?.id ?? campaign?.pk ?? campaign?._id,
+        });
+        setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${form.nombre}!` });
+        onParticipateSuccess && onParticipateSuccess(campaign);
+        setTimeout(() => onClose && onClose(), 1500);
+      } catch (err) {
+        console.error("Error registrando participación:", err);
+        setMsg({ type: "error", text: "Error al registrar la participación. Intenta de nuevo." });
+      } finally {
+        setLoading(false);
+      }
+      return;
     }
 
-    // --- Lógica cuando no es un usuario suscrito o es la primera vez que ingresa el correo ---
+    // Si no está suscrito: validar y crear participación + crear usuario si el backend lo soporta
+    const error = validarFormulario();
+    if (error) return setMsg({ type: "error", text: error });
 
-    // Primero, verificar si el correo ya está en la tabla de suscritos
     try {
-        const suscrito = await checkSuscripcion(correo); // Esto debería devolver el usuario si existe
-        if (suscrito && suscrito.nombre && suscrito.apellido) {
-            // Si el usuario ya está suscrito, mostramos el mensaje de bienvenida
-            setNombre(suscrito.nombre); // Precargamos el nombre
-            setApellido(suscrito.apellido); // Precargamos el apellido
-            setTipoSangre(suscrito.tipoSangre || ''); // Si lo tienes en la suscripción
-            setIsSubscribedUser(true);
-            setMessage({ type: 'info', text: `¡Bienvenido de nuevo, ${suscrito.nombre} ${suscrito.apellido}! ¿Deseas participar en "${campaign.titulo}"?` });
-            // Aquí, el botón "Suscribirme" se convertirá en "Confirmar Participación"
-        } else {
-            // Si no está suscrito, procedemos con el registro completo
-            if (!nombre || !apellido || !correo || !tipoSangre) {
-              setMessage({ type: 'error', text: 'Por favor, completa todos los campos.' });
-              setIsLoading(false);
-              return;
-            }
-
-            await registerParticipante({
-                nombre,
-                apellido,
-                correo,
-                tipoSangre,
-                campaignId: campaign.id,
-            });
-            setMessage({ type: 'success', text: `¡Gracias, ${nombre}! Tu participación en "${campaign.titulo}" ha sido registrada.` });
-            onParticipateSuccess(campaign); // Llama al callback de éxito
-            setTimeout(onClose, 3000); // Cierra el modal después de 3 segundos
-        }
-    } catch (error) {
-        console.error('Error al verificar suscripción o registrar:', error);
-        setMessage({ type: 'error', text: 'Ocurrió un error. Por favor, revisa tu conexión o intenta de nuevo.' });
+      setLoading(true);
+      await registerParticipante({
+        nombre: form.nombre,
+        apellido: form.apellido,
+        correo: form.correo,
+        tipo_sangre: form.tipo_sangre,
+        campaignId: campaign?.id ?? campaign?.pk ?? campaign?._id,
+        createSubscription: true, // backend debe interpretar esto y crear customuser si es necesario
+      });
+      setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${form.nombre}!` });
+      onParticipateSuccess && onParticipateSuccess(campaign);
+      setTimeout(() => onClose && onClose(), 1500);
+    } catch (err) {
+      console.error("Error registrando participante (nuevo):", err);
+      setMsg({ type: "error", text: "Error al procesar el registro. Intenta de nuevo." });
     } finally {
-        setIsLoading(false);
+      setLoading(false);
     }
   };
 
   if (!isOpen) return null;
 
-  return createPortal(
-    <div className="modal-backdrop">
-      <div className="modal-content">
-        <button className="modal-close" onClick={onClose} aria-label="Cerrar">
-          <FiX />
-        </button>
-        <div className="modal-header">
-          <FiBell className="modal-icon" />
-          <h3 className="modal-title">
-            {isSubscribedUser ? `¡Hola de nuevo, ${nombre}!` : 'Suscríbete al Boletín'}
-          </h3>
-          <p className="modal-subtitle">
-            {isSubscribedUser 
-              ? `Ya te conocemos. Confirma tu participación en "${campaign.titulo}".`
-              : 'Recibe noticias, estadísticas y actualizaciones sobre VidaConectada'}
-          </p>
-        </div>
+  const [tiposSangre, setTiposSangre] = useState([]);
 
-        {message && (
-          <div className={`modal-message modal-message--${message.type}`}>
-            {message.text}
-          </div>
-        )}
+  useEffect(() => {
+    // Cargar tipos de sangre al iniciar
+    async function loadTipos() {
+      try {
+        const data = await GetTiposSangre();
+        setTiposSangre(data);
+      } catch (e) {
+        console.error("Error cargando tipos de sangre", e);
+      }
+    }
 
-        <form onSubmit={handleSubmit} className="modal-form">
-            {/* Mostrar campos solo si no es un usuario suscrito confirmado O si es la primera vez que se busca su correo */}
-            {!isSubscribedUser && (
-                <>
-                    <div className="form-group-inline">
-                        <div className="form-group">
-                            <label htmlFor="nombre">Nombre</label>
-                            <input
-                                id="nombre"
-                                type="text"
-                                value={nombre}
-                                onChange={(e) => setNombre(e.target.value)}
-                                placeholder="Tu nombre"
-                                required={!isSubscribedUser}
-                                disabled={isSubscribedUser} // Deshabilitar si ya se precargó el nombre
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="apellido">Apellido</label>
-                            <input
-                                id="apellido"
-                                type="text"
-                                value={apellido}
-                                onChange={(e) => setApellido(e.target.value)}
-                                placeholder="Tu apellido"
-                                required={!isSubscribedUser}
-                                disabled={isSubscribedUser}
-                            />
-                        </div>
-                    </div>
-                </>
-            )}
+    loadTipos();
+  }, []);
 
-            <div className="form-group">
-                <label htmlFor="correo">Correo electrónico</label>
-                <input
-                    id="correo"
-                    type="email"
-                    value={correo}
-                    onChange={(e) => {
-                      setCorreo(e.target.value);
-                      setIsSubscribedUser(false); // Resetear estado si el correo cambia
-                    }}
-                    placeholder="correo@ejemplo.com"
-                    required
-                    disabled={isSubscribedUser} // Deshabilitar si es un usuario suscrito
-                />
+  return (
+    <div className="sub-overlay" onClick={onClose}>
+      <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
+        <h3 className="sub-title">
+          {isSubscribedUser ? `¡Hola de nuevo, ${form.nombre}!` : "Participa en la campaña"}
+        </h3>
+        <p className="sub-subtitle">
+          {isSubscribedUser
+            ? `Confirma tu participación en "${campaign?.Titulo ?? campaign?.title ?? ""}".`
+            : step === 1
+            ? "Ingresa tu correo para comenzar"
+            : "Completa tus datos para participar"}
+        </p>
+
+        <div className="sub-iconWrap"><FiBell /></div>
+
+        <form className="sub-form" onSubmit={step === 1 ? handleNextStep : handleSubmit}>
+          {step === 1 && (
+            <div className="sub-field">
+              <label>Correo electrónico</label>
+              <input name="correo" value={form.correo} onChange={onChange} placeholder="correo@ejemplo.com" autoFocus />
             </div>
-            
-            <div className="form-group">
-                <label htmlFor="tipoSangre">Tipo de sangre</label>
+          )}
+
+          {step === 2 && (
+            <>
+              <div className="sub-row">
+                <div className="sub-field">
+                  <label>Nombre</label>
+                  <input name="nombre" value={form.nombre} onChange={onChange} placeholder="Tu nombre" readOnly={isSubscribedUser} />
+                </div>
+                <div className="sub-field">
+                  <label>Apellido</label>
+                  <input name="apellido" value={form.apellido} onChange={onChange} placeholder="Tu apellido" readOnly={isSubscribedUser} />
+                </div>
+              </div>
+
+              <div className="sub-field">
+                <label>Tipo de sangre</label>
                 <select
-                    id="tipoSangre"
-                    value={tipoSangre}
-                    onChange={(e) => setTipoSangre(e.target.value)}
-                    required
-                    disabled={isSubscribedUser && tipoSangre !== ''} // Deshabilitar si precargado
+                  name="tipo_sangre"
+                  value={form.tipo_sangre}
+                  onChange={onChange}
+                  disabled={isSubscribedUser && !!form.tipo_sangre}
                 >
-                    <option value="">Selecciona tu tipo de sangre</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                </select>
-            </div>
+                  <option value="">Selecciona tu tipo de sangre</option>
 
-            <button type="submit" className="modal-submit-btn" disabled={isLoading}>
-                {isLoading 
-                  ? 'Procesando...' 
-                  : isSubscribedUser 
-                    ? 'Confirmar Participación' 
-                    : 'Suscribirme'}
-            </button>
+                  {tiposSangre.map((t) => (
+                    <option key={t.id_tipo_sangre} value={t.blood_type}>
+                      {t.blood_type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </>
+          )}
+
+          {msg.text && <div className={`sub-alert ${msg.type}`}>{msg.text}</div>}
+
+          <button className="sub-btn" disabled={loading}>
+            {loading ? "Procesando..." : isSubscribedUser ? "Confirmar participación" : step === 1 ? "Siguiente" : "Participar"}
+          </button>
         </form>
 
-        <div className="modal-footer">
-          <p>Enviaremos boletines mensuales con información relevante.</p>
-          <p>Tu privacidad es importante. No compartiremos tu información con terceros.</p>
-        </div>
+        <p className="sub-footnote">Enviaremos información relevante y respetaremos tu privacidad.</p>
       </div>
-    </div>,
-  document.getElementById('modal-root')
+    </div>
   );
 }
 

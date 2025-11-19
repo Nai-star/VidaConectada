@@ -1,5 +1,5 @@
 // Este es un ejemplo básico. Ajusta las URLs y los métodos según tu API real.
-
+import axios from "axios";
 const API_BASE_URL = 'http://127.0.0.1:8000/api'; // Cambia esto por la URL de tu backend
 
 export async function checkSuscripcion(email) {
@@ -21,24 +21,22 @@ export async function checkSuscripcion(email) {
   }
 }
 
-export async function registerParticipante(participanteData) {
+// 🔹 Registrar la participación en una campaña
+export const registerParticipante = async ({ nombre, apellido, correo, tipo_sangre, campaignId, createSubscription = false }) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/participantes`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(participanteData),
+    // Si createSubscription es true, el backend debe crear también la entrada en api_customuser
+    const response = await axios.post(`${API_URL}/participacion/`, {
+      nombre,
+      apellido,
+      correo,
+      tipo_sangre,
+      campaign: campaignId,
+      create_subscription: createSubscription, // backend flag
     });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  } catch (error) {
-    console.error('Error al registrar participante:', error);
-    throw error;
+    return response.data;
+  } catch (err) {
+    console.error("Error registrando participación:", err);
+    throw err;
   }
-}
+};
 
