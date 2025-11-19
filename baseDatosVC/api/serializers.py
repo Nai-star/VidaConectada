@@ -286,32 +286,6 @@ class CaruselSerializer(serializers.ModelSerializer):
         return data
 
 
-    # 🔥 to_representation limpio (SIN campos inexistentes)
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        return rep
-
-
-
-    # Para mostrar requisitos correctamente
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-
-    
-
-        # Mostrar imágenes
-        rep["Imagen_campana"] = [
-            img.imagen.url for img in instance.Imagen_campana.all()
-        ]
-
-        return rep
-
-
-
-
-
-
-
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
