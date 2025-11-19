@@ -80,8 +80,6 @@ class SuscritosDetailView(RetrieveUpdateDestroyAPIView):
 class CantonesListCreateView(ListCreateAPIView):
     queryset = Cantones.objects.all().order_by('id')
     serializer_class = CantonesSerializer
-    permission_classes = [AllowAny]
-
 
 
 # ✅ Campañas
@@ -196,9 +194,22 @@ class CaruselListCreateView(ListCreateAPIView):
         print("FILES:", request.FILES)
         return super().create(request, *args, **kwargs)
 
+#galeria
+
+class GaleriaListCreateView(ListCreateAPIView):
+    queryset =  Galeria.objects.all()
+    serializer_class =  GaleriaSerializer
+    permission_classes = [AllowAny]
+
+
+class  GaleriaRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset =  Galeria.objects.all()
+    serializer_class =  GaleriaSerializer
+    permission_classes = [AllowAny]
 
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
 			serializer_class = CustomTokenObtainPairSerializer
+
 

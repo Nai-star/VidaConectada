@@ -11,8 +11,6 @@ urlpatterns = [
     # Publicaciones
     path('publicaciones', PublicacionesListCreateView.as_view(), name="crear y listar publicaciones"),
     path('publicaciones/<int:pk>', PublicacionesDetailView.as_view(), name="actualizar y eliminar publicaciones"),
-
-    # Imágenes de publicaciones
     
 
     # Sangre
@@ -24,6 +22,7 @@ urlpatterns = [
     path('suscritos/<int:pk>', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),
 
     # Lugar de campaña
+
 
     # Campañas
     path('campanas/', CampanaListCreateView.as_view(), name="crear y listar campañas"),
@@ -45,10 +44,11 @@ urlpatterns = [
     path('respuestas/', RespuestaListCreateView.as_view(), name="crear y listar respuestas"),
     path('respuesta/<int:pk>', RespuestaDetailView.as_view(), name="actualizar y eliminar respuestas"),
     
+    #Sangre urgente
     path('urgente_tip_sang/', Urgente_Tip_SangListCreateView.as_view(), name="crear y listar urgentes"),
     path('urgente_tip_sang/<int:pk>/', Urgente_Tip_SangRetrieveUpdateDestroyAPIView.as_view(), name="detalle urgente"),
 
-
+    #carrusel
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
 
     path('Cantones/', CantonesListCreateView.as_view(), name="crear y listar cantones"),
@@ -57,18 +57,13 @@ urlpatterns = [
     path("requisitos/", RequisitosListCreateView.as_view(), name="requisitos-list-create"),
     path("requisitos/<int:pk>/", RequisitosRetrieveUpdateDestroyAPIView.as_view(), name="requisitos-detail"),
 
-    
 
-    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    #Galeria
+    path('galeria/', GaleriaListCreateView.as_view(), name='token_obtain_pair'),
+    path('galeria2/', GaleriaRetrieveUpdateDestroyAPIView.as_view(), name='token_refresh'),
+    
+    #tokens
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
 ]
-
-
-
-
-    
-
-
-
-

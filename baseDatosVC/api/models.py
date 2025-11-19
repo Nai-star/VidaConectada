@@ -60,6 +60,8 @@ class Urgente_Tip_Sang(models.Model):
 
 
 
+
+
 class Suscritos(models.Model):
     CustomUser= models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Suscritos")
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
@@ -82,6 +84,7 @@ class Cantones(models.Model):
 class Campana(models.Model):
     Titulo = models.CharField(max_length=100)
     Descripcion= models.CharField(max_length=300)
+
     # Fechas sin hora
     Fecha_inicio = models.DateField(default=timezone.now, null=False, blank=False)
     Fecha_fin = models.DateField(default=timezone.now, null=False, blank=False)
@@ -94,13 +97,10 @@ class Campana(models.Model):
     Contacto = models.CharField(max_length=50)
     direccion_exacta=models.CharField(max_length=300)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Campana")
-    Cantones = models.ForeignKey( Cantones,on_delete=models.CASCADE, related_name="Campana",null=True, blank=True)
+    Cantones= models.ForeignKey( Cantones,on_delete=models.CASCADE, related_name="Campana",null=True, blank=True)
     def __str__(self):
         return f"{self.Titulo}"
     
-    
-
-
 
 class Imagen_campana(models.Model):
     imagen = CloudinaryField('imagen_campana', folder='campanas')
@@ -151,9 +151,11 @@ class DetalleRequisitos (models.Model):
     Requisitos = models.ForeignKey(Requisitos,on_delete=models.CASCADE, related_name="DetalleRequisito")
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="DetalleRequisito")
     Estado =models.BooleanField()
+
+
     def __str__(self):
         return f"{self.Estado}"
-    
+
 
 class carusel (models.Model):
     imagen = CloudinaryField('imagen_carusel', folder='carusel')
@@ -176,4 +178,4 @@ class Galeria(models.Model):
 
 
     def __str__(self):
-        return f"{self.  imagen_g}"
+        return f"{self.imagen_g}"

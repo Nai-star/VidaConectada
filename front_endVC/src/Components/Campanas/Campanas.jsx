@@ -119,9 +119,9 @@ function Campanas() {
               <div className="info-row">
                 <FiCalendar /> 
                 <span>
-                  {c.Fecha_inicio ? new Date(c.Fecha_inicio).toLocaleDateString() : ""}
+                  {c.Fecha_inicio }
                   {" - "}
-                  {c.Fecha_fin ? new Date(c.Fecha_fin).toLocaleDateString() : ""}
+                  {c.Fecha_fin }
                 </span>
               </div>
               
