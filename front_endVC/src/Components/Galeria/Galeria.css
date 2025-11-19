@@ -93,7 +93,7 @@
   transition: opacity .28s ease, transform .28s ease;
 }
 
-.gal-hover-title{
+/* .gal-hover-title{
   color: var(--card-bg);
   background: rgba(0,0,0,0.45);
   padding: 8px 14px;
@@ -101,7 +101,7 @@
   font-weight: 700;
   font-size: 0.95rem;
   color: #fff;
-}
+} */
 
 /* efectos al pasar el cursor */
 .gal-item:hover{

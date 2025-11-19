@@ -2,7 +2,7 @@ from.models import *
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from .models import Campana, Cantones, Imagen_campana, DetalleRequisitos, Requisitos, CustomUser
+from .models import Campana, Cantones, Imagen_campana, DetalleRequisitos, Requisitos, CustomUser, Galeria
 """ from .models import CustomUser """
 from .models import Buzon
 
@@ -102,19 +102,6 @@ class CantonesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cantones
         fields = '__all__'
-
-""" class LugarCampanaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Lugar_campana
-        fields = [
-            "id",
-            "Nombre_lugar",
-            "Canton",
-            "Direcion",
-        ]
- """
-
-
 
 
 # ---------------- Campana ----------------
@@ -248,11 +235,19 @@ class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class GaleriaSerializer(serializers.ModelSerializer):
+    # Campo calculado que devuelve la URL de Cloudinary
+    image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = Galeria
-        fields = '__all__'
+        # Incluye 'image_url' explícitamente
+        fields = ['id', 'image_url', 'descripcion', 'video_url', 'fecha_publicacion', 'activo', 'CustomUser']
 
-
+    def get_image_url(self, obj):
+        try:
+            return obj.imagen_g.url if obj.imagen_g else None
+        except Exception:
+            return None
 
 class Red_bancosSerializer(serializers.ModelSerializer):
     class Meta:
