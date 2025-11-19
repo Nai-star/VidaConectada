@@ -1,231 +1,110 @@
-import React, { useEffect, useMemo, useState } from "react";
-import "./campanas.css";
-import { obtenerCampanasActivas, obtenerLugaresCampana } from "../../services/ServicioCampanas";
+import React, { useEffect, useState } from "react";
+import { obtenerCampanas } from "../../services/ServicioCampanas";
 import { FiCalendar, FiClock, FiMapPin } from "react-icons/fi";
-import ParticiparModal from '../../Components/ParticiparModal/ParticiparModal'; // Importa el nuevo modal
+import "./campanas.css";
 
 function Campanas() {
   const [campanas, setCampanas] = useState([]);
-  const [openId, setOpenId] = useState(null); 
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
-  
-  // Nuevo estado para el modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCampaign, setSelectedCampaign] = useState(null); // Para pasar la campaña al modal
+  const [openId, setOpenId] = useState(null);
 
   useEffect(() => {
-    let alive = true;
-
-    (async () => {
+    async function cargar() {
       try {
-        setLoading(true);
-        const [campanasRaw, lugares] = await Promise.all([
-          obtenerCampanasActivas(),
-          obtenerLugaresCampana(),
-        ]);
-
-        if (!alive) return;
-
-        const lugaresPorCampana = {};
-        for (const l of lugares || []) {
-          const cid = String(l.campanaId);
-          if (!cid || cid === "0") continue;
-          if (!lugaresPorCampana[cid]) lugaresPorCampana[cid] = [];
-          lugaresPorCampana[cid].push(l);
-        }
-
-        const fused = (campanasRaw || []).map((c) => {
-          const cid = String(c.id); 
-          const asociados = cid && cid !== "0" ? (lugaresPorCampana[cid] ?? []) : [];
-
-          const progresoFallback =
-            typeof c.progreso === "number"
-              ? c.progreso
-              : c.fechaInicio && c.fechaFin
-              ? Math.round(
-                  ((Date.now() - new Date(c.fechaInicio).getTime()) /
-                    (new Date(c.fechaFin).getTime() - new Date(c.fechaInicio).getTime())) *
-                    100
-                )
-              : 0;
-
-          let ubicacionTexto = c.ubicacion ?? "Ubicación por confirmar";
-          if (asociados.length) {
-            const L = asociados[0];
-            const partes = [L.nombre, L.canton, L.direccion].filter(Boolean);
-            if (partes.length) ubicacionTexto = partes.join(", ");
-          }
-
-          return {
-            ...c,
-            ubicacion: ubicacionTexto,
-            lugares: asociados,
-            progreso: Math.max(0, Math.min(100, progresoFallback || 0)),
-          };
-        });
-
-        setCampanas(fused);
-        setErr("");
-      } catch (e) {
-        console.error("Error cargando campañas o lugares:", e);
-        if (!alive) return;
-        setErr("No se pudieron cargar las campañas o los lugares.");
-      } finally {
-        if (alive) setLoading(false);
+        const data = await obtenerCampanas();
+        setCampanas(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error al cargar campañas:", err);
+        setCampanas([]);
       }
-    })();
-
-    return () => {
-      alive = false;
-    };
+    }
+    cargar();
   }, []);
 
-  const vacias = useMemo(() => !loading && !err && campanas.length === 0, [loading, err, campanas]);
-
-  // Función para abrir el modal
-  const handleOpenModal = (campaign) => {
-    setSelectedCampaign(campaign);
-    setIsModalOpen(true);
+  const toggleOpen = (id) => {
+    setOpenId((prev) => (prev === id ? null : id));
   };
-
-  // Función para cerrar el modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedCampaign(null);
-  };
-
-  // Función que se ejecuta cuando la participación es exitosa en el modal
-  const handleParticipationSuccess = (participatedCampaign) => {
-    // Puedes hacer algo aquí si necesitas actualizar el estado de la campaña en Campanas.jsx
-    // Por ejemplo, marcarla como "ya participado" o refrescar datos.
-    console.log(`Participación exitosa en: ${participatedCampaign.titulo}`);
-    // Opcional: Cierra también los detalles de la tarjeta.
-    setOpenId(null); 
-  };
-
 
   return (
     <section className="cmp-wrap" id="campanas">
       <h2 className="cmp-title">Campañas Activas</h2>
       <p className="cmp-subtitle">Encuentra una jornada de donación cerca de ti y participa</p>
 
-      {loading && <div className="cmp-skeleton">Cargando campañas…</div>}
-      {err && <div className="cmp-error">{err}</div>}
-      {vacias && <div className="cmp-empty">No hay campañas activas de momento.</div>}
+      <div className="campanas-container">
+        {campanas.length === 0 ? (
+          <div className="cmp-empty">No hay campañas disponibles.</div>
+        ) : (
+          campanas.map((c, idx) => {
+            // id seguro: usa id, pk, _id o el índice como fallback
+            const cid = c.id ?? c.pk ?? c._id ?? idx;
 
-      <div className="cmp-grid">
-        {campanas.map((c, index) => {
-          const keyForToggle = String(c.id != null ? c.id : `fallback-${index}`); 
-          const abierta = openId === keyForToggle;
+            const imagenes = Array.isArray(c.imagenes) ? c.imagenes : (Array.isArray(c.Imagen_campana) ? c.Imagen_campana : []);
+            const requisitos = Array.isArray(c.requisitos) ? c.requisitos : (Array.isArray(c.DetalleRequisito) ? c.DetalleRequisito.map(dr => dr.Requisitos ?? dr) : []);
 
-          const cardKey = `camp-${keyForToggle}`;
+            return (
+              <div key={cid} className="campana-card">
+                <h3 className="campana-title">{c.Titulo}</h3>
 
-          return (
-            <article key={cardKey} className={`cmp-card ${c.urgencyClass ?? ""}`}>
-              <header className="cmp-head">
-                <h3 className="cmp-card-title">{c.titulo}</h3>
-                {c.urgency && <span className={`cmp-badge ${c.urgencyClass ?? ""}`}>{c.urgency}</span>}
-              </header>
-
-              <ul className="cmp-meta" aria-hidden={false}>
-                <li className="meta-item">
-                  <FiCalendar className="ic" />
-                  <span>{c.fechaTexto}</span>
-                </li>
-                <li className="meta-item">
-                  <FiClock className="ic" />
-                  <span>{c.horarioTexto}</span>
-                </li>
-                <li className="meta-item">
-                  <FiMapPin className="ic" />
-                  <span>{c.ubicacion}</span>
-                </li>
-              </ul>
-
-              <div className="cmp-progress" aria-hidden>
-                <div
-                  className="cmp-progress-bar"
-                  style={{ width: `${Math.max(0, Math.min(100, c.progreso || 0))}%` }}
-                />
-              </div>
-
-              {/* Detalles colapsables */}
-              <div
-                id={`detalles-${keyForToggle}`}
-                className={`cmp-details ${abierta ? "open" : ""}`}
-                aria-expanded={abierta}
-              >
-                <div className="cmp-section">
-                  <h4>Descripción</h4>
-                  <p>{c.descripcion || "No hay descripción disponible."}</p>
+                {/* IMÁGENES */}
+                <div className="imagenes-container">
+                  {imagenes.length > 0 ? (
+                    imagenes.map((img, i) => {
+                      const src = img?.imagen ?? img?.url ?? img;
+                      return <img key={i} src={src} alt={`${c.Titulo} ${i+1}`} className="campana-img" />;
+                    })
+                  ) : (
+                    <p className="no-img">Sin imágenes</p>
+                  )}
                 </div>
 
-                {c.requisitos?.length ? (
-                  <div className="cmp-section">
+                {/* META */}
+                <div className="info-row">
+                  <FiCalendar /> <span>{c.Fecha_inicio ? new Date(c.Fecha_inicio).toLocaleDateString() : ""}</span>
+                </div>
+
+                <div className="info-row">
+                  <FiClock /> <span>{c.Fecha_inicio ? new Date(c.Fecha_inicio).toLocaleTimeString() : ""} - {c.Fecha_fin ? new Date(c.Fecha_fin).toLocaleTimeString() : ""}</span>
+                </div>
+
+                <div className="info-row">
+                  <FiMapPin /> <span>{c.direccion_exacta ?? c.direccion ?? ""}</span>
+                </div>
+
+                {/* SECCIÓN DESPLEGABLE: usa cid para controlar apertura */}
+                <div className={`detalles-expandido ${openId === cid ? "open" : ""}`}>
+                  <div className="detalles-content">
+                    <h4>Descripción</h4>
+                    <p>{c.Descripcion ?? "Sin descripción disponible."}</p>
+
                     <h4>Requisitos</h4>
-                    <ul className="cmp-list">
-                      {c.requisitos.map((r, i) => (
-                        <li key={`req-${keyForToggle}-${i}`}>• {r}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
+                    {requisitos.length > 0 ? (
+                      <ul>
+                        {requisitos.map((req, i) => (
+                          // req puede ser objeto o string
+                          <li key={req?.id ?? i}>{req?.Nombre ?? req}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="no-img">No hay requisitos registrados.</p>
+                    )}
 
-                <div className="cmp-section">
-                  <h4>Contacto</h4>
-                  <p>{c.contacto}</p>
+                    <h4>Contacto</h4>
+                    <p>{c.Contacto ?? "No disponible"}</p>
+                  </div>
                 </div>
 
-                {/* {c.lugares?.length ? (
-                  <div className="cmp-section">
-                    <h4>Lugar(es) asociado(s)</h4>
-                    <ul className="cmp-list">
-                      {c.lugares.map((L, lugarIdx) => {
-                        const lugarKey = L?.id != null ? `lug-${L.id}` : `lug-${keyForToggle}-${lugarIdx}`;
-                        return (
-                          <li key={lugarKey}>
-                            <strong>{L.nombre || "Lugar sin nombre"}</strong>
-                            {L.canton ? ` — ${L.canton}` : ""}
-                            {L.direccion ? `, ${L.direccion}` : ""}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                ) : null} */}
-              </div>
-
-              {/* ÚNICO BOTÓN INTELIGENTE */}
-              <div className="cmp-actions">
+                {/* BOTÓN FINAL */}
                 <button
-                  className={`cmp-btn ${abierta ? "primary" : "ghost"} full-width`} 
-                  onClick={() => {
-                    if (abierta) {
-                      // Si el botón ya dice "Participar", abre el modal.
-                      handleOpenModal(c);
-                    } else {
-                      // Si no está abierta, abre los detalles de la tarjeta.
-                      setOpenId(keyForToggle);
-                    }
-                  }}
-                  aria-controls={`detalles-${keyForToggle}`}
+                  className="btn-detalles"
+                  onClick={() => toggleOpen(cid)}
+                  type="button"
                 >
-                  {abierta ? "Participar en esta Campaña" : "Ver Detalles"}
+                  {openId === cid ? "Participar en campaña" : "Ver más"}
                 </button>
               </div>
-            </article>
-          );
-        })}
+            );
+          })
+        )}
       </div>
-
-      {/* Renderizar el Modal aquí */}
-      <ParticiparModal 
-        isOpen={isModalOpen} 
-        onClose={handleCloseModal} 
-        campaign={selectedCampaign} // Pasa la campaña seleccionada al modal
-        onParticipateSuccess={handleParticipationSuccess}
-      />
     </section>
   );
 }
