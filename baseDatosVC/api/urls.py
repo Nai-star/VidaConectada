@@ -50,6 +50,8 @@ urlpatterns = [
 
 
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
+
+    path('Cantones/', CantonesListCreateView.as_view(), name="crear y listar cantones"),
   
 
     path("requisitos/", RequisitosListCreateView.as_view(), name="requisitos-list-create"),

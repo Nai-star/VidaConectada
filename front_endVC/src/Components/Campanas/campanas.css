@@ -164,3 +164,142 @@
   text-align: center;
   max-width: 720px;
 }
+/* Variables (Se mantienen) */
+:root {
+  --bg: #f5f9fc;
+  --card-bg: #ffffff;
+  --muted: #8b98a6;
+  --accent: #b92a26;
+  --accent-dark: #9b2220;
+  --border: #e6e9ec;
+  --shadow: 0 4px 12px rgba(13,34,56,0.12);
+  --gap: 20px; /* Definir el gap para el grid */
+  --max-width: 1200px; /* Definir el ancho máximo */
+}
+
+/* ---------------------------------------------------- */
+/* :bulb: CORRECCIÓN DE LAYOUT (GRID) */
+/* ---------------------------------------------------- */
+.campanas-container {
+  display: grid;
+  /* :bulb: CAMBIO CLAVE: Permite que el grid decida el número de columnas (mínimo 300px) */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--gap);
+  width: 100%;
+  max-width: var(--max-width);
+  margin-top: 28px;
+  box-sizing: border-box;
+  align-items: flex-start; /* Evita que las tarjetas se estiren verticalmente */
+}
+
+/* ---------------------------------------------------- */
+/* :bulb: CORRECCIÓN DE TARJETA */
+/* ---------------------------------------------------- */
+.campana-card {
+  background: white;
+  /* :bulb: ELIMINAR ANCHO FIJO: Permitir que el grid controle el ancho */
+  /* width: 360px; <-- ELIMINADO/Comentado */
+  border-radius: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s ease;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+  display: flex; /* Para controlar el apilamiento de contenido */
+  flex-direction: column;
+}
+
+.campana-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ---------------------------------------------------- */
+/* :bulb: ESTILOS DEL CARRUSEL (NUEVO) */
+/* ---------------------------------------------------- */
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* Relación de aspecto 16:9 (o ajusta si tus fotos son cuadradas) */
+  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.campana-img-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease; /* Transición suave entre imágenes */
+}
+
+/* Controles de navegación */
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.carousel-control:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-control.prev {
+  left: 10px;
+}
+
+.carousel-control.next {
+  right: 10px;
+}
+
+/* Indicadores (dots) */
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.indicator.active {
+  background: var(--accent);
+  transform: scale(1.2);
+}
+
+.no-img {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9em;
+    padding: 10px 0;
+}
+
