@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from cloudinary.models import CloudinaryField
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
    
@@ -71,6 +72,7 @@ class Provincia(models.Model):
     nombre_p = models.CharField(max_length=100)
     def __str__(self):
         return f"{self.nombre_p}"
+    
 class Cantones(models.Model):
     nombre_canton = models.CharField(max_length=100)
     Provincia= models.ForeignKey( Provincia,on_delete=models.CASCADE, related_name="Cantones")
@@ -82,38 +84,23 @@ class Cantones(models.Model):
 class Campana(models.Model):
     Titulo = models.CharField(max_length=100)
     Descripcion= models.CharField(max_length=300)
-    Fecha_inicio = models.DateTimeField (auto_now_add=False)
-    Fecha_fin = models.DateTimeField (auto_now_add=False)
+
+    # Fechas sin hora
+    Fecha_inicio = models.DateField(default=timezone.now, null=False, blank=False)
+    Fecha_fin = models.DateField(default=timezone.now, null=False, blank=False)
+
+    # Nuevas horas
+    Hora_inicio = models.TimeField(null=False, blank=False)
+    Hora_fin = models.TimeField(null=False, blank=False)
+
     Activo = models.BooleanField(default=True)
     Contacto = models.CharField(max_length=50)
     direccion_exacta=models.CharField(max_length=300)
     CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Campana")
     Cantones= models.ForeignKey( Cantones,on_delete=models.CASCADE, related_name="Campana",null=True, blank=True)
-
     def __str__(self):
         return f"{self.Titulo}"
     
-    
-
-
-
-""" 
-class detalle_lugar_campana(models.Model):
- 
- Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="detalle_lugar_campana") """  
-
-
-
-
-""" class Lugar_campana(models.Model):
-
-    Nombre_lugar = models.CharField(max_length=100)
-    Canton = models.CharField(max_length=100)
-    Direcion = models.CharField(max_length=200)
-    Campana = models.ForeignKey(Campana,on_delete=models.CASCADE, related_name="Lugar_campana")
-    def __str__(self):
-        return f"{self.Nombre_lugar}" """
-
 
 class Imagen_campana(models.Model):
     imagen = CloudinaryField('imagen_campana', folder='campanas')
@@ -169,7 +156,7 @@ class DetalleRequisitos (models.Model):
     def __str__(self):
         return f"{self.Estado}"
 
-    
+
 
 class carusel (models.Model):
     imagen = CloudinaryField('imagen_carusel', folder='carusel')

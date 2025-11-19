@@ -263,7 +263,7 @@
 
 /* Cuando está abierto */
 .tabla-collapsible.open {
-  max-height: 1200px;     /* lo suficiente para la tabla; ajusta si hace falta */
+   max-height: none;    /* lo suficiente para la tabla; ajusta si hace falta */
   opacity: 1;
   transform: translateY(0);
 }

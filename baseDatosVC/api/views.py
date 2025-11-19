@@ -11,8 +11,6 @@ from rest_framework.parsers import MultiPartParser, FormParser
 
 
 
-
-
 from .models import *
 from .serializers import *
 
@@ -65,8 +63,6 @@ class SangreDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 
-
-
 # ✅ Suscritos
 class SuscritosListCreateView(ListCreateAPIView):
     queryset = Suscritos.objects.all()
@@ -81,24 +77,15 @@ class SuscritosDetailView(RetrieveUpdateDestroyAPIView):
 
 
 # ✅ Lugar campaña
-
-""" class LugarCampanaListCreateView(ListCreateAPIView):
-    queryset = Lugar_campana.objects.all()
-    serializer_class = LugarCampanaSerializer
-    permission_classes = [AllowAny]
-
-
-class LugarCampanaDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = Lugar_campana.objects.all()
-    serializer_class = LugarCampanaSerializer
-    permission_classes = [AllowAny]
- """
+class CantonesListCreateView(ListCreateAPIView):
+    queryset = Cantones.objects.all().order_by('id')
+    serializer_class = CantonesSerializer
 
 
 # ✅ Campañas
 class CampanaListCreateView(ListCreateAPIView):
     queryset = Campana.objects.all()
-    serializer_class = CampanaCreateSerializer
+    serializer_class = CampanaSerializer
     permission_classes = [AllowAny]
 
 
@@ -111,13 +98,13 @@ class CampanaDetailView(RetrieveUpdateDestroyAPIView):
 # ✅ Imágenes de campaña
 class ImagenCampanaListCreateView(ListCreateAPIView):
     queryset = Imagen_campana.objects.all()
-    serializer_class =Imagen_campanaSerializer
+    serializer_class =ImagenCampanaSerializer
     permission_classes = [AllowAny]
 
 
 class ImagenCampanaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Imagen_campana.objects.all()
-    serializer_class = Imagen_campanaSerializer
+    serializer_class = ImagenCampanaSerializer
     permission_classes = [AllowAny]
 
 
@@ -173,7 +160,11 @@ class RespuestaDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 
+
 #Tiopo de sangre necesitada
+
+
+
 class Urgente_Tip_SangListCreateView(ListCreateAPIView):
     queryset = Urgente_Tip_Sang.objects.all()
     serializer_class = Urgente_Tip_SangSerializer
@@ -265,4 +256,5 @@ class Red_bancosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
 			serializer_class = CustomTokenObtainPairSerializer
+
 

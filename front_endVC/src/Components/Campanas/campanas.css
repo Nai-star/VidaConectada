@@ -1,23 +1,143 @@
-/* campanas.css
-   Estilos para el componente Campanas
-   Usa variables para fácil personalización.
-*/
-
-:root{
+:root {
   --bg: #f5f9fc;
   --card-bg: #ffffff;
   --muted: #8b98a6;
-  --accent: #b92a26; /* rojo principal */
+  --accent: #b92a26;
   --accent-dark: #9b2220;
-  --accent-soft: #f7eaea;
-  --success: #22a663;
   --border: #e6e9ec;
-  --shadow: 0 6px 18px rgba(13,34,56,0.06);
-  --radius: 12px;
-  --gap: 24px;
-  --max-width: 1180px;
-  --text: #222;
-  --card-padding: 20px;
+  --shadow: 0 4px 12px rgba(13,34,56,0.12);
+}
+
+/* GRID */
+.campanas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--gap);
+  width: 100%;
+  max-width: var(--max-width);
+  margin-top: 28px;
+  box-sizing: border-box;
+  align-items: flex-start;
+}
+
+/* TARJETA */
+/* ----- TARJETAS ----- */
+.campana-card {
+  background: white;
+  width: 360px;
+  border-radius: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s ease;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+
+}
+
+.campana-card.open {
+  height: auto;
+  transition: height 0.3s ease;
+} 
+
+
+.campana-card:hover {
+  transform: translateY(-4px);
+}
+
+/* IMÁGENES */
+.imagenes-container {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+}
+
+.campana-img {
+  height: 120px;
+  width: 160px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* TÍTULO */
+.campana-title {
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* FILAS DE INFO */
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 5px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* BOTÓN */
+.btn-detalles {
+  margin-top: 15px;
+  width: 100%;
+  background: var(--accent);
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.btn-detalles:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+}
+
+/* SECCIÓN EXPANDIBLE */
+.detalles-expandido {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.4s ease, opacity 0.3s ease;
+  margin-top: 0;
+}
+
+/* cuando está abierta */
+.detalles-expandido.open {
+  max-height: 600px; /* suficiente para todo */
+  opacity: 1;
+  margin-top: 15px;
+}
+
+/* textos internos */
+.detalles-expandido h4 {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #222;
+}
+
+.detalles-expandido p,
+.detalles-expandido li {
+  font-size: 14px;
+  color: #444;
+}
+
+.detalles-expandido ul {
+  padding-left: 20px;
+}
+
+
+.info-row svg {
+  color: var(--accent); /* o cualquier color */
+}
+.info-row svg {
+  color: #b92a26; /* rojo */
+  width: 18px;
+  height: 18px;
 }
 
 /* Estructura general */
@@ -44,244 +164,142 @@
   text-align: center;
   max-width: 720px;
 }
-
-/* mensajes de carga / error / vacío */
-.cmp-skeleton, .cmp-error, .cmp-empty{
-  margin: 18px 0;
-  padding: 12px 16px;
-  border-radius: 8px;
-  max-width: var(--max-width);
-  width: 100%;
-  box-sizing: border-box;
-  text-align: center;
+/* Variables (Se mantienen) */
+:root {
+  --bg: #f5f9fc;
+  --card-bg: #ffffff;
+  --muted: #8b98a6;
+  --accent: #b92a26;
+  --accent-dark: #9b2220;
+  --border: #e6e9ec;
+  --shadow: 0 4px 12px rgba(13,34,56,0.12);
+  --gap: 20px; /* Definir el gap para el grid */
+  --max-width: 1200px; /* Definir el ancho máximo */
 }
 
-.cmp-skeleton{ background: linear-gradient(90deg,#f0f2f4,#eef4f8,#f0f2f4); color: transparent; }
-.cmp-error{ background: #fff1f0; color: #7a1f1b; border: 1px solid #ffd6d4; }
-.cmp-empty{ background: #fff; color: var(--muted); border: 1px dashed var(--border); }
-
-/* Grid de tarjetas */
-.cmp-grid{
+/* ---------------------------------------------------- */
+/* :bulb: CORRECCIÓN DE LAYOUT (GRID) */
+/* ---------------------------------------------------- */
+.campanas-container {
   display: grid;
+  /* :bulb: CAMBIO CLAVE: Permite que el grid decida el número de columnas (mínimo 300px) */
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--gap);
   width: 100%;
   max-width: var(--max-width);
   margin-top: 28px;
   box-sizing: border-box;
-  align-items: flex-start;
+  align-items: flex-start; /* Evita que las tarjetas se estiren verticalmente */
 }
 
-/* Card */
-.cmp-card{
-  background: var(--card-bg);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: var(--card-padding);
-  border: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-  position: relative;
-  overflow: visible;
-}
-
-/* Emphasis on hover (opcional) */
-.cmp-card:hover{
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(13,34,56,0.09);
-}
-
-/* Variant classes (urgency) - usa los nombres que lleves desde el backend (ej: "urgent", "medium") */
-.cmp-card.urgent { border-color: rgba(185,42,38,0.18); }
-.cmp-card.medium { border-color: rgba(255,165,0,0.14); }
-
-/* Header */
-.cmp-head{
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  gap: 12px;
-}
-
-.cmp-card-title{
-  margin: 0;
-  font-size: 18px;
-  color: var(--text);
-  font-weight: 600;
-}
-
-/* Badge */
-.cmp-badge{
-  padding: 6px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  white-space: nowrap;
-  margin-left: 8px;
-  align-self: flex-start;
-  border: 1px solid rgba(0,0,0,0.04);
-}
-.cmp-badge.urgent { background: var(--accent); color: #fff; box-shadow: 0 3px 10px rgba(185,42,38,0.08); }
-.cmp-badge.medium { background: #ffb84d; color: #3f2a00; }
-
-/* Meta list (fecha, hora, ubicacion) */
-.cmp-meta{
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-.meta-item{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ic{
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
-  color: var(--accent);
-}
-
-/* Progress bar */
-.cmp-progress{
-  height: 10px;
-  background: linear-gradient(90deg, #f0f0f0, #f7f7f7);
-  border-radius: 999px;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.03);
-  margin-top: 6px;
-}
-
-.cmp-progress-bar{
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
-  width: 0%;
-  transition: width 600ms cubic-bezier(.2,.9,.2,1);
-  box-shadow: inset 0 -2px 6px rgba(0,0,0,0.06);
-}
-
-/* Detalles colapsables */
-.cmp-details{
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 360ms cubic-bezier(.2,.9,.2,1), opacity 240ms ease;
-  opacity: 0;
-  padding: 0 var(--card-padding);
-  margin: 0 calc(var(--card-padding) * -1);
-  box-sizing: border-box;
-  border-top: 1px solid var(--border);
-}
-
-.cmp-details.open{
-  opacity: 1;
-  /* max-height grande para permitir contenido variable; ajusta si necesitas más */
-  max-height: 1000px;
-  padding: 16px var(--card-padding);
-}
-
-/* Secciones dentro de detalles */
-.cmp-section{
-  margin-bottom: 12px;
-  color: var(--text);
-  font-size: 14px;
-}
-
-.cmp-section h4{
-  margin: 0 0 6px 0;
-  font-size: 14px;
-  color: #333;
-  font-weight: 700;
-}
-
-.cmp-section p{ margin: 0; color: var(--muted); line-height: 1.45; }
-
-.cmp-list{
-  margin: 0;
-  padding-left: 12px;
-}
-
-/* Lista simple para lugares / requisitos */
-.cmp-list li{
-  margin-bottom: 6px;
-  color: var(--muted);
-  font-size: 14px;
-}
-
-/* Lugar fuerte */
-.cmp-list strong{ color: var(--text); }
-
-/* Acciones / botones */
-.cmp-actions{
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-}
-
-/* Botones */
-.cmp-btn{
-  border: 1px solid var(--border);
-  padding: 10px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 14px;
+/* ---------------------------------------------------- */
+/* :bulb: CORRECCIÓN DE TARJETA */
+/* ---------------------------------------------------- */
+.campana-card {
   background: white;
-  min-width: 100%;
-  box-shadow: none;
-  transition: background .12s ease, transform .08s ease, box-shadow .12s ease;
+  /* :bulb: ELIMINAR ANCHO FIJO: Permitir que el grid controle el ancho */
+  /* width: 360px; <-- ELIMINADO/Comentado */
+  border-radius: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  box-shadow: var(--shadow);
+  transition: transform 0.25s ease;
+  overflow: hidden;
+  position: relative;
+  min-height: 0;
+  display: flex; /* Para controlar el apilamiento de contenido */
+  flex-direction: column;
 }
 
-.cmp-btn.ghost{
-  background: transparent;
-  color: var(--accent);
-  border: 1px solid rgba(185,42,38,0.14);
+.campana-card:hover {
+  transform: translateY(-4px);
 }
 
-.cmp-btn.ghost:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(13,34,56,0.06);
+/* ---------------------------------------------------- */
+/* :bulb: ESTILOS DEL CARRUSEL (NUEVO) */
+/* ---------------------------------------------------- */
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* Relación de aspecto 16:9 (o ajusta si tus fotos son cuadradas) */
+  margin-bottom: 15px;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
-.cmp-btn.primary{
+.campana-img-main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease; /* Transición suave entre imágenes */
+}
+
+/* Controles de navegación */
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.carousel-control:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.carousel-control.prev {
+  left: 10px;
+}
+
+.carousel-control.next {
+  right: 10px;
+}
+
+/* Indicadores (dots) */
+.carousel-indicators {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.indicator.active {
   background: var(--accent);
-  color: #fff;
-  border: 1px solid var(--accent-dark);
-  box-shadow: 0 6px 18px rgba(185,42,38,0.08);
+  transform: scale(1.2);
 }
 
-.cmp-btn.primary:hover{
-  transform: translateY(-2px);
+.no-img {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9em;
+    padding: 10px 0;
 }
 
-/* Responsive */
-@media (max-width: 900px){
-  .cmp-actions{ flex-direction: column; align-items: stretch; gap: 10px; }
-  .cmp-btn{ width: 100%; min-width: 0; }
-  .cmp-grid{ gap: 18px; }
-}
-
-/* Accesibilidad: enfocar botones con outline visible */
-.cmp-btn:focus{
-  outline: 3px solid rgba(185,42,38,0.12);
-  outline-offset: 2px;
-  border-color: var(--accent-dark);
-}
-
-/* Ajustes visuales extra para tarjetas "destacadas" */
-.cmp-card.urgent .cmp-badge{ background: var(--accent); color: #fff; }
-.cmp-card.urgent .cmp-btn.primary{ background: var(--accent-dark); border-color: var(--accent-dark); }
-
-/* Pequeños pits: evitar anchos de texto raros */
-.cmp-card-title, .cmp-meta span{ overflow-wrap: anywhere; word-break: break-word; }
