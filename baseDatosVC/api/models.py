@@ -171,7 +171,6 @@ class DetalleRequisitos (models.Model):
 
     
 
-
 class carusel (models.Model):
     imagen = CloudinaryField('imagen_carusel', folder='carusel')
     texto  = models.CharField(max_length=100)
@@ -193,4 +192,14 @@ class Galeria(models.Model):
 
 
     def __str__(self):
-        return f"{self.imagen_g}"
+       return f"{self.imagen_g}"
+
+class Red_bancos(models.Model):
+    nombre_hospi = models.CharField(max_length=200)
+    horarios = models.CharField(max_length=100)
+    hora = models.CharField(max_length=100)
+    Contacto  = models.CharField(max_length=100)
+    Notas  = models.CharField(max_length=100)
+
+    def __str__(self):
+       return f"{self.nombre_hospi}"

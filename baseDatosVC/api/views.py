@@ -173,13 +173,7 @@ class RespuestaDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 
-
-
-
-
-
-
-
+#Tiopo de sangre necesitada
 class Urgente_Tip_SangListCreateView(ListCreateAPIView):
     queryset = Urgente_Tip_Sang.objects.all()
     serializer_class = Urgente_Tip_SangSerializer
@@ -191,7 +185,7 @@ class Urgente_Tip_SangRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView)
     serializer_class = Urgente_Tip_SangSerializer
     permission_classes = [AllowAny]
 
-
+#Requisitos
 class RequisitosListCreateView(ListCreateAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
@@ -202,7 +196,8 @@ class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
     permission_classes = [IsAuthenticated]
-    
+
+#Carrusel
 class CaruselListCreateView(ListCreateAPIView):
     queryset = carusel.objects.all().order_by("id")
     serializer_class = CaruselSerializer
@@ -211,6 +206,12 @@ class CaruselListCreateView(ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         print("FILES:", request.FILES)
         return super().create(request, *args, **kwargs)
+
+
+class CaruselRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = carusel.objects.all()
+    serializer_class =  CaruselSerializer
+    permission_classes = [IsAuthenticated]
 
 #galeria
 
@@ -223,6 +224,41 @@ class GaleriaListCreateView(ListCreateAPIView):
 class  GaleriaRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset =  Galeria.objects.all()
     serializer_class =  GaleriaSerializer
+    permission_classes = [AllowAny]
+
+#Provincia
+class ProvinciaListCreateView(ListCreateAPIView):
+    queryset = Provincia.objects.all()
+    serializer_class =  ProvinciaSerializer
+    permission_classes = [AllowAny]
+
+
+class  ProvinciaRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset =  Provincia.objects.all()
+    serializer_class =  ProvinciaSerializer
+    permission_classes = [AllowAny]
+
+#Cantones
+class CantonesListCreateView(ListCreateAPIView):
+    queryset = Cantones.objects.all()
+    serializer_class =  CantonesSerializer
+    permission_classes = [AllowAny]
+
+
+class CantonesRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Cantones.objects.all()
+    serializer_class = CantonesSerializer
+    permission_classes = [AllowAny]
+
+class Red_bancosListCreateView(ListCreateAPIView):
+    queryset = Red_bancos.objects.all()
+    serializer_class = Red_bancosSerializer
+    permission_classes = [AllowAny]
+
+
+class Red_bancosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset =Red_bancos.objects.all()
+    serializer_class = Red_bancosSerializer
     permission_classes = [AllowAny]
 
 

@@ -91,7 +91,15 @@ class RequisitosSerializer(serializers.ModelSerializer):
         model = Requisitos
         fields = ["requisitos","Estado"]
 
+class ProvinciaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Provincia
+        fields = '__all__'
 
+class CantonesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cantones
+        fields = '__all__'
 
 """ class LugarCampanaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -234,8 +242,14 @@ class GaleriaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class Red_bancosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Red_bancos
+        fields = '__all__'
+
+
 class CaruselSerializer(serializers.ModelSerializer):
-    requisitos = serializers.SerializerMethodField()
+ 
     imagenes = serializers.SerializerMethodField()
 
     class Meta:
@@ -272,14 +286,7 @@ class CaruselSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
 
-        rep["requisitos"] = [
-            {
-                "id": d.Requisitos.id,
-                "requisitos": d.Requisitos.requisitos,
-                "Estado": d.Requisitos.Estado
-            }
-            for d in instance.DetalleRequisito.all()
-        ]
+    
 
         # Mostrar imágenes
         rep["Imagen_campana"] = [
