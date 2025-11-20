@@ -351,3 +351,81 @@ class CampanaSerializer(serializers.ModelSerializer):
             DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=rid, CustomUser=campana.CustomUser)
 
         return campana
+
+from rest_framework import serializers
+from .models import Testimonio, Testimonio_texto
+
+class TestimonioFullSerializer(serializers.ModelSerializer):
+    # Campos para crear el texto
+    Nombre = serializers.CharField(write_only=True)
+    Frase = serializers.CharField(write_only=True)
+    Foto_P = serializers.ImageField(write_only=True)  # Aquí acepta file directamente
+
+    # Para lectura
+    Testimonio_texto = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Testimonio
+        fields = ["CustomUser", "Estado", "Nombre", "Frase", "Foto_P", "Testimonio_texto"]
+
+    def create(self, validated_data):
+        nombre = validated_data.pop("Nombre")
+        frase = validated_data.pop("Frase")
+        foto = validated_data.pop("Foto_P")
+        user = validated_data.pop("CustomUser")
+
+        # Crear Testimonio
+        testimonio = Testimonio.objects.create(CustomUser=user, **validated_data)
+
+        # Crear Testimonio_texto con archivo subido
+        Testimonio_texto.objects.create(
+            Testimonio=testimonio,
+            Nombre=nombre,
+            Frase=frase,
+            Foto_P=foto
+        )
+
+        return testimonio
+
+    def get_Testimonio_texto(self, obj):
+        textos = obj.Testimonio_texto.all()
+        return [{"Nombre": t.Nombre, "Frase": t.Frase, "Foto_P": t.Foto_P.url if t.Foto_P else None} for t in textos]
+
+
+
+
+from rest_framework import serializers
+from .models import Testimonio, Testimonio_video
+
+class TestimonioVideoSerializer(serializers.ModelSerializer):
+    # Campos para crear el video
+    Descripcion = serializers.CharField(write_only=True)
+    Video = serializers.FileField(write_only=True)  # Aquí aceptamos el archivo de video
+
+    # Para lectura
+    Testimonio_video = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Testimonio
+        fields = ["CustomUser", "Estado", "Descripcion", "Video", "Testimonio_video"]
+
+    def create(self, validated_data):
+        descripcion = validated_data.pop("Descripcion")
+        video = validated_data.pop("Video")
+        user = validated_data.pop("CustomUser")
+
+        # Crear Testimonio
+        testimonio = Testimonio.objects.create(CustomUser=user, **validated_data)
+
+        # Crear Testimonio_video con archivo subido
+        Testimonio_video.objects.create(
+            Testimonio=testimonio,
+            Descripcion=descripcion,
+            Video=video
+        )
+
+        return testimonio
+
+    def get_Testimonio_video(self, obj):
+        videos = obj.Testimonio_video.all()
+        return [{"Descripcion": v.Descripcion, "Video": v.Video.url if v.Video else None} for v in videos]

@@ -61,12 +61,18 @@ urlpatterns = [
     #Galeria
     path('galeria/', GaleriaListCreateView.as_view(), name='crear y listar '),
     path('galeria2/', GaleriaRetrieveUpdateDestroyAPIView.as_view(), name='"actualizar y eliminar respuestas"'),
-    
+    #provincia
     path('provincia/', ProvinciaListCreateView.as_view(), name='token_obtain_pair'),
     path('provincia/', ProvinciaRetrieveUpdateDestroyAPIView.as_view(), name='token_refresh'),
-
+    #banco
     path('banco/', Red_bancosListCreateView.as_view(), name='token_obtain_pair'),
     path('banco', Red_bancosRetrieveUpdateDestroyAPIView.as_view(), name='token_refresh'),
+
+    path('Testimonio_texto/', Testimonio_textoListCreateView.as_view(), name='crear y listar'),
+    path('Testimonio_texto/', Testimonio_textoRetrieveUpdateDestroyAPIView.as_view(), name='actualizar y eliminar'),
+
+    path('Testimonio_video/', Testimonio_videoListCreateView.as_view(), name='crear y listar'),
+    path('Testimonio_video', Testimonio_videoRetrieveUpdateDestroyAPIView.as_view(), name='actualizar y eliminar'),
     #tokens
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),

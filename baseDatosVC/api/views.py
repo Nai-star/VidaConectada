@@ -253,6 +253,29 @@ class Red_bancosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 
+class Testimonio_textoListCreateView(ListCreateAPIView):
+    queryset = Testimonio.objects.all()
+    serializer_class = TestimonioFullSerializer
+    permission_classes = [AllowAny]
+
+
+class Testimonio_textoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Testimonio.objects.all()
+    serializer_class = TestimonioFullSerializer
+    permission_classes = [AllowAny]
+
+class Testimonio_videoListCreateView(ListCreateAPIView):
+    queryset = Testimonio.objects.all()
+    serializer_class = TestimonioVideoSerializer
+    permission_classes = [AllowAny]
+
+
+class Testimonio_videoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset = Testimonio.objects.all()
+    serializer_class = TestimonioVideoSerializer
+    permission_classes = [AllowAny]
+
+
 from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
 			serializer_class = CustomTokenObtainPairSerializer
