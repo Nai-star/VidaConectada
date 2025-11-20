@@ -63,7 +63,7 @@ class Urgente_Tip_Sang(models.Model):
 
 
 class Suscritos(models.Model):
-    Numero_cedula = models.CharField(max_length=100)
+    Numero_cedula = models.CharField(max_length=12)
     CustomUser= models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Suscritos")
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
     Fecha = models.DateTimeField(auto_now_add=True)
@@ -191,6 +191,7 @@ class Red_bancos(models.Model):
 
     def __str__(self):
        return f"{self.nombre_hospi}"
+
     
 
  
@@ -221,3 +222,26 @@ class Testimonio_video (models.Model):
 
     def __str__(self):
         return f"{self.Video} "
+
+
+
+
+class Participacion(models.Model):
+    Numero_cedula = models.CharField(max_length=12)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="participaciones")
+    sangre = models.ForeignKey(Sangre, on_delete=models.SET_NULL, null=True, blank=True)
+    campana = models.ForeignKey(Campana, on_delete=models.CASCADE, related_name="participaciones")
+    fecha_participacion = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "api_participacion"
+        ordering = ["-fecha_participacion"]
+
+        # Valida que un usuario (por su correo) no pueda registrarse 2 veces a la misma campaña
+        unique_together = (("user", "campana"),)
+
+    def __str__(self):
+        if self.user:
+            return f"{self.user.nombre} {self.user.apellido} - {self.user.email}"
+        return "Participación sin usuario asignado"
+

@@ -303,3 +303,60 @@
     padding: 10px 0;
 }
 
+/* Asegura que el layout de las tarjetas no se rompa al expandir detalles */
+.campana-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Mantén un alto mínimo para que no salte el layout */
+  min-height: 420px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.08);
+  transition: transform 0.15s ease;
+}
+
+/* Contenedor de detalles con transición de altura */
+.detalles-expandido {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+/* Cuando está abierto le damos un max-height alto (suficiente para tu contenido) */
+.detalles-expandido.open {
+  max-height: 420px; /* ajusta según el contenido máximo esperado */
+}
+
+/* Ajustes para botones en la tarjeta */
+.campana-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Botones */
+.btn-ver {
+  background: transparent;
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn-participar {
+  background: #A00000;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Si quieres que el botón Participar tenga un estilo más visible en móviles */
+@media (max-width: 600px) {
+  .campana-card { min-height: 480px; }
+  .detalles-expandido.open { max-height: 600px; }
+}
+
+
