@@ -5,10 +5,11 @@ from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
-
-
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.exceptions import ValidationError
 
 
 from .models import *
@@ -124,8 +125,6 @@ class MapaDetailView(RetrieveUpdateDestroyAPIView):
 
 
 # ✅ Buzón
-from rest_framework.response import Response
-
 class BuzonListCreateView(ListCreateAPIView):
     queryset = Buzon.objects.all()
     serializer_class = BuzonSerializer
@@ -164,9 +163,6 @@ class RespuestaDetailView(RetrieveUpdateDestroyAPIView):
 
 
 #Tiopo de sangre necesitada
-
-
-
 class Urgente_Tip_SangListCreateView(ListCreateAPIView):
     queryset = Urgente_Tip_Sang.objects.all()
     serializer_class = Urgente_Tip_SangSerializer
@@ -255,8 +251,37 @@ class Red_bancosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 
-from rest_framework_simplejwt.views import TokenObtainPairView
 class CustomTokenObtainPairView(TokenObtainPairView):
 			serializer_class = CustomTokenObtainPairSerializer
 
 
+#✅ Participacion
+class ParticipacionListCreateView(ListCreateAPIView):
+    queryset = Participacion.objects.all()
+    serializer_class = ParticipacionSerializer
+
+    def create(self, request, *args, **kwargs):
+        print("=== NUEVA PETICION /api/participacion/ ===")
+        print("request.data:", request.data)  # muestra exactamente lo que llega
+
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            print("Participación creada:", serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except ValidationError as ve:
+            # Imprime errores legibles en consola de Django
+            print("ValidationError:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            # Otros errores
+            print("Error inesperado al crear participacion:", str(e))
+            return Response({"detail": "Error interno"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class ParticipacionDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Participacion.objects.all()
+    serializer_class = ParticipacionSerializer
+    permission_classes = [AllowAny]

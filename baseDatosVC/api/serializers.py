@@ -1,10 +1,10 @@
 from.models import *
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from .models import Campana, Cantones, Imagen_campana, DetalleRequisitos, Requisitos, CustomUser, Galeria
-""" from .models import CustomUser """
-from .models import Buzon
+from django.db import transaction
+import time
 
 #Usuarios
 class GroupSerializer(serializers.ModelSerializer):
@@ -281,9 +281,7 @@ class CaruselSerializer(serializers.ModelSerializer):
         return data
 
 
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+# ---------------- JWT Custom Serializer ----------------
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 			def validate(self, attrs):
 				data = super().validate(attrs)
@@ -346,3 +344,81 @@ class CampanaSerializer(serializers.ModelSerializer):
             DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=rid, CustomUser=campana.CustomUser)
 
         return campana
+    
+
+
+# ✅ Participacion
+class ParticipacionSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(write_only=True, required=False, allow_blank=True)
+    nombre = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    apellido = serializers.CharField(write_only=True, required=False, allow_blank=True)
+    createSubscription = serializers.BooleanField(write_only=True, required=False, default=False)
+
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    sangre = serializers.PrimaryKeyRelatedField(queryset=Sangre.objects.all(), required=False, allow_null=True)
+    campana = serializers.PrimaryKeyRelatedField(queryset=Campana.objects.all())
+
+    class Meta:
+        model = Participacion
+        fields = [
+            "id",
+            "user",
+            "email",
+            "nombre",
+            "apellido",
+            "sangre",
+            "campana",
+            "fecha_participacion",
+            "createSubscription",
+        ]
+        read_only_fields = ["id", "user", "fecha_participacion"]
+
+    def validate(self, attrs):
+        email = (attrs.get("email") or "").strip().lower()
+        if not email:
+            raise serializers.ValidationError({"email": "Se requiere el correo para verificar/identificar al usuario."})
+        return attrs
+
+    @transaction.atomic
+    def create(self, validated_data):
+        email = (validated_data.pop("email", "") or "").strip().lower()
+        nombre_payload = validated_data.pop("nombre", "").strip()
+        apellido_payload = validated_data.pop("apellido", "").strip()
+        create_sub = validated_data.pop("createSubscription", False)
+        sangre_obj = validated_data.get("sangre", None)
+        campana_obj = validated_data.get("campana")
+
+        user = CustomUser.objects.filter(email__iexact=email).first()
+
+        if user:
+            if Participacion.objects.filter(user=user, campana=campana_obj).exists():
+                raise serializers.ValidationError("El usuario ya está inscrito en esta campaña.")
+            validated_data["user"] = user
+            if not sangre_obj:
+                sus = Suscritos.objects.filter(CustomUser=user).select_related("Sangre").first()
+                if sus:
+                    validated_data["sangre"] = sus.Sangre
+            participacion = Participacion.objects.create(**validated_data)
+            return participacion
+
+        if not user and not create_sub:
+            raise serializers.ValidationError(
+                "No existe un usuario con ese correo. Envía createSubscription=true para crear el usuario automáticamente."
+            )
+
+        local_part = email.split("@")[0] if "@" in email else email
+        suggested_username = f"{local_part}_{int(time.time())}"
+        user = CustomUser.objects.create_user(username=suggested_username, email=email)
+        if nombre_payload:
+            user.first_name = nombre_payload
+        if apellido_payload:
+            user.last_name = apellido_payload
+        user.save()
+
+        if sangre_obj:
+            if not Suscritos.objects.filter(CustomUser=user, Sangre=sangre_obj).exists():
+                Suscritos.objects.create(CustomUser=user, Sangre=sangre_obj)
+
+        validated_data["user"] = user
+        participacion = Participacion.objects.create(**validated_data)
+        return participacion

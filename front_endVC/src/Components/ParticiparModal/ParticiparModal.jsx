@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../Suscripciones/modalSuscripcion.css";
 import { registerParticipante } from "../../services/ServicioParticipacion";
 import { checkCustomUser } from "../../services/ServicioCustomUser";
-import { GetTiposSangre } from "../../services/Servicio_TS"; 
-
+import { GetTiposSangre } from "../../services/Servicio_TS";
 import { FiBell } from "react-icons/fi";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
@@ -14,6 +13,7 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({ type: "", text: "" });
   const [isSubscribedUser, setIsSubscribedUser] = useState(false);
+  const [tiposSangre, setTiposSangre] = useState([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -24,6 +24,30 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
       setLoading(false);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    // Carga y normaliza tipos de sangre (soporta varias formas de respuesta)
+    async function loadTipos() {
+      try {
+        const data = await GetTiposSangre();
+        if (!Array.isArray(data)) {
+          setTiposSangre([]);
+          return;
+        }
+        const normalized = data.map((t) => {
+          // soporta distintos shapes: {id, tipo} o {id_tipo_sangre, blood_type} o {id, tipo_sangre}
+          const id = t.id ?? t.id_tipo_sangre ?? t.id_tipo;
+          const tipo = t.tipo ?? t.blood_type ?? t.tipo_sangre ?? t.tipo_sangre_text;
+          return { id, tipo };
+        }).filter(Boolean);
+        setTiposSangre(normalized);
+      } catch (e) {
+        console.error("Error cargando tipos de sangre", e);
+        setTiposSangre([]);
+      }
+    }
+    loadTipos();
+  }, []);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -63,45 +87,40 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
       // Consulta a la API (ServicioCustomUser)
       const usuario = await checkCustomUser(form.correo);
 
-      // Si no hay usuario -> paso 2 (registro completo)
       if (!usuario) {
+        // No existe → pedir formulario completo
         setStep(2);
         setIsSubscribedUser(false);
         setMsg({ type: "", text: "" });
         return;
       }
 
-      // Si hay usuario: verificar campos de verificación (varios nombres posibles)
-      // Normalizamos nombres/flags posibles
-      const userObj = usuario;
-      const nombre = userObj.nombre ?? userObj.first_name ?? "";
-      const apellido = userObj.apellido ?? userObj.last_name ?? "";
-      const correo = (userObj.correo ?? userObj.email ?? form.correo).toString();
-      const tipo_sangre = userObj.tipo_sangre ?? userObj.blood_type ?? "";
+      // Normalizar campos del user object (soporta distintos nombres)
+      const nombre = usuario.nombre ?? usuario.first_name ?? "";
+      const apellido = usuario.apellido ?? usuario.last_name ?? "";
+      const correo = (usuario.correo ?? usuario.email ?? form.correo).toString();
+      const tipo_sangre = usuario.tipo_sangre ?? usuario.blood_type ?? "";
 
-      // Detectar si tiene flag de verificación/activación
-      const verifiedFlag = userObj.is_verified ?? userObj.verified ?? userObj.email_verified;
-      const activeFlag = userObj.is_active ?? userObj.active; // en Django suele ser is_active
-      const isVerified = verifiedFlag === true || activeFlag === true || verifiedFlag === undefined && activeFlag === undefined;
+      // Determinar verificación/activo (fallback: si no hay flags, asumimos OK)
+      const verifiedFlag = usuario.is_verified ?? usuario.verified ?? usuario.email_verified;
+      const activeFlag = usuario.is_active ?? usuario.active;
+      const isVerified = verifiedFlag === true || activeFlag === true || (verifiedFlag === undefined && activeFlag === undefined);
 
-      // Si el usuario existe pero NO está verificado -> tratar como no suscrito
       if (!isVerified) {
-        // No marcar como suscrito; pasar a step 2 para que el usuario complete/reenvíe datos
-        setForm((f) => ({ ...f, correo })); // pre-llenamos correo al menos
+        setForm((f) => ({ ...f, correo }));
         setStep(2);
         setIsSubscribedUser(false);
         setMsg({ type: "info", text: "Se encontró un registro con ese correo, pero no está verificado. Completa los datos para registrarte/actualizar." });
         return;
       }
 
-      // Usuario existe y parece verificado -> precargar y permitir confirmación
+      // Usuario verificado → precargar y permitir confirmación
       setForm({ nombre, apellido, correo, tipo_sangre });
       setIsSubscribedUser(true);
       setStep(2);
       setMsg({ type: "info", text: `¡Hola de nuevo, ${nombre} ${apellido}! Confirma tu participación.` });
     } catch (err) {
       console.error("Error en checkCustomUser:", err);
-      // Si la petición falla, no pasamos info; mejor mostrar mensaje y permitir que continúe manualmente
       setMsg({ type: "error", text: "Error al verificar el correo. Intenta nuevamente." });
     } finally {
       setLoading(false);
@@ -112,16 +131,20 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
     e.preventDefault();
     setMsg({ type: "", text: "" });
 
+    // Build campaign id robustly
+    const campaignId = campaign?.id ?? campaign?.pk ?? campaign?._id;
+
     if (isSubscribedUser) {
-      // confirmar participación para usuario verificado
       try {
         setLoading(true);
+        console.log("Enviando confirmación para usuario suscrito:", { correo: form.correo, tipo_sangre: form.tipo_sangre, campaignId });
         await registerParticipante({
           nombre: form.nombre,
           apellido: form.apellido,
           correo: form.correo,
           tipo_sangre: form.tipo_sangre,
-          campaignId: campaign?.id ?? campaign?.pk ?? campaign?._id,
+          campaignId,
+          createSubscription: false,
         });
         setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${form.nombre}!` });
         onParticipateSuccess && onParticipateSuccess(campaign);
@@ -135,19 +158,20 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
       return;
     }
 
-    // Si no está suscrito: validar y crear participación + crear usuario si el backend lo soporta
+    // Nuevo usuario o no suscrito
     const error = validarFormulario();
     if (error) return setMsg({ type: "error", text: error });
 
     try {
       setLoading(true);
+      console.log("Enviando registro nuevo participante:", { ...form, campaignId });
       await registerParticipante({
         nombre: form.nombre,
         apellido: form.apellido,
         correo: form.correo,
         tipo_sangre: form.tipo_sangre,
-        campaignId: campaign?.id ?? campaign?.pk ?? campaign?._id,
-        createSubscription: true, // backend debe interpretar esto y crear customuser si es necesario
+        campaignId,
+        createSubscription: true,
       });
       setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${form.nombre}!` });
       onParticipateSuccess && onParticipateSuccess(campaign);
@@ -161,22 +185,6 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
   };
 
   if (!isOpen) return null;
-
-  const [tiposSangre, setTiposSangre] = useState([]);
-
-  useEffect(() => {
-    // Cargar tipos de sangre al iniciar
-    async function loadTipos() {
-      try {
-        const data = await GetTiposSangre();
-        setTiposSangre(data);
-      } catch (e) {
-        console.error("Error cargando tipos de sangre", e);
-      }
-    }
-
-    loadTipos();
-  }, []);
 
   return (
     <div className="sub-overlay" onClick={onClose}>
@@ -198,7 +206,13 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
           {step === 1 && (
             <div className="sub-field">
               <label>Correo electrónico</label>
-              <input name="correo" value={form.correo} onChange={onChange} placeholder="correo@ejemplo.com" autoFocus />
+              <input
+                name="correo"
+                value={form.correo}
+                onChange={onChange}
+                placeholder="correo@ejemplo.com"
+                autoFocus
+              />
             </div>
           )}
 
@@ -207,11 +221,23 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
               <div className="sub-row">
                 <div className="sub-field">
                   <label>Nombre</label>
-                  <input name="nombre" value={form.nombre} onChange={onChange} placeholder="Tu nombre" readOnly={isSubscribedUser} />
+                  <input
+                    name="nombre"
+                    value={form.nombre}
+                    onChange={onChange}
+                    placeholder="Tu nombre"
+                    readOnly={isSubscribedUser}
+                  />
                 </div>
                 <div className="sub-field">
                   <label>Apellido</label>
-                  <input name="apellido" value={form.apellido} onChange={onChange} placeholder="Tu apellido" readOnly={isSubscribedUser} />
+                  <input
+                    name="apellido"
+                    value={form.apellido}
+                    onChange={onChange}
+                    placeholder="Tu apellido"
+                    readOnly={isSubscribedUser}
+                  />
                 </div>
               </div>
 
@@ -226,8 +252,9 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
                   <option value="">Selecciona tu tipo de sangre</option>
 
                   {tiposSangre.map((t) => (
-                    <option key={t.id_tipo_sangre} value={t.blood_type}>
-                      {t.blood_type}
+                    // value = t.tipo (ej. "A+", "AB-") — tu servicio mapea esto a ID antes de enviar
+                    <option key={t.id} value={t.tipo}>
+                      {t.tipo}
                     </option>
                   ))}
                 </select>

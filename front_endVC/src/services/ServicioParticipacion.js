@@ -1,42 +1,58 @@
-// Este es un ejemplo básico. Ajusta las URLs y los métodos según tu API real.
 import axios from "axios";
-const API_BASE_URL = 'http://127.0.0.1:8000/api'; // Cambia esto por la URL de tu backend
 
-export async function checkSuscripcion(email) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/suscritos?correo=${encodeURIComponent(email)}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    // Tu API debería devolver un array o un objeto.
-    // Asumimos que si encuentra un suscriptor, devuelve un array con al menos un elemento.
-    if (data && data.length > 0) {
-      return data[0]; // Devuelve el primer suscriptor encontrado
-    }
-    return null; // No encontrado
-  } catch (error) {
-    console.error('Error al verificar suscripción:', error);
-    throw error;
-  }
-}
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 
-// 🔹 Registrar la participación en una campaña
-export const registerParticipante = async ({ nombre, apellido, correo, tipo_sangre, campaignId, createSubscription = false }) => {
-  try {
-    // Si createSubscription es true, el backend debe crear también la entrada en api_customuser
-    const response = await axios.post(`${API_URL}/participacion/`, {
-      nombre,
-      apellido,
-      correo,
-      tipo_sangre,
-      campaign: campaignId,
-      create_subscription: createSubscription, // backend flag
-    });
-    return response.data;
-  } catch (err) {
-    console.error("Error registrando participación:", err);
-    throw err;
-  }
+export const obtenerTiposSangre = async () => {
+  const response = await axios.get(`${API_BASE_URL}/sangre/`);
+  return response.data;
 };
 
+export const registerParticipante = async (data) => {
+  try {
+    console.log("DATA RECIBIDA:", data);
+
+    const email = data.correo;
+    const sangreTexto = (data.tipo_sangre || "").trim();
+    const campana = data.campaignId;
+    const createSubscription = !!data.createSubscription; // true/false
+
+    if (!email) throw new Error("❌ Falta el correo");
+    if (!sangreTexto) throw new Error("❌ Falta el tipo de sangre");
+    if (!campana) throw new Error("❌ Falta el ID de campaña");
+
+    const tipos = await obtenerTiposSangre();
+
+    // Ajusta según tu API: muchos de tus endpoints usan 'tipo_sangre' como clave
+    const tipo = tipos.find(t => t.tipo_sangre === sangreTexto || t.tipo === sangreTexto || t.blood_type === sangreTexto);
+
+    if (!tipo) {
+      console.log("Tipos recibidos:", tipos);
+      throw new Error(`Tipo de sangre inválido: ${sangreTexto}`);
+    }
+
+    const payload = {
+      nombre: data.nombre,
+      apellido: data.apellido,
+      email: email,
+      sangre: tipo.id,
+      campana: campana,
+      createSubscription: createSubscription, // <-- Asegúrate de enviarlo
+    };
+
+    console.log("DATA ENVIADA:", payload);
+
+    const response = await axios.post(`${API_BASE_URL}/participacion/`, payload);
+    return response.data;
+
+  } catch (error) {
+    // MUESTRA el body del error devuelto por Django/DRF si existe (útil para debug)
+    if (error.response && error.response.data) {
+      console.error("Backend error response:", error.response.data);
+      // re-lanzar con ese detalle para que el modal pueda mostrarlo si quieres
+      throw new Error(JSON.stringify(error.response.data));
+    }
+
+    console.error("Error registrando participación:", error);
+    throw error;
+  }
+};

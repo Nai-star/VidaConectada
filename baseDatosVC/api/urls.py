@@ -20,7 +20,7 @@ urlpatterns = [
     # Suscritos
     path('suscritos/', SuscritosListCreateView.as_view(), name="crear y listar suscritos"),
     path('suscritos/<int:pk>', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),
-
+    
     # Lugar de campaña
 
 
@@ -71,4 +71,9 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
+    path('participacion/', ParticipacionListCreateView.as_view(), name="crear y listar participaciones"),
+    path('participacion/<int:pk>', ParticipacionDetailView.as_view(), name="actualizar y eliminar participacion"),
+
+
+
 ]
