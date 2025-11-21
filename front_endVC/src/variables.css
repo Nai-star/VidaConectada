@@ -7,3 +7,9 @@
   --color-fondo: #fff;
   --altura-navbar: 70px;
 }
+
+body{
+    margin: 0;
+    padding: 0;
+    border: 0;
+}

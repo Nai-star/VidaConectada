@@ -14,19 +14,17 @@ export const registerParticipante = async (data) => {
     const email = data.correo;
     const sangreTexto = (data.tipo_sangre || "").trim();
     const campana = data.campaignId;
-    const createSubscription = !!data.createSubscription; // true/false
+    const createSubscription = !!data.createSubscription; 
 
     if (!email) throw new Error("❌ Falta el correo");
     if (!sangreTexto) throw new Error("❌ Falta el tipo de sangre");
     if (!campana) throw new Error("❌ Falta el ID de campaña");
 
-    const tipos = await obtenerTiposSangre();
-
-    // Ajusta según tu API: muchos de tus endpoints usan 'tipo_sangre' como clave
+    const tipos = await obtenerTiposSangre()
     const tipo = tipos.find(t => t.tipo_sangre === sangreTexto || t.tipo === sangreTexto || t.blood_type === sangreTexto);
 
     if (!tipo) {
-      console.log("Tipos recibidos:", tipos);
+      console.log("Tipos recibidos:", tipos)
       throw new Error(`Tipo de sangre inválido: ${sangreTexto}`);
     }
 
@@ -36,7 +34,7 @@ export const registerParticipante = async (data) => {
       email: email,
       sangre: tipo.id,
       campana: campana,
-      createSubscription: createSubscription, // <-- Asegúrate de enviarlo
+      createSubscription: createSubscription, 
     };
 
     console.log("DATA ENVIADA:", payload);

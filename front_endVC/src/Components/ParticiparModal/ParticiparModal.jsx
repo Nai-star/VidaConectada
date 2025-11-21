@@ -26,7 +26,6 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
   }, [isOpen]);
 
   useEffect(() => {
-    // Carga y normaliza tipos de sangre (soporta varias formas de respuesta)
     async function loadTipos() {
       try {
         const data = await GetTiposSangre();
@@ -35,7 +34,6 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
           return;
         }
         const normalized = data.map((t) => {
-          // soporta distintos shapes: {id, tipo} o {id_tipo_sangre, blood_type} o {id, tipo_sangre}
           const id = t.id ?? t.id_tipo_sangre ?? t.id_tipo;
           const tipo = t.tipo ?? t.blood_type ?? t.tipo_sangre ?? t.tipo_sangre_text;
           return { id, tipo };
@@ -252,7 +250,6 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
                   <option value="">Selecciona tu tipo de sangre</option>
 
                   {tiposSangre.map((t) => (
-                    // value = t.tipo (ej. "A+", "AB-") — tu servicio mapea esto a ID antes de enviar
                     <option key={t.id} value={t.tipo}>
                       {t.tipo}
                     </option>
