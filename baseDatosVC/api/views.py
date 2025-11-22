@@ -10,6 +10,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.exceptions import ValidationError
+from rest_framework.views import APIView
+from rest_framework.exceptions import AuthenticationFailed
+
+
 
 
 from .models import *
@@ -17,25 +21,47 @@ from .serializers import *
 
 
 # ✅ CustomUser
-class CustomUserListCreateView(ListCreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    filterset_fields = ['correo']  # Esto permite ?correo=...
-    permission_classes = [AllowAny]
 
+User = get_user_model()
+
+# Crear y listar usuarios (igual que tenías)
+class CustomUserListCreateView(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [AllowAny]  # ajustar según necesites
 
     def perform_create(self, serializer):
-        password = serializer.validated_data.get('password')
-        if password:
-            serializer.validated_data['password'] = make_password(password)
-        serializer.save()
+        user = serializer.save()
+        try:
+            group = Group.objects.get(name__iexact="admin")
+        except Group.DoesNotExist:
+            try:
+                group = Group.objects.get(pk=1)
+            except Group.DoesNotExist:
+                group = Group.objects.create(name="admin")
+
+        user.groups.add(group)
+        user.is_staff = True
+        user.save(update_fields=["is_staff"])
 
 
-class CustomUserDetailView(RetrieveUpdateDestroyAPIView):
-    queryset = CustomUser.objects.all()
+class CustomUserDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
     serializer_class = CustomUserSerializer
+    permission_classes = [AllowAny]  # ajustar según necesites
+
+class AdminLoginView(APIView):
     permission_classes = [AllowAny]
 
+    def post(self, request, *args, **kwargs):
+        # DEBUG: muestra lo que llega (puedes borrar después)
+        print("DEBUG /api/login/admin/ request.data:", request.data)
+
+        serializer = AdminLoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+    
 
 # ✅ Publicaciones
 class PublicacionesListCreateView(ListCreateAPIView):

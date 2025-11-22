@@ -46,7 +46,7 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
     }
     loadTipos();
   }, []);
-
+  
   const onChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));

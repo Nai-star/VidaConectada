@@ -5,6 +5,13 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from django.db import transaction
 import time
+from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth.models import Group as AuthGroup
+from rest_framework import serializers
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
+
 
 #Usuarios
 class GroupSerializer(serializers.ModelSerializer):
@@ -12,26 +19,127 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ['id', 'name']
 
+
+User = get_user_model()
+
 class CustomUserSerializer(serializers.ModelSerializer):
-    groups = GroupSerializer(many=True, read_only=True)  # Muestra los grupos a los que pertenece
-    group_ids = serializers.PrimaryKeyRelatedField(
-        many=True, write_only=True, queryset=Group.objects.all(), source='groups'
-    )
+    password = serializers.CharField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = [
-            'id', 'username', 'password', 'email',
-            'first_name', 'last_name', 'Telefono', 'Edad', 'groups', 'group_ids'
+            "id", "username", "first_name", "last_name", "email",
+            "password", "is_staff", "is_active", "date_joined",
+            "Telefono", "Edad",
         ]
-        extra_kwargs = {'password': {'write_only': True}}
+        read_only_fields = ["id", "date_joined"]
 
     def create(self, validated_data):
-        groups = validated_data.pop('groups', [])
-        validated_data['password'] = make_password(validated_data['password'])
-        user = super().create(validated_data)
-        user.groups.set(groups)
+        password = validated_data.pop("password", None)
+        user = User(**validated_data)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
+        user.save()
+
+        # Asignar al grupo 'admin' (por nombre preferiblemente)
+        try:
+            group = Group.objects.get(name__iexact="admin")
+        except Group.DoesNotExist:
+            # fallback por id=1 (si realmente necesitas) o crear el grupo
+            try:
+                group = Group.objects.get(pk=1)
+            except Group.DoesNotExist:
+                group = Group.objects.create(name="admin")
+
+        user.groups.add(group)
+        user.is_staff = True
+        user.save(update_fields=["is_staff"])
         return user
+
+User = get_user_model()
+class AdminLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField(write_only=True)
+    password = serializers.CharField(write_only=True)
+
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+    user_id = serializers.IntegerField(read_only=True)
+    user_email = serializers.EmailField(read_only=True)
+
+    def validate(self, attrs):
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        if not email or not password:
+            raise serializers.ValidationError("Se requieren email y password.")
+
+        # Buscar usuario por email (case-insensitive)
+        try:
+            user = User.objects.get(email__iexact=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Credenciales inválidas.")
+
+        # Verificar contraseña
+        if not user.check_password(password):
+            raise serializers.ValidationError("Credenciales inválidas.")
+
+        # Verificar que esté activo
+        if not user.is_active:
+            raise serializers.ValidationError("Cuenta desactivada.")
+
+        # Verificar rol admin: permitimos is_superuser o is_staff o grupo 'admin' o id=1
+        is_admin = user.is_superuser or user.is_staff \
+                   or user.groups.filter(id=1).exists() \
+                   or user.groups.filter(name__iexact="admin").exists()
+
+        if not is_admin:
+            raise serializers.ValidationError("No autorizado: solo administradores.")
+
+        # Generar tokens JWT
+        refresh = RefreshToken.for_user(user)
+        access = refresh.access_token
+
+        return {
+            "refresh": str(refresh),
+            "access": str(access),
+            "user_id": user.id,
+            "user_email": user.email or ""
+        }
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Extiende TokenObtainPairSerializer para permitir login por email o username.
+    Útil si quieres usar /api/login/ con SimpleJWT pero con email.
+    """
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # Puedes agregar claims personalizados aquí si necesitas
+        return token
+
+    def validate(self, attrs):
+        # attrs contiene 'username' y 'password' por defecto en TokenObtainPairSerializer
+        username = attrs.get("username")
+        password = attrs.get("password")
+
+        # si client envía 'username' como email, intentar resolver a username real
+        user = authenticate(username=username, password=password)
+        if not user:
+            try:
+                candidate = User.objects.get(email__iexact=username)
+                user = authenticate(username=candidate.username, password=password)
+            except User.DoesNotExist:
+                user = None
+
+        if not user:
+            raise serializers.ValidationError("Credenciales inválidas.")
+
+        # Llamar al flujo normal para generar tokens
+        data = super().validate({"username": user.username, "password": password})
+        return data
     
 
 #Publicaciones

@@ -4,9 +4,17 @@ from rest_framework_simplejwt.views import ( TokenObtainPairView,TokenRefreshVie
 
 
 urlpatterns = [
-    # Usuarios
-    path('usuarios/', CustomUserListCreateView.as_view(), name="crear y listar usuarios"),
-    path('usuarios/<int:pk>', CustomUserDetailView.as_view(), name="actualizar y eliminar usuarios"),
+        # Usuarios
+    path('usuarios/', CustomUserListCreateView.as_view(), name="crear_listar_usuarios"),
+    path('usuarios/<int:pk>/', CustomUserDetailView.as_view(), name="detalle_usuario"),
+
+    # Login admin (endpoint específico)
+    path('login/admin/', AdminLoginView.as_view(), name='login_admin'),
+
+    # Login estándar (opcional) - permite email o username
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
 
     # Publicaciones
     path('publicaciones', PublicacionesListCreateView.as_view(), name="crear y listar publicaciones"),
@@ -67,9 +75,7 @@ urlpatterns = [
 
     path('banco/', Red_bancosListCreateView.as_view(), name='token_obtain_pair'),
     path('banco', Red_bancosRetrieveUpdateDestroyAPIView.as_view(), name='token_refresh'),
-    #tokens
-    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+ 
     
     path('participacion/', ParticipacionListCreateView.as_view(), name="crear y listar participaciones"),
     path('participacion/<int:pk>', ParticipacionDetailView.as_view(), name="actualizar y eliminar participacion"),

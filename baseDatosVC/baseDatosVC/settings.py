@@ -26,7 +26,21 @@ SECRET_KEY = 'django-insecure-qih7d63@-zm%9y+_89m70oj_327$f_ybn)gdt58rrr5tzj^hql
 DEBUG = True
 
 ALLOWED_HOSTS = []
-CORS_ALLOW_ALL_ORIGINS= True
+#CORS_ALLOW_ALL_ORIGINS= True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",  # opcional si pruebas con 127.0.0.1
+]
+
+# Permitir cookies/credenciales
+CORS_ALLOW_CREDENTIALS = True
+
+# Opcional: permitir cabeceras por defecto + content-type
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "content-type",
+]
+
 
 # Application definition
 
