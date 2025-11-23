@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createAdminUser } from "../../services/ServicioRegist";
+import { createAdminUser, checkEmailExists } from "../../services/ServicioRegist";
 import "./Register.css";
 
 function Register() {
@@ -57,6 +57,21 @@ function Register() {
       setTipoMensaje("");
       setMensaje("");
 
+      // --- PRE-CHECK: comprobar en backend si el email ya existe (UX) ---
+      const emailTrim = email.trim().toLowerCase();
+      try {
+        const exists = await checkEmailExists(emailTrim);
+        if (exists) {
+          setTipoMensaje("error");
+          setMensaje("❌ El correo ya está registrado.");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        // Si falla el check (red/CORS), no bloqueamos el registro: el POST lo validará
+        console.warn("checkEmailExists falló, procediendo al POST. Error:", err);
+      }
+
       // Generar username único para evitar colisiones
       const username = generateUniqueUsername(nombre, apellido);
 
@@ -64,12 +79,13 @@ function Register() {
         username,
         first_name: nombre.trim(),
         last_name: apellido.trim(),
-        email: email.trim(),
+        email: emailTrim,
         password: password,
         is_staff: true,
-        is_active: true
+        is_active: true,
       };
 
+      // POST para crear usuario (el backend debe validar email único también)
       const created = await createAdminUser(payload);
 
       setTipoMensaje("success");
@@ -90,7 +106,11 @@ function Register() {
   return (
     <div className="registro-admin-wrapper">
       <div className="left-side">
-        <img src={"/mnt/data/e7ad0832-a7b5-4fda-9782-6ce462809582.png"} alt="mockup-logo" className="mockup-image" />
+        <img
+          src={"/mnt/data/e7ad0832-a7b5-4fda-9782-6ce462809582.png"}
+          alt="mockup-logo"
+          className="mockup-image"
+        />
       </div>
 
       <div className="right-side">

@@ -34,6 +34,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["id", "date_joined"]
 
+    def validate_email(self, value):
+        # si estás actualizando un usuario, permitir el mismo email del usuario actual
+        user = self.instance
+        if User.objects.filter(email__iexact=value).exclude(pk=getattr(user, "pk", None)).exists():
+            raise serializers.ValidationError("El correo ya está registrado.")
+        return value
+
     def create(self, validated_data):
         password = validated_data.pop("password", None)
         user = User(**validated_data)

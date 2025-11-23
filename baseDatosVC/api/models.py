@@ -7,6 +7,11 @@ class CustomUser(AbstractUser):
    
     Telefono = models.IntegerField( unique=True, null=True, blank=True)
     Edad = models.IntegerField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["email"], name="unique_customuser_email")
+        ]
  
     def __str__(self):
         return f"{self.Telefono}"
