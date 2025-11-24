@@ -55,34 +55,30 @@ class SangreSerializer(serializers.ModelSerializer):
         model = Sangre
         fields = '__all__'
 
+from rest_framework import serializers
+from .models import Suscritos
 
-# serializers.py
+from rest_framework import serializers
+from .models import Suscritos
+
 class SuscritosSerializer(serializers.ModelSerializer):
-    nombre = serializers.CharField(write_only=True)
-    apellido = serializers.CharField(write_only=True)
-    correo = serializers.EmailField(write_only=True)
-    tipo_sangre = serializers.CharField(write_only=True)
-
     class Meta:
         model = Suscritos
-        fields = ['id', 'nombre', 'apellido', 'correo', 'tipo_sangre', 'Fecha']
+        fields = '__all__'
 
-    def create(self, validated_data):
-        # Crear o buscar usuario
-        user, _ = CustomUser.objects.get_or_create(
-            email=validated_data['correo'],
-            defaults={
-                'first_name': validated_data['nombre'],
-                'last_name': validated_data['apellido']
-            }
-        )
-        # Buscar tipo de sangre
-        sangre = Sangre.objects.get(tipo_sangre=validated_data['tipo_sangre'])
+    def validate(self, data):
+        cedula = data.get("Numero_cedula")
 
-        # Crear suscrito
-        suscrito = Suscritos.objects.create(CustomUser=user, Sangre=sangre)
-        return suscrito
+        # Si estás editando, self.instance existe
+        suscrito_id = self.instance.id if self.instance else None
 
+        # Busca si existe OTRO registro con la misma cédula
+        if Suscritos.objects.filter(Numero_cedula=cedula).exclude(id=suscrito_id).exists():
+            raise serializers.ValidationError(
+                {"Numero_cedula": "Este usuario ya está registrado con esa cédula."}
+            )
+
+        return data
 
 
 #Campaña

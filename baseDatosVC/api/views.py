@@ -65,18 +65,26 @@ class SangreDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = SangreSerializer
     permission_classes = [AllowAny]
 
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from django.contrib.auth.models import Group
+from .models import Suscritos
+from .serializers import SuscritosSerializer
 
-# ✅ Suscritos
 class SuscritosListCreateView(ListCreateAPIView):
     queryset = Suscritos.objects.all()
     serializer_class = SuscritosSerializer
     permission_classes = [AllowAny]
+
+      
 
 
 class SuscritosDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Suscritos.objects.all()
     serializer_class = SuscritosSerializer
     permission_classes = [AllowAny]
+
+
 
 
 # ✅ Lugar campaña

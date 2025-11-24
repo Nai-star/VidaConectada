@@ -64,9 +64,10 @@ class Urgente_Tip_Sang(models.Model):
 
 class Suscritos(models.Model):
     Numero_cedula = models.CharField(max_length=12)
-    CustomUser= models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Suscritos")
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
     Fecha = models.DateTimeField(auto_now_add=True)
+    nombre = models.CharField(max_length=100)
+    correo = models.CharField( unique= True, max_length=100)
 
 
 class Provincia(models.Model):

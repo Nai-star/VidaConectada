@@ -31,6 +31,7 @@ CORS_ALLOW_ALL_ORIGINS= True
 # Application definition
 
 INSTALLED_APPS = [
+    
     'cloudinary',
     'cloudinary_storage',
     'django.contrib.admin',
@@ -41,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'api',#agregar
+    'api.apps.ApiConfig',#agregar 
 
 ]
 
