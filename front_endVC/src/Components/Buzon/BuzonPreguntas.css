@@ -1,0 +1,216 @@
+/* 🌈 Sección principal */
+.bz-wrap {
+  padding: 36px 20px 48px;
+  text-align: center;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: linear-gradient(180deg, #ffffff 0%, #fff4f4 100%);
+}
+
+/* 🩸 Título principal */
+.bz-title {
+  color: #c62828;
+  font-weight: 700;
+  font-size: 32px;
+  margin: 0 0 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bz-icon {
+  font-size: 24px;
+}
+
+.bz-subtitle {
+  color: #5a6b7a;
+  margin-bottom: 18px;
+}
+
+/* 📦 Card del formulario */
+.bz-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  padding: 18px 18px 22px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+  text-align: left;
+
+  /* Animación de entrada */
+  transform: translateY(6px);
+  opacity: 0;
+  animation: bz-in .35s ease forwards;
+}
+
+@keyframes bz-in {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 🧱 Seguridad de medidas */
+.bz-card,
+.bz-card * {
+  box-sizing: border-box;
+}
+
+/* 🧩 Contenedor del formulario */
+.bz-form {
+  display: grid;
+  gap: 12px;
+}
+
+/* Cada grupo de campo */
+.bz-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ✍️ Labels e inputs */
+.bz-label {
+  font-size: 14px;
+  color: #2c3e50;
+  margin: 10px 0 6px;
+  display: block;
+}
+
+/* Inputs y textarea seguros */
+.bz-input,
+.bz-textarea,
+.bz-select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid #ebeef3;
+  background: #f3f5f8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #1f2a37;
+  outline: none;
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .1s ease;
+}
+
+.bz-input:focus,
+.bz-textarea:focus,
+.bz-select:focus {
+  background: #fff;
+  border-color: #c0d7ff;
+  box-shadow: 0 0 0 3px rgba(64,128,255,.15);
+  transform: translateY(-1px);
+}
+
+/* Textarea ajustable solo en altura */
+.bz-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* 🧊 Nota azul informativa */
+.bz-note {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-left: 4px solid #3b82f6;
+  background: #eef4ff;
+  color: #263a66;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* 🔔 Mensajes de estado */
+.bz-alert {
+  margin-top: 12px;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  transition: all .25s ease;
+  opacity: 0;
+  transform: translateY(4px);
+  animation: bz-pop .25s ease forwards;
+}
+
+@keyframes bz-pop {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bz-alert.success {
+  background: #e9f8ef;
+  color: #1b5e20;
+  border: 1px solid #b8e6c7;
+}
+
+.bz-alert.error {
+  background: #ffecec;
+  color: #b71c1c;
+  border: 1px solid #ffc7c7;
+}
+
+/* ❤️ Botón principal con micro interacciones */
+.bz-btn {
+  margin-top: 14px;
+  width: 100%;
+  background: #c62828;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s ease, transform .12s ease, box-shadow .2s ease;
+  box-shadow: 0 6px 14px rgba(198,40,40,.18);
+}
+
+.bz-btn:hover {
+  background: #b22222;
+  transform: translateY(-1px);
+}
+
+.bz-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 10px rgba(198,40,40,.18);
+}
+
+.bz-btn:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 🧍‍♀️ Dos columnas (ejemplo nombre + correo) */
+.bz-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bz-row .bz-field {
+  min-width: 0;
+}
+
+/* 📱 Responsivo */
+@media (max-width: 640px) {
+  .bz-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .bz-wrap {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .bz-card {
+    padding: 16px 14px 18px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

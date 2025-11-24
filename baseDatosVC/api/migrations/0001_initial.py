@@ -1,0 +1,229 @@
+
+
+import cloudinary.models
+import django.contrib.auth.models
+import django.contrib.auth.validators
+import django.db.models.deletion
+import django.utils.timezone
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    initial = True
+
+    dependencies = [
+        ('auth', '0012_alter_user_first_name_max_length'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Buzon',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Nombre_persona', models.CharField(max_length=100, null=True)),
+                ('correo', models.CharField(max_length=50, null=True)),
+                ('pregunta', models.TextField(null=True)),
+                ('estado', models.CharField(default='Pendiente', max_length=20)),
+                ('fecha', models.DateTimeField(auto_now_add=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Cantones',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('nombre_canton', models.CharField(max_length=100)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='carusel',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('imagen', cloudinary.models.CloudinaryField(max_length=255, verbose_name='imagen_carusel')),
+                ('texto', models.CharField(max_length=100)),
+                ('estado', models.BooleanField(default=True)),
+                ('filtro_oscuro', models.BooleanField(default=False)),
+                ('mostrar_texto', models.BooleanField(default=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Group',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Nombre_rol', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Provincia',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('nombre_p', models.CharField(max_length=100)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Requisitos',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('requisitos', models.CharField(max_length=200)),
+                ('Estado', models.BooleanField(default=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Sangre',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('tipo_sangre', models.CharField(max_length=3)),
+                ('frecuencia', models.CharField(max_length=20)),
+                ('poblacion', models.CharField(max_length=20)),
+                ('donaA', models.CharField(max_length=30)),
+                ('recibeDe', models.CharField(max_length=40)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CustomUser',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('password', models.CharField(max_length=128, verbose_name='password')),
+                ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
+                ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
+                ('username', models.CharField(error_messages={'unique': 'A user with that username already exists.'}, help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150, unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()], verbose_name='username')),
+                ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
+                ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
+                ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
+                ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
+                ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
+                ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
+                ('Telefono', models.IntegerField(blank=True, null=True, unique=True)),
+                ('Edad', models.IntegerField(blank=True, null=True)),
+                ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
+                ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+            ],
+            options={
+                'verbose_name': 'user',
+                'verbose_name_plural': 'users',
+                'abstract': False,
+            },
+            managers=[
+                ('objects', django.contrib.auth.models.UserManager()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Campana',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Titulo', models.CharField(max_length=100)),
+                ('Descripcion', models.CharField(max_length=300)),
+                ('Fecha_inicio', models.DateField(blank=True, null=True)),
+                ('Fecha_fin', models.DateField(blank=True, null=True)),
+                ('Hora_inicio', models.TimeField(blank=True, null=True)),
+                ('Hora_fin', models.TimeField(blank=True, null=True)),
+                ('Activo', models.BooleanField(default=True)),
+                ('Contacto', models.CharField(max_length=50)),
+                ('direccion_exacta', models.CharField(max_length=300)),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Campana', to=settings.AUTH_USER_MODEL)),
+                ('Cantones', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='Campana', to='api.cantones')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Galeria',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('imagen_g', cloudinary.models.CloudinaryField(max_length=255, verbose_name='imagen_g')),
+                ('descripcion', models.TextField(blank=True, null=True)),
+                ('video_url', models.URLField(blank=True, null=True)),
+                ('fecha_publicacion', models.DateTimeField(auto_now_add=True)),
+                ('activo', models.BooleanField(default=True)),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Galeria', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Imagen_campana',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('imagen', cloudinary.models.CloudinaryField(max_length=255, verbose_name='imagen_campana')),
+                ('Campana', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Imagen_campana', to='api.campana')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Mapa',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('latitud', models.DecimalField(decimal_places=6, max_digits=9)),
+                ('longitud', models.DecimalField(decimal_places=6, max_digits=9)),
+                ('activo', models.BooleanField(default=True)),
+                ('Campana', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Mapa', to='api.campana')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='cantones',
+            name='Provincia',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Cantones', to='api.provincia'),
+        ),
+        migrations.CreateModel(
+            name='Publicaciones',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('texto', models.CharField(max_length=200)),
+                ('Estado', models.BooleanField()),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Publicaciones', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Imagenes_publi',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('imagen', cloudinary.models.CloudinaryField(max_length=255, verbose_name='imagen_publicacion')),
+                ('Publicaciones', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Imagenes_publi', to='api.publicaciones')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='DetalleRequisitos',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Estado', models.BooleanField()),
+                ('Campana', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='DetalleRequisito', to='api.campana')),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='DetalleRequisito', to=settings.AUTH_USER_MODEL)),
+                ('Requisitos', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='DetalleRequisito', to='api.requisitos')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Respuesta',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Respuesta_P', models.TextField()),
+                ('estado', models.BooleanField(default=False)),
+                ('Fecha', models.DateTimeField(auto_now_add=True)),
+                ('Buzon', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Respuesta', to='api.buzon')),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Respuesta', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Suscritos',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('Fecha', models.DateTimeField(auto_now_add=True)),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Suscritos', to=settings.AUTH_USER_MODEL)),
+                ('Sangre', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Suscritos', to='api.sangre')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Urgente_Tip_Sang',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('urgencia', models.CharField(max_length=40)),
+                ('activo', models.BooleanField()),
+                ('nota', models.CharField(max_length=40)),
+                ('actualizado', models.DateTimeField()),
+                ('Sangre', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Urgente_Tip_Sang', to='api.sangre')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Usuario_rol',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('CustomUser', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Usurio_rol', to=settings.AUTH_USER_MODEL)),
+                ('Group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='Usurio_rol', to='api.group')),
+            ],
+        ),
+    ]

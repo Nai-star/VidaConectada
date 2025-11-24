@@ -1,0 +1,188 @@
+:root{
+  --brand-red: #d90429;
+  --brand-red-dark: #b30021;
+  --muted: #6b7280;
+  --card-bg: #fff;
+}
+
+/* contenedor */
+.gal-wrap{
+  padding: 48px 6%;
+  text-align: center;
+  background: linear-gradient(180deg, #fff 0%, #fff7f7 100%);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* nota pequeña */
+.gal-note{
+  color: var(--muted);
+  font-size: 13px;
+  margin: 2px 0 8px;
+}
+
+/* título */
+.gal-title{
+  font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+  color: #0f172a;
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+/* línea decorativa */
+.gal-underline{
+  width: 56px;
+  height: 3px;
+  background: var(--brand-red);
+  margin: 8px auto 24px;
+  border-radius: 999px;
+}
+
+/* grid responsive */
+.gal-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  max-width: 1100px;
+  margin: 18px auto 16px;
+}
+
+@media (max-width: 1024px) {
+  .gal-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 760px) {
+  .gal-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 420px) {
+  .gal-grid { grid-template-columns: 1fr; }
+}
+
+/* cada item (botón para accesibilidad) */
+.gal-item{
+  position: relative;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  transition: transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
+}
+
+.gal-item img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform .6s ease, filter .25s ease;
+}
+
+/* hover overlay */
+.gal-item .gal-hover{
+  position: absolute;
+  inset: 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(0deg, rgba(217,4,41,0.12), rgba(217,4,41,0.06));
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .28s ease, transform .28s ease;
+}
+
+/* .gal-hover-title{
+  color: var(--card-bg);
+  background: rgba(0,0,0,0.45);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+} */
+
+/* efectos al pasar el cursor */
+.gal-item:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 18px 44px rgba(2,6,23,0.12);
+}
+.gal-item:hover img{
+  transform: scale(1.07);
+  filter: saturate(1.05) contrast(1.02);
+}
+.gal-item:hover .gal-hover{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* botón ver más */
+.gal-actions{ margin-top: 12px; }
+.gal-btn{
+  display: inline-block;
+  background: transparent;
+  color: var(--brand-red-dark);
+  border: 2px solid var(--brand-red);
+  padding: 10px 20px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: background .18s ease, color .18s ease, transform .12s ease, box-shadow .2s;
+  box-shadow: 0 8px 20px rgba(217,4,41,0.06);
+}
+.gal-btn:hover{
+  background: var(--brand-red);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* lightbox */
+.gal-lightbox{
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(3,6,23,0.64);
+  z-index: 9999;
+  padding: 28px;
+}
+
+.gal-lightbox-content{
+  width: min(980px, 96%);
+  max-height: 90vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 14px;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(2,6,23,0.48);
+  animation: lb-in .22s ease;
+}
+
+@keyframes lb-in { from { transform: translateY(8px) scale(.99); opacity: 0 } to { transform: none; opacity: 1 } }
+
+.gal-lightbox-content img{
+  width: 100%;
+  height: auto;
+  display:block;
+  border-radius: 6px;
+}
+
+.gal-close{
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* caption */
+.gal-caption{
+  text-align: left;
+  padding: 10px 6px 0;
+}
+.gal-caption h4{ margin: 0; color: #111827; }
+.gal-caption p{ margin: 6px 0 0; color: #4b5563; font-size: 0.95rem; line-height: 1.4; }

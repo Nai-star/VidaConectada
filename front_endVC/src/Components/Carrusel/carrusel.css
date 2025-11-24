@@ -1,0 +1,153 @@
+@font-face {
+  font-family: "slick";
+  src: url("/slick.woff") format("woff"),
+       url("/slick.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+/* --- Contenedor Principal --- */
+.banner-container {
+  position: relative;
+  width: 100%;
+  height: 85vh;
+  min-height: 420px;
+  overflow: hidden;
+}
+
+/* --- Slider de react-slick --- */
+.banner-slider, 
+.banner-slider .slick-list, 
+.banner-slider .slick-track {
+  height: 100%;
+}
+
+.banner-slider .slide {
+  position: relative;
+  height: 100%;
+}
+
+.banner-slider .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Capa Oscura --- */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 9;
+  pointer-events: none;
+}
+
+/* --- Contenido Centrado --- */
+.banner-frases {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 1rem;
+  text-align: center;
+  z-index: 10;
+  animation: fadeUp 800ms ease both, float 6s ease-in-out infinite;
+}
+
+/* --- Texto Principal --- */
+.banner-frases span {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+}
+
+/* --- Botón "Quiero Donar" --- */
+.banner-frases .btn-participar {
+  margin-top: 20px;
+  background-color: #d90429;
+  color: #fff;
+  border: 2px solid #d90429;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.3s ease, border-color 0.3s ease;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.banner-frases .btn-participar:hover {
+  background-color: #b30021;
+  border-color: #b30021;
+  transform: translateY(-1px);
+}
+
+/* --- Animaciones --- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes float {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
+/* --- Dots de react-slick --- */
+.banner-slider .slick-dots {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  right: 0;
+  z-index: 11;
+}
+
+.banner-slider .slick-dots li button:before {
+  font-size: 10px;
+  opacity: 0.6;
+  /* Puedes ajustar el color aquí si quieres */
+}
+
+.banner-slider .slick-dots li.slick-active button:before {
+  opacity: 1;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .banner-container { height: 70vh; }
+  .banner-frases span { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+  .banner-frases .btn-participar { padding: 10px 22px; font-size: 0.95rem; }
+}
+
+/* overlay con modo on/off */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+.banner-overlay.on  { background: rgba(0,0,0,.55); opacity: 1; }
+.banner-overlay.off { background: rgba(0,0,0,0);   opacity: 0; }
+
+/* estados de carga/error (opcionales) */
+.banner-loading,
+.banner-error {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  color: #fff;
+  background: rgba(0,0,0,.35);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}

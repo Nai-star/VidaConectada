@@ -1,0 +1,236 @@
+:root{
+  --bg-start: #fbfbfb;
+  --bg-end: #f3f6f9;
+  --card-bg: #ffffff;
+  --muted: #6b7280;
+  --primary: #4f46e5;
+  --primary-hover: #3b36c9;
+  --input-border: #e6e9ee;
+  --input-focus: #d7dbff;
+  --radius: 12px;
+  --shadow-soft: 0 8px 30px rgba(15, 23, 42, 0.08);
+  --shadow-sm: 0 4px 10px rgba(15, 23, 42, 0.06);
+  font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Ruta a la imagen (ajústala si la mueves) */
+  --bg-image: url('/fondo_login.png');
+}
+
+/* --- Fondo a pantalla completa --- */
+.login-container{
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  box-sizing: border-box;
+  position: relative;
+
+  /* Imagen como fondo completo */
+  background-image: var(--bg-image);
+  background-repeat: no-repeat;
+  background-position: center right; /* la ilustración a la derecha */
+  background-size: cover;             /* cubrir toda el área */
+  /* Si quieres efecto "fijo" al hacer scroll, descomenta: */
+  /* background-attachment: fixed; */
+  background-color: var(--bg-start);  /* fallback */
+}
+
+/* enlace Home pequeño (se mantiene sobre el fondo) */
+.login-home-link{
+  position: absolute;
+  left: 40px;
+  top: 24px;
+  color: var(--muted);
+  font-size: 13px;
+  text-decoration: none;
+  z-index: 12;
+}
+
+/* Layout principal: divide en dos secciones */
+.login-content{
+  width: 1200px;
+  max-width: calc(100% - 64px);
+  display: grid;
+  grid-template-columns: 1fr 640px;
+  gap: 40px;
+  align-items: center;
+  position: relative;
+  z-index: 10; /* importante: que el contenido quede por encima del fondo */
+}
+
+/* PANEL IZQUIERDO: texto grande */
+.login-left-panel-title{
+  padding-left: 24px;
+  z-index: 11;
+}
+
+.login-title{
+  font-size: 42px;
+  line-height: 1.02;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  transform: translateY(-150px);
+}
+
+.login-title span{
+  color: #0b1220;
+  font-weight: 800;
+}
+
+/* PANEL DERECHO: solo contendrá el formulario (sin imagen propia) */
+.login-right-panel-content{
+  position: relative;
+  min-height: 420px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+/* Form container (sobre la ilustración) */
+.login-form-container{
+  width: 420px;
+  /* background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.98)); */
+  border-radius: 16px;
+  padding: 28px;
+  /* box-shadow: var(--shadow-soft); */
+  z-index: 20; /* encima de todo */
+  position: relative;
+  /* backdrop-filter: blur(6px);
+  border: 1px solid rgba(15,23,42,0.04); */
+}
+
+/* Form */
+.login-form{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Input group: para poder posicionar iconos */
+.login-input-group{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Inputs estilizados */
+.login-input{
+  width: 100%;
+  padding: 12px 44px 12px 44px;
+  border-radius: 10px;
+  border: 1px solid var(--input-border);
+  outline: none;
+  background: #ffffff6b;
+  font-size: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+
+/* focus */
+.login-input:focus{
+  border-color: var(--input-focus);
+  box-shadow: 0 6px 18px rgba(99,102,241,0.12);
+}
+
+/* Iconos */
+.login-input-icon-start{
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--muted);
+  z-index: 8;
+  pointer-events: none;
+}
+
+.login-input-icon-end{
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--muted);
+  z-index: 8;
+  cursor: pointer;
+}
+
+/* Botón principal */
+.login-button{
+  margin-top: 6px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #ff9210, #ff1313);
+  /* background: linear-gradient(90deg, var(--primary), var(--primary-hover)); */
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+  /* box-shadow: 0 8px 24px rgba(79,70,229,0.18); */
+  z-index: 22;
+}
+
+.login-button:active{ transform: translateY(1px); }
+.login-button[disabled]{ opacity: .7; cursor:not-allowed; box-shadow:none; }
+
+/* Mensaje de error */
+.error-message{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #b00020;
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+/* Descripción pequeña debajo del form */
+.login-description{
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+  /* max-width: 340px; */
+  text-align: center;
+}
+
+/* --- RESPONSIVE: ajustes para tablet y móvil --- */
+@media (max-width: 1100px){
+  .login-content{
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+  }
+  .login-left-panel-title{
+    order: 2;
+    text-align: left;
+    padding-left: 8px;
+  }
+  .login-right-panel-content{
+    order: 1;
+    justify-content: center;
+  }
+  /* Para pantallas pequeñas, centramos el fondo y lo hacemos menos intrusivo */
+  .login-container{
+    background-position: center top;
+    background-size: contain; /* evita que recorte partes importantes en móviles */
+  }
+  .login-form-container{
+    width: 92%;
+    padding: 22px;
+  }
+  .login-title{ font-size: 32px; transform:none; }
+}
+
+/* Si quieres ocultar totalmente la ilustración en pantallas muy pequeñas: */
+@media (max-width: 480px){
+  .login-container{
+    background-image: none;
+    background-color: var(--bg-start);
+  }
+}

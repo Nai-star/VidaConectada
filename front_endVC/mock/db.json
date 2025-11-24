@@ -1,0 +1,302 @@
+{
+  "tipo_sangre": [
+    {
+      "id_tipo_sangre": 1,
+      "blood_type": "A+",
+      "frecuencia": "Común",
+      "poblacion": 35.7,
+      "donaA": [
+        "A+",
+        "AB+"
+      ],
+      "recibeDe": [
+        "A+",
+        "A-",
+        "O+",
+        "O-"
+      ],
+      "id": "e030"
+    },
+    {
+      "id_tipo_sangre": 2,
+      "blood_type": "A-",
+      "frecuencia": "Poco común",
+      "poblacion": 6.3,
+      "donaA": [
+        "A+",
+        "A-",
+        "AB+",
+        "AB-"
+      ],
+      "recibeDe": [
+        "A-",
+        "O-"
+      ],
+      "id": "c838"
+    },
+    {
+      "id_tipo_sangre": 3,
+      "blood_type": "B+",
+      "frecuencia": "Poco común",
+      "poblacion": 8.5,
+      "donaA": [
+        "B+",
+        "AB+"
+      ],
+      "recibeDe": [
+        "B+",
+        "B-",
+        "O+",
+        "O-"
+      ],
+      "id": "be70"
+    },
+    {
+      "id_tipo_sangre": 4,
+      "blood_type": "B-",
+      "frecuencia": "Raro",
+      "poblacion": 1.5,
+      "donaA": [
+        "B+",
+        "B-",
+        "AB+",
+        "AB-"
+      ],
+      "recibeDe": [
+        "B-",
+        "O-"
+      ],
+      "id": "08f3"
+    },
+    {
+      "id_tipo_sangre": 5,
+      "blood_type": "AB+",
+      "frecuencia": "Muy raro",
+      "poblacion": 0.6,
+      "donaA": [
+        "AB+"
+      ],
+      "recibeDe": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+      ],
+      "id": "a4f9"
+    },
+    {
+      "id_tipo_sangre": 6,
+      "blood_type": "AB-",
+      "frecuencia": "Muy raro",
+      "poblacion": 0.7,
+      "donaA": [
+        "AB+",
+        "AB-"
+      ],
+      "recibeDe": [
+        "A-",
+        "B-",
+        "AB-",
+        "O-"
+      ],
+      "id": "a076"
+    },
+    {
+      "id_tipo_sangre": 7,
+      "blood_type": "O+",
+      "frecuencia": "Común",
+      "poblacion": 37.4,
+      "donaA": [
+        "O+",
+        "A+",
+        "B+",
+        "AB+"
+      ],
+      "recibeDe": [
+        "O+",
+        "O-"
+      ],
+      "id": "02f1"
+    },
+    {
+      "id_tipo_sangre": 8,
+      "blood_type": "O-",
+      "frecuencia": "Raro",
+      "poblacion": 6.6,
+      "donaA": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+      ],
+      "recibeDe": [
+        "O-"
+      ],
+      "id": "0cb9"
+    }
+  ],
+  "Urgente_Tip_Sang": [
+    {
+      "id": "1",
+      "id_tipo_sangre": 4,
+      "urgency": "urgent",
+      "is_active": true,
+      "note": "Se necesita con prioridad",
+      "updated_at": "2025-11-07T19:30:42Z"
+    },
+    {
+      "id": "2",
+      "id_tipo_sangre": 6,
+      "urgency": "urgent",
+      "is_active": true,
+      "note": "Se necesita con prioridad",
+      "updated_at": "2025-11-07T19:31:10Z"
+    },
+    {
+      "id": "3",
+      "id_tipo_sangre": 8,
+      "urgency": "urgent",
+      "is_active": true,
+      "note": "Se necesita con prioridad",
+      "updated_at": "2025-11-07T19:31:40Z"
+    },
+    {
+      "id": "4",
+      "id_tipo_sangre": 1,
+      "urgency": "priority",
+      "is_active": false,
+      "note": "Reserva",
+      "updated_at": "2025-11-07T19:31:40Z"
+    }
+  ],
+  "requisitos": [
+    {
+      "id": "1",
+      "requisitos": "Tener entre 18 y 65 años de edad",
+      "estado": true
+    },
+    {
+      "id": "2",
+      "requisitos": "Gozar de buena salud general",
+      "estado": true
+    },
+    {
+      "id": "3",
+      "requisitos": "No haber donado sangre en los últimos 2 meses",
+      "estado": true
+    },
+    {
+      "id": "4",
+      "requisitos": "No estar embarazada o lactando",
+      "estado": true
+    },
+    {
+      "id": "5",
+      "requisitos": "No padecer enfermedades transmisibles por sangre",
+      "estado": true
+    },
+    {
+      "id": "6",
+      "requisitos": "Peso mínimo de 52 kilogramos",
+      "estado": true
+    },
+    {
+      "id": "7",
+      "requisitos": "Presentar documento de identidad vigente",
+      "estado": true
+    },
+    {
+      "id": "8",
+      "requisitos": "No tener tatuajes o piercings recientes (últimos 12 meses)",
+      "estado": true
+    },
+    {
+      "id": "9",
+      "requisitos": "No haber tenido cirugías recientes",
+      "estado": true
+    },
+    {
+      "id": "10",
+      "requisitos": "Haber descansado bien la noche anterior",
+      "estado": true
+    }
+  ],
+  "Pregunta_frecuente": [
+    {
+      "id": "1",
+      "pregunta": "¿Cuánto tiempo toma donar sangre?",
+      "respuesta": "El proceso completo toma aproximadamente 45 minutos a 1 hora, incluyendo registro, entrevista médica, la donación (8–10 minutos) y la recuperación. La extracción de sangre en sí toma unos 10 minutos.",
+      "estado": true
+    },
+    {
+      "id": "2",
+      "pregunta": "¿Es seguro donar sangre?",
+      "respuesta": "Sí. Se utilizan materiales estériles y desechables en cada donación. Además, se realiza una evaluación médica previa para garantizar la seguridad de la persona donante.",
+      "estado": true
+    },
+    {
+      "id": "3",
+      "pregunta": "¿Con qué frecuencia puedo donar?",
+      "respuesta": "Hombres: cada 3 meses. Mujeres: cada 4 meses. Siempre espera el tiempo recomendado y sigue las indicaciones del personal de salud.",
+      "estado": true
+    },
+    {
+      "id": "4",
+      "pregunta": "¿Qué debo hacer antes de donar?",
+      "respuesta": "Duerme bien, hidrátate, come ligero (evita grasas), lleva tu documento de identidad y no consumas alcohol 24 horas antes.",
+      "estado": true
+    },
+    {
+      "id": "5",
+      "pregunta": "¿Puedo donar si tengo tatuajes o piercings?",
+      "respuesta": "Sí, siempre que hayan pasado al menos 12 meses desde la realización del tatuaje o piercing y no existan complicaciones.",
+      "estado": true
+    }
+  ],
+  "buzon": [
+    {
+      "id": "1",
+      "Nombre_persona": "Ejemplo",
+      "correo": "correo@ejemplo.com",
+      "pregunta": "¿Puedo donar si ...?",
+      "estado": "pendiente",
+      "created_at": "2025-11-11T14:00:00Z"
+    },
+    {
+      "id": "2885",
+      "Nombre_persona": "Prueba",
+      "correo": "reychel@gmail.com",
+      "pregunta": "¿Cuánto tiempo se dura donando?",
+      "estado": "pendiente",
+      "created_at": "2025-11-11T21:01:31.846Z"
+    }
+  ],
+  "suscripciones": [
+    {
+      "id": "1",
+      "nombre": "Ana",
+      "apellido": "Soto",
+      "correo": "ana@example.com",
+      "tipo_sangre": "O+",
+      "estado": "activo",
+      "created_at": "2025-11-11T14:00:00Z"
+    },
+    {
+      "id": "737e",
+      "nombre": "Reychel",
+      "apellido": "Fallas",
+      "correo": "reychel@gmail.com",
+      "tipo_sangre": "B+",
+      "estado": "activo",
+      "created_at": "2025-11-12T15:04:44.817Z"
+    }
+  ]
+}

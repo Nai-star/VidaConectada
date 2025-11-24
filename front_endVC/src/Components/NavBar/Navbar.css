@@ -1,0 +1,170 @@
+/* --- Variables de Color (basado en tu imagen) --- */
+:root {
+  --color-rojo-principal: #D90429; /* Un rojo fuerte similar al de la imagen */
+  --color-rojo-oscuro: #b30021;
+  --color-texto-oscuro: #333;
+  --color-fondo: #fff;
+  --altura-navbar: 70px; /* Variable para la altura */
+}
+
+/* --- Contenedor Principal del Navbar --- */
+.navbar-container {
+  display: flex;
+  justify-content: space-between; /* Clave para distribuir los elementos */
+  align-items: center;
+  padding: 0 5%; /* Padding a los lados */
+  height: var(--altura-navbar);
+  background-color: var(--color-fondo);
+  
+  /* --- REQUISITO: Fijo en la parte de arriba --- */
+  position: fixed;
+  top: var(--mini-offset);  
+  left: 0; right: 0;
+  width: 100%;
+  z-index: 1001; /* Asegura que esté por encima de otro contenido */
+  transition: top .28s ease; 
+  
+  /* Sombra sutil para separarlo del contenido */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* Para que el padding no afecte el width: 100% */
+}
+
+/* --- Estilos del Logo --- */
+.navbar-logo a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar-logo img {
+  height: 35px; /* Ajusta el tamaño de tu logo */
+  margin-right: 10px;
+}
+
+.navbar-logo span {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--color-rojo-principal);
+}
+
+/* --- Lista de Enlaces de Navegación --- */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 25px; /* Espacio entre cada elemento <li> */
+}
+
+.navbar-links li {
+  margin: 0;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: var(--color-texto-oscuro);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links a:hover {
+  color: var(--color-rojo-principal);
+}
+
+/* --- Estilos de los Botones --- */
+.navbar-btn-item button {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  font-size: 0.95rem;
+  white-space: nowrap; /* Evita que el texto se parta */
+}
+
+.btn-sucribirse {
+  background-color: var(--color-fondo);
+  color: var(--color-rojo-principal);
+  border: 2px solid var(--color-rojo-principal);
+}
+
+.btn-sucribirse:hover {
+  background-color: #fef0f2; /* Un hover rojo muy suave */
+}
+
+.btn-participar {
+  background-color: var(--color-rojo-principal);
+  color: var(--color-fondo);
+  border: 2px solid var(--color-rojo-principal);
+}
+
+.btn-participar:hover {
+  background-color: var(--color-rojo-oscuro);
+  border-color: var(--color-rojo-oscuro);
+}
+
+/* --- Botón Hamburguesa (Mobile) --- */
+.menu-toggle-I {
+  display: none; /* Oculto en desktop */
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--color-texto-oscuro);
+  cursor: pointer;
+  z-index: 1001; /* Por encima del resto del nav */
+}
+
+/* --- Estilos Responsive (Mobile) --- */
+@media (max-width: 992px) {
+  
+  /* Mostramos el botón hamburguesa */
+  .menu-toggle-I {
+    display: block;
+  }
+
+  /* Ocultamos la lista de enlaces */
+  .navbar-links {
+    display: none; /* Oculta por defecto */
+    position: absolute;
+    top: var(--altura-navbar); /* Justo debajo del navbar */
+    left: 0;
+    width: 100%;
+    
+    /* Estilos del menú desplegado */
+    background-color: var(--color-fondo);
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    gap: 20px;
+  }
+
+  /* Clase 'open' que añade React para mostrar el menú */
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .navbar-links a {
+    font-size: 1.2rem; /* Letra más grande en mobile */
+  }
+
+  /* Hacemos que los botones ocupen más espacio en mobile */
+  .navbar-btn-item {
+    width: 90%;
+    max-width: 300px;
+  }
+  .navbar-btn-item button {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+/* Opcional: Ocultar el texto del logo en pantallas muy pequeñas */
+@media (max-width: 400px) {
+  .navbar-logo span {
+    display: none;
+  }
+}
+

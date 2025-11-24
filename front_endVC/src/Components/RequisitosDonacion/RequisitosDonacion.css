@@ -1,0 +1,129 @@
+/* ===========================
+   CONTENEDOR PRINCIPAL
+   =========================== */
+.req-container {
+  text-align: center;
+  padding: 40px 20px;
+  font-family: "Inter", sans-serif;
+}
+
+/* ===========================
+   TÍTULO Y SUBTÍTULO
+   =========================== */
+.req-title {
+  color: #c62828;
+  font-size: 32px;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.req-icon {
+  font-size: 26px;
+}
+
+.req-subtitle {
+  color: #546e7a;
+  font-size: 17px;
+  margin-bottom: 30px;
+}
+
+/* ===========================
+   TARJETA DE REQUISITOS
+   =========================== */
+.req-card {
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 14px;
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+/* ===========================
+   GRID DE DOS COLUMNAS
+   =========================== */
+.req-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  text-align: left;
+  gap: 16px 24px;
+}
+
+.req-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 16px;
+  color: #37474f;
+}
+
+.req-check {
+  font-size: 18px;
+  color: #2e7d32; /* verde */
+  margin-top: 2px;
+}
+
+/* ===========================
+   ADVERTENCIA IMPORTANTE
+   =========================== */
+.req-warning {
+  background: #fff8d9;
+  border-left: 4px solid #ffb300;
+  padding: 12px 14px;
+  margin-top: 26px;
+  text-align: left;
+  font-size: 15px;
+  color: #6b4f00;
+  border-radius: 6px;
+}
+
+/* ===========================
+   BOTÓN
+   =========================== */
+.req-btn {
+  margin-top: 30px;
+  padding: 10px 26px;
+  background: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+.req-btn:hover {
+  background: #0d5bb5;
+}
+
+/* ===========================
+   FOOTER
+   =========================== */
+.req-footer {
+  margin-top: 24px;
+  color: #566b7a;
+  font-size: 15px;
+}
+
+.req-footer a {
+  color: #1976d2;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.req-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ===========================
+   RESPONSIVE
+   =========================== */
+@media (max-width: 700px) {
+  .req-grid {
+    grid-template-columns: 1fr;
+  }
+}
