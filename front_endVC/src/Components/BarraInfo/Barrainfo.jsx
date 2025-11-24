@@ -61,7 +61,7 @@ function Barrainfo() {
 
         <div className="mini-divider" />
 
-        <a href="/quejas" className="mini-item">
+        <a href="https://forms.office.com/r/SYYbTB4s41" className="mini-item">
           <FiUser className="mini-ic" />
           <span>Quejas y sugerencias</span>
         </a>

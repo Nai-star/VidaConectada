@@ -2,158 +2,178 @@ import React, { useEffect, useState } from "react";
 import "./modalSuscripcion.css";
 import { crearSuscripcion } from "../../services/ServicioSuscripcion";
 import { GetTiposSangre } from "../../services/Servicio_TS";
-import { checkCustomUser } from "../../services/ServicioCustomUser"; // <-- agregar
+/* import { checkCustomUser} from "../../services/ServicioCustomUser" */;
 import { FiBell } from "react-icons/fi";
 
-const emailRegex = /^[^\s@]+@[^\s@]+.[^\s@]{2,}$/i;
+
 
 function ModalSuscripcion({ isOpen, onClose }) {
-const [form, setForm] = useState({ nombre: "", apellido: "", correo: "", tipo_sangre: "" });
-const [tipos, setTipos] = useState([]);
-const [loading, setLoading] = useState(false);
-const [msg, setMsg] = useState({ type: "", text: "" });
-const [isSubscribedUser, setIsSubscribedUser] = useState(false); // <-- nuevo
-
-useEffect(() => {
-if (isOpen) {
-GetTiposSangre()
-.then((data) => setTipos(data))
-.catch(() => setTipos([]));
-  setForm({ nombre: "", apellido: "", correo: "", tipo_sangre: "" });
-  setIsSubscribedUser(false);
-  setMsg({ type: "", text: "" });
-}
-
-
-}, [isOpen]);
-
-const onChange = (e) => {
-const { name, value } = e.target;
-setForm((f) => ({ ...f, [name]: value }));
-
-if (name === "correo") {
-  setIsSubscribedUser(false);
-  setMsg({ type: "", text: "" });
-}
-
-};
-
-const validar = () => {
-if (!form.nombre.trim()) return "El nombre es requerido";
-if (!form.apellido.trim()) return "El apellido es requerido";
-if (!emailRegex.test(form.correo)) return "Correo inválido";
-if (!form.tipo_sangre) return "Selecciona tu tipo de sangre";
-return "";
-};
-
-const handleNextStep = async (e) => {
-e.preventDefault();
-setMsg({ type: "", text: "" });
-
-const correoError = !form.correo.trim() ? "Ingrese un correo" : !emailRegex.test(form.correo) ? "Correo inválido" : "";
-if (correoError) return setMsg({ type: "error", text: correoError });
-
-setLoading(true);
-try {
-  // Verificar si el usuario ya existe
-  const usuario = await checkCustomUser(form.correo);
-  if (usuario) {
-    setIsSubscribedUser(true);
-    setForm({
-      nombre: usuario.nombre ?? usuario.first_name ?? "",
-      apellido: usuario.apellido ?? usuario.last_name ?? "",
-      correo: usuario.correo ?? usuario.email ?? form.correo,
-      tipo_sangre: usuario.tipo_sangre ?? usuario.blood_type ?? "",
-    });
-    setMsg({ type: "info", text: "Este correo ya está suscrito. Confirma los datos o actualiza." });
-    return;
-  }
-  setIsSubscribedUser(false);
-  setMsg({ type: "", text: "" });
-} catch (err) {
-  console.error("Error verificando correo:", err);
-  setMsg({ type: "error", text: "Error al verificar el correo. Intenta nuevamente." });
-} finally {
-  setLoading(false);
-}
-
-
-};
-
-const onSubmit = async (e) => {
-e.preventDefault();
-setMsg({ type: "", text: "" });
-if (!isSubscribedUser) {
-  const error = validar();
-  if (error) return setMsg({ type: "error", text: error });
-}
-
-try {
-  setLoading(true);
-  await crearSuscripcion(form);
-  setMsg({ type: "success", text: "¡Suscripción registrada con éxito!" });
-  setTimeout(() => onClose(), 1500);
-  setForm({ nombre: "", apellido: "", correo: "", tipo_sangre: "" });
-} catch (err) {
-  console.error("Error creando suscripción:", err);
-  setMsg({ type: "error", text: "Hubo un error, intenta de nuevo." });
-} finally {
-  setLoading(false);
-}
-
-};
-
-if (!isOpen) return null;
-
-return ( <div className="sub-overlay" onClick={onClose}>
-<div className="sub-modal" onClick={(e) => e.stopPropagation()}> <h3 className="sub-title">Suscríbete al Boletín</h3> <p className="sub-subtitle">Recibe noticias, estadísticas y actualizaciones sobre VidaConectada</p>
-
-    <div className="sub-iconWrap"><FiBell /></div>
-
-    <form className="sub-form" onSubmit={isSubscribedUser ? onSubmit : handleNextStep}>
-      {/* Nombre y apellido */}
-      <div className="sub-row">
-        <div className="sub-field">
-          <label>Nombre</label>
-          <input name="nombre" value={form.nombre} onChange={onChange} placeholder="Tu nombre" readOnly={isSubscribedUser} />
+  const [tiposSangre, setTiposSangre] = useState([]);
+  const [customUser, setCustomUser] = useState(null);
+  const [isExisting, setIsExisting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [form, setForm] = useState({
+    Numero_cedula: "",
+    nombre: "",
+    correo: "",
+    Sangre: "",
+  });
+  // ------------------------------ cargar tipos de sangre
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await GetTiposSangre();
+        setTiposSangre(data || []);
+      } catch (err) {
+        console.error(err);
+        setError("Error cargando tipos de sangre");
+      }
+    };
+    fetchData();
+  }, []);
+  // ------------------------------ verificar usuario y suscripción
+  const handleBuscarUsuario = async () => {
+    if (!form.cedula.trim()) return;
+    const user = await checkCustomUser(form.cedula);
+    const suscrito = await checkSuscripcion(form.cedula);
+    if (suscrito?.id) {
+      setError("¡Ya estás suscrito con esta cédula!");
+      setSuccess("");
+      setCustomUser(user || null);
+      setIsExisting(!!user);
+      return;
+    }
+    if (user?.id) {
+      setCustomUser(user);
+      setForm((prev) => ({
+        ...prev,
+        nombre: user.nombre,
+        correo: user.correo,
+      }));
+      setIsExisting(true);
+      setError("Usuario ya registrado, puedes continuar con la suscripción.");
+      setSuccess("");
+    } else {
+      setCustomUser(null);
+      setIsExisting(false);
+      setForm((prev) => ({ ...prev, nombre: "", correo: "" }));
+      setError("");
+      setSuccess("");
+    }
+  };
+  // ------------------------------ manejar inputs
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  // ------------------------------ enviar formulario
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    //if (!form.Numero_cedula.trim()) return setError("La cédula es obligatoria.");
+    //if (!form.nombre.trim()) return setError("El nombre es obligatorio.");
+    //if (!form.correo.trim()) return setError("El correo es obligatorio.");
+    //if (!form.Sangre) return setError("Debe seleccionar un tipo de sangre.");
+    console.log(form);
+    const suscrito = await crearSuscripcion (form);
+    console.log(suscrito);
+    if (suscrito?.id) return setError("¡Ya estás suscrito con esta cédula!");
+    let userId = customUser?.id;
+    // Crear usuario si no existe
+    if (!userId) {
+      const newUser = await createUser({
+        cedula: form.cedula,
+        nombre: form.nombre,
+        correo: form.correo,
+      });
+      if (!newUser?.id) return setError("Error al crear usuario.");
+      userId = newUser.id;
+    }
+    // Crear suscripción
+    const payload = {
+      Numero_cedula: form.cedula,
+      CustomUser: userId,
+      Sangre: form.sangre,
+    };
+    const response = await crearSuscripcion(payload);
+    if (response?.id) {
+      setSuccess("¡Suscripción creada con éxito!");
+      setError("");
+    } else {
+      setError("Error al crear suscripción.");
+    }
+  };
+  if (!isOpen) return null;
+  return (
+    <div className="sub-overlay">
+      <div className="sub-modal">
+        <button className="close-btn" onClick={onClose}>X</button>
+        <div className="sub-iconWrap">
+          <FiBell />
         </div>
-        <div className="sub-field">
-          <label>Apellido</label>
-          <input name="apellido" value={form.apellido} onChange={onChange} placeholder="Tu apellido" readOnly={isSubscribedUser} />
-        </div>
+        <h2 className="sub-title">Suscribirse</h2>
+        <p className="sub-subtitle">Complete los datos para suscribirse</p>
+        {error && <div className="sub-alert error">{error}</div>}
+        {success && <div className="sub-alert success">{success}</div>}
+        <form className="sub-form" onSubmit={handleSubmit}>
+          {/* CÉDULA */}
+          <div className="sub-field">
+            <label>Cédula:</label>
+            <input
+              type="text"
+              name="Numero_cedula"
+              value={form.Numero_cedula}
+              onChange={handleChange}
+              onBlur={handleBuscarUsuario}
+              placeholder="Ingrese la cédula"
+            />
+          </div>
+          {/* NOMBRE */}
+          <div className="sub-field">
+            <label>Nombre:</label>
+            <input
+              type="text"
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              readOnly={isExisting}
+              placeholder="Nombre del usuario"
+            />
+          </div>
+          {/* CORREO */}
+          <div className="sub-field">
+            <label>Correo:</label>
+            <input
+              type="email"
+              name="correo"
+              value={form.correo}
+              onChange={handleChange}
+              readOnly={isExisting}
+              placeholder="Correo del usuario"
+            />
+          </div>
+          {/* TIPO DE SANGRE */}
+          <div className="sub-field">
+            <label>Tipo de sangre:</label>
+            <select name="Sangre" value={form.Sangre} onChange={handleChange}>
+              <option value="">Seleccione...</option>
+              {tiposSangre.map((t) => (
+                <option key={t.id_tipo_sangre} value={t.id_tipo_sangre}>
+                  {t.blood_type}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button type="submit" className="sub-btn">
+            Suscribirse
+          </button>
+        </form>
+        <p className="sub-footnote">
+          Al suscribirse, acepta nuestra política de privacidad.
+        </p>
       </div>
-
-      {/* Correo */}
-      <div className="sub-field">
-        <label>Correo electrónico</label>
-        <input name="correo" value={form.correo} onChange={onChange} placeholder="correo@ejemplo.com" />
-      </div>
-
-      {/* Tipo de sangre */}
-      <div className="sub-field">
-        <label>Tipo de sangre</label>
-        <select name="tipo_sangre" value={form.tipo_sangre} onChange={onChange} disabled={isSubscribedUser && !!form.tipo_sangre}>
-          <option value="">Selecciona tu tipo de sangre</option>
-          {tipos.map((t) => (
-            <option key={t.id_tipo_sangre} value={t.blood_type}>{t.blood_type}</option>
-          ))}
-        </select>
-      </div>
-
-      {msg.text && <div className={`sub-alert ${msg.type}`}>{msg.text}</div>}
-
-      <button className="sub-btn" disabled={loading}>
-        {loading ? "Procesando..." : isSubscribedUser ? "Actualizar suscripción" : "Verificar correo"}
-      </button>
-
-      <p className="sub-footnote">Enviaremos boletines mensuales con información relevante.</p>
-    </form>
-
-    <p className="sub-privacy">Tu privacidad es importante. No compartiremos tu información con terceros.</p>
-  </div>
-</div>
-
-);
+    </div>
+  );
 }
-
 export default ModalSuscripcion;

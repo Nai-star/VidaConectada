@@ -9,6 +9,7 @@ import Private_routing from "./Private_routing";
 import GaleriaVermas from '../Components/Galeria/GaleriaVermas';
 import Login from '../pages/Login/Login';
 import Register from '../Components/Register/Register';
+import Admin from '../pages/Admin/Admin';
 
 
 function Routing() {
@@ -26,6 +27,7 @@ function Routing() {
 
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
+        <Route path='/admin' element={<Admin/>}/>
       
         
 

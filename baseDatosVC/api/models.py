@@ -68,9 +68,11 @@ class Urgente_Tip_Sang(models.Model):
 
 
 class Suscritos(models.Model):
-    CustomUser= models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Suscritos")
+    Numero_cedula = models.CharField(max_length=12, unique=True)
     Sangre= models.ForeignKey(Sangre,on_delete=models.CASCADE, related_name="Suscritos")
     Fecha = models.DateTimeField(auto_now_add=True)
+    nombre = models.CharField(max_length=200)
+    correo = models.CharField( max_length=200, unique=True)
 
 
 class Provincia(models.Model):
@@ -196,9 +198,42 @@ class Red_bancos(models.Model):
     def __str__(self):
        return f"{self.nombre_hospi}"
 
+    
+
+ 
+
+
+class Testimonio(models.Model):
+
+    Estado = models.BooleanField(default=True)
+    fecha_publicacion = models.DateTimeField(auto_now_add=True)
+    CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Testimonio")
+
+    def __str__(self):
+        return f"{self.Estado} "
+    
+
+class Testimonio_texto (models.Model):
+    Nombre = models.CharField(max_length=100)
+    Frase =  models.CharField(max_length=200)
+    Foto_P = CloudinaryField('imagen_Testimonio_texto', folder='Testimonio_texto')
+    Testimonio = models.ForeignKey(Testimonio,on_delete=models.CASCADE, related_name="Testimonio_texto")
+    def __str__(self):
+        return f"{self.Nombre} "
+
+class Testimonio_video (models.Model):
+    Video =  CloudinaryField('imagen_Testimonio_video', folder='Testimonio_video', resource_type='video')
+    Descripcion  =  models.CharField(max_length=200)
+    Testimonio = models.ForeignKey(Testimonio,on_delete=models.CASCADE, related_name="Testimonio_video")
+
+    def __str__(self):
+        return f"{self.Video} "
+
+
 
 
 class Participacion(models.Model):
+    Numero_cedula = models.CharField(max_length=12, null=True, blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="participaciones")
     sangre = models.ForeignKey(Sangre, on_delete=models.SET_NULL, null=True, blank=True)
     campana = models.ForeignKey(Campana, on_delete=models.CASCADE, related_name="participaciones")
@@ -215,3 +250,4 @@ class Participacion(models.Model):
         if self.user:
             return f"{self.user.nombre} {self.user.apellido} - {self.user.email}"
         return "Participación sin usuario asignado"
+

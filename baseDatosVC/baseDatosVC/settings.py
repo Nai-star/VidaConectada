@@ -45,6 +45,7 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 # Application definition
 
 INSTALLED_APPS = [
+    
     'cloudinary',
     'cloudinary_storage',
     'django.contrib.admin',
@@ -55,7 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'api',#agregar
+    'api.apps.ApiConfig',#agregar 
 
 ]
 

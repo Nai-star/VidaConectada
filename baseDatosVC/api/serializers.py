@@ -170,34 +170,30 @@ class SangreSerializer(serializers.ModelSerializer):
         model = Sangre
         fields = '__all__'
 
+from rest_framework import serializers
+from .models import Suscritos
 
-# serializers.py
+from rest_framework import serializers
+from .models import Suscritos
+
 class SuscritosSerializer(serializers.ModelSerializer):
-    nombre = serializers.CharField(write_only=True)
-    apellido = serializers.CharField(write_only=True)
-    correo = serializers.EmailField(write_only=True)
-    tipo_sangre = serializers.CharField(write_only=True)
-
     class Meta:
         model = Suscritos
-        fields = ['id', 'nombre', 'apellido', 'correo', 'tipo_sangre', 'Fecha']
+        fields = '__all__'
 
-    def create(self, validated_data):
-        # Crear o buscar usuario
-        user, _ = CustomUser.objects.get_or_create(
-            email=validated_data['correo'],
-            defaults={
-                'first_name': validated_data['nombre'],
-                'last_name': validated_data['apellido']
-            }
-        )
-        # Buscar tipo de sangre
-        sangre = Sangre.objects.get(tipo_sangre=validated_data['tipo_sangre'])
+    def validate(self, data):
+        cedula = data.get("Numero_cedula")
 
-        # Crear suscrito
-        suscrito = Suscritos.objects.create(CustomUser=user, Sangre=sangre)
-        return suscrito
+        # Si estás editando, self.instance existe
+        suscrito_id = self.instance.id if self.instance else None
 
+        # Busca si existe OTRO registro con la misma cédula
+        if Suscritos.objects.filter(Numero_cedula=cedula).exclude(id=suscrito_id).exists():
+            raise serializers.ValidationError(
+                {"Numero_cedula": "Este usuario ya está registrado con esa cédula."}
+            )
+
+        return data
 
 
 #Campaña
@@ -459,6 +455,86 @@ class CampanaSerializer(serializers.ModelSerializer):
             DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=rid, CustomUser=campana.CustomUser)
 
         return campana
+
+
+from rest_framework import serializers
+from .models import Testimonio, Testimonio_texto
+
+class TestimonioFullSerializer(serializers.ModelSerializer):
+    # Campos para crear el texto
+    Nombre = serializers.CharField(write_only=True)
+    Frase = serializers.CharField(write_only=True)
+    Foto_P = serializers.ImageField(write_only=True)  # Aquí acepta file directamente
+
+    # Para lectura
+    Testimonio_texto = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Testimonio
+        fields = ["CustomUser", "Estado", "Nombre", "Frase", "Foto_P", "Testimonio_texto","fecha_publicacion"]
+
+    def create(self, validated_data):
+        nombre = validated_data.pop("Nombre")
+        frase = validated_data.pop("Frase")
+        foto = validated_data.pop("Foto_P")
+        user = validated_data.pop("CustomUser")
+
+        # Crear Testimonio
+        testimonio = Testimonio.objects.create(CustomUser=user, **validated_data)
+
+        # Crear Testimonio_texto con archivo subido
+        Testimonio_texto.objects.create(
+            Testimonio=testimonio,
+            Nombre=nombre,
+            Frase=frase,
+            Foto_P=foto
+        )
+
+        return testimonio
+
+    def get_Testimonio_texto(self, obj):
+        textos = obj.Testimonio_texto.all()
+        return [{"Nombre": t.Nombre, "Frase": t.Frase, "Foto_P": t.Foto_P.url if t.Foto_P else None} for t in textos]
+
+
+
+
+from rest_framework import serializers
+from .models import Testimonio, Testimonio_video
+
+class TestimonioVideoSerializer(serializers.ModelSerializer):
+    # Campos para crear el video
+    Descripcion = serializers.CharField(write_only=True)
+    Video = serializers.FileField(write_only=True)  # Aquí aceptamos el archivo de video
+
+    # Para lectura
+    Testimonio_video = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Testimonio
+        fields = ["CustomUser", "Estado", "Descripcion", "Video", "Testimonio_video","fecha_publicacion"]
+
+    def create(self, validated_data):
+        descripcion = validated_data.pop("Descripcion")
+        video = validated_data.pop("Video")
+        user = validated_data.pop("CustomUser")
+
+        # Crear Testimonio
+        testimonio = Testimonio.objects.create(CustomUser=user, **validated_data)
+
+        # Crear Testimonio_video con archivo subido
+        Testimonio_video.objects.create(
+            Testimonio=testimonio,
+            Descripcion=descripcion,
+            Video=video
+        )
+
+        return testimonio
+
+    def get_Testimonio_video(self, obj):
+        videos = obj.Testimonio_video.all()
+        return [{"Descripcion": v.Descripcion, "Video": v.Video.url if v.Video else None} for v in videos]
+
     
 
 
@@ -537,3 +613,4 @@ class ParticipacionSerializer(serializers.ModelSerializer):
         validated_data["user"] = user
         participacion = Participacion.objects.create(**validated_data)
         return participacion
+
