@@ -12,6 +12,7 @@ import Barrainfo from "../../Components/BarraInfo/Barrainfo"
 import Contactanos from "../../Components/Contactanos/Contactanos"
 import Campanas from "../../Components/Campanas/Campanas"
 import Galeria from "../../Components/Galeria/Galeria"
+import Testimonios from "../../Components/Testimonios/Testimonios"
 
 
 
@@ -43,6 +44,7 @@ function Home() {
         <p className="alerta-sangre"><b className="alerta-roja">¡Tu ayuda es crucial!</b> Estos tipos de sangre tienen niveles críticos en los bancos de sangre de Costa Rica. Una donación puede salvar vidas hoy mismo.</p>
         
         <div>Testimoninos</div>
+        <Testimonios/>
 
 
         <TarjetasTipoSangre/>

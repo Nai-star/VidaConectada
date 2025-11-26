@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://192.168.100.34:8000/api";
 
 export const obtenerTiposSangre = async () => {
   const response = await axios.get(`${API_BASE_URL}/sangre/`);
@@ -11,17 +11,20 @@ export const registerParticipante = async (data) => {
   try {
     console.log("DATA RECIBIDA:", data);
 
-    const email = data.correo;
+    const email = data.correo || data.email;
     const sangreTexto = (data.tipo_sangre || "").trim();
-    const campana = data.campaignId;
+    const campana = data.campaignId || data.campana;
     const createSubscription = !!data.createSubscription; 
+    const cedula = data.cedula || data.Numero_cedula || data.numero_cedula || "";
 
     if (!email) throw new Error("❌ Falta el correo");
     if (!sangreTexto) throw new Error("❌ Falta el tipo de sangre");
     if (!campana) throw new Error("❌ Falta el ID de campaña");
 
-    const tipos = await obtenerTiposSangre()
-    const tipo = tipos.find(t => t.tipo_sangre === sangreTexto || t.tipo === sangreTexto || t.blood_type === sangreTexto);
+    const tipos = await obtenerTiposSangre();
+    const tipo = tipos.find(t => 
+      t.tipo_sangre === sangreTexto || t.tipo === sangreTexto || t.blood_type === sangreTexto || String(t.id) === String(sangreTexto)
+    );
 
     if (!tipo) {
       console.log("Tipos recibidos:", tipos)
@@ -31,10 +34,16 @@ export const registerParticipante = async (data) => {
     const payload = {
       nombre: data.nombre,
       apellido: data.apellido,
+      // enviar ambos para compatibilidad
       email: email,
+      correo: email,
       sangre: tipo.id,
       campana: campana,
-      createSubscription: createSubscription, 
+      createSubscription: createSubscription,
+      // campo que el backend te está pidiendo
+      Numero_cedula: cedula,
+      // opcional (por compatibilidad)
+      cedula: cedula,
     };
 
     console.log("DATA ENVIADA:", payload);
@@ -43,13 +52,11 @@ export const registerParticipante = async (data) => {
     return response.data;
 
   } catch (error) {
-    // MUESTRA el body del error devuelto por Django/DRF si existe (útil para debug)
     if (error.response && error.response.data) {
       console.error("Backend error response:", error.response.data);
-      // re-lanzar con ese detalle para que el modal pueda mostrarlo si quieres
+      // re-lanzamos con detalle (tu modal ya maneja esto)
       throw new Error(JSON.stringify(error.response.data));
     }
-
     console.error("Error registrando participación:", error);
     throw error;
   }

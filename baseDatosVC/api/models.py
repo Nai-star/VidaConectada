@@ -198,9 +198,7 @@ class Red_bancos(models.Model):
     def __str__(self):
        return f"{self.nombre_hospi}"
 
-    
 
- 
 
 
 class Testimonio(models.Model):
@@ -214,8 +212,8 @@ class Testimonio(models.Model):
     
 
 class Testimonio_texto (models.Model):
-    Nombre = models.CharField(max_length=100)
-    Frase =  models.CharField(max_length=200)
+    Nombre = models.CharField(max_length=150)
+    Frase =  models.CharField(max_length=255)
     Foto_P = CloudinaryField('imagen_Testimonio_texto', folder='Testimonio_texto')
     Testimonio = models.ForeignKey(Testimonio,on_delete=models.CASCADE, related_name="Testimonio_texto")
     def __str__(self):
@@ -233,8 +231,8 @@ class Testimonio_video (models.Model):
 
 
 class Participacion(models.Model):
-    Numero_cedula = models.CharField(max_length=12, null=True, blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True, related_name="participaciones")
+    """ Numero_cedula = models.CharField(max_length=12, null=True, blank=True) """
+    suscritos = models.ForeignKey(Suscritos, on_delete=models.SET_NULL, null=True, blank=True, related_name="participaciones")
     sangre = models.ForeignKey(Sangre, on_delete=models.SET_NULL, null=True, blank=True)
     campana = models.ForeignKey(Campana, on_delete=models.CASCADE, related_name="participaciones")
     fecha_participacion = models.DateTimeField(default=timezone.now)
@@ -244,10 +242,10 @@ class Participacion(models.Model):
         ordering = ["-fecha_participacion"]
 
         # Valida que un usuario (por su correo) no pueda registrarse 2 veces a la misma campaña
-        unique_together = (("user", "campana"),)
+        unique_together = (("suscritos", "campana"),)
 
     def __str__(self):
-        if self.user:
-            return f"{self.user.nombre} {self.user.apellido} - {self.user.email}"
+        if self.suscritos:
+            return f"{self.suscritos.nombre} {self.suscritos.apellido} - {self.suscritos.email}"
         return "Participación sin usuario asignado"
 

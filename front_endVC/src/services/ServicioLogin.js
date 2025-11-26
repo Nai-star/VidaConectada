@@ -1,7 +1,7 @@
 // src/services/ServicioLogin.js
 import axios from "axios";
 
-const BASE = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+const BASE = import.meta.env.VITE_API_URL || "http://192.168.100.34:8000";
 const LOGIN_API_URL = `${BASE.replace(/\/$/, "")}/api/login/admin/`;
 
 /**

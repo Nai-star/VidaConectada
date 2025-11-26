@@ -1,18 +1,19 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import "./AdminSidebar.css";
 
 const ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: "▦" },
-  { id: "banners", label: "Banners Principales", icon: "🖼️" },
-  { id: "campanas", label: "Campañas", icon: "📅" },
-  { id: "preguntas", label: "Preguntas y FAQs", icon: "💬" },
-  { id: "tipos", label: "Tipos de Sangre", icon: "💧" },
-  { id: "requisitos", label: "Requisitos para Donar", icon: "📋" },
-  { id: "usuarios", label: "Usuarios", icon: "👥" },
-  { id: "config", label: "Configuración", icon: "⚙️" },
+  { id: "dashboard", label: "Dashboard", icon: "▦", path: "" },
+  { id: "banners", label: "Banners Principales", icon: "🖼️", path: "banners" },
+  { id: "campanas", label: "Campañas", icon: "📅", path: "campanas" },
+  { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "preguntas" },
+  { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "tipos" },
+  { id: "requisitos", label: "Requisitos para Donar", icon: "📋", path: "requisitos" },
+  { id: "usuarios", label: "Usuarios", icon: "👥", path: "gestion_usuarios" },
+  { id: "config", label: "Configuración", icon: "⚙️", path: "configuracion" },
 ];
 
-export default function AdminSidebar({ active = "dashboard", onNavigate }) {
+function AdminSidebar() {
   return (
     <aside className="admin-sidebar">
       <div className="brand">
@@ -29,22 +30,27 @@ export default function AdminSidebar({ active = "dashboard", onNavigate }) {
 
       <ul className="nav-list">
         {ITEMS.map((item) => (
-          <li
-            key={item.id}
-            className={`nav-item ${active === item.id ? "active" : ""}`}
-            onClick={() => onNavigate(item.id)}
-          >
-            <span className="nav-icon">{item.icon}</span>
-            <span className="nav-label">{item.label}</span>
+          <li key={item.id}>
+            <NavLink
+              to={item.path}
+              className={({ isActive }) =>
+                "nav-item " + (isActive ? "active" : "")
+              }
+            >
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
+            </NavLink>
           </li>
         ))}
       </ul>
 
       <div className="bottom">
-        <button className="logout-btn" onClick={() => onNavigate("logout")}>
+        <button className="logout-btn" onClick={() => console.log("logout")}>
           ⤴ <span>Cerrar sesión</span>
         </button>
       </div>
     </aside>
   );
 }
+
+export default AdminSidebar;

@@ -170,30 +170,36 @@ class SangreSerializer(serializers.ModelSerializer):
         model = Sangre
         fields = '__all__'
 
-from rest_framework import serializers
-from .models import Suscritos
 
-from rest_framework import serializers
-from .models import Suscritos
 
 class SuscritosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Suscritos
-        fields = '__all__'
+        fields = "__all__"
 
     def validate(self, data):
         cedula = data.get("Numero_cedula")
+        correo = data.get("Correo")  # <- Ajusta según el nombre real en tu modelo
 
-        # Si estás editando, self.instance existe
+        # Detecta si es edición (self.instance existe) o creación
         suscrito_id = self.instance.id if self.instance else None
 
-        # Busca si existe OTRO registro con la misma cédula
-        if Suscritos.objects.filter(Numero_cedula=cedula).exclude(id=suscrito_id).exists():
-            raise serializers.ValidationError(
-                {"Numero_cedula": "Este usuario ya está registrado con esa cédula."}
-            )
+        # --- Validar CÉDULA ---
+        if cedula:
+            if Suscritos.objects.filter(Numero_cedula=cedula).exclude(id=suscrito_id).exists():
+                raise serializers.ValidationError({
+                    "Numero_cedula": "Esta cédula ya pertenece a un suscrito."
+                })
+
+        # --- Validar CORREO ---
+        if correo:
+            if Suscritos.objects.filter(Correo__iexact=correo).exclude(id=suscrito_id).exists():
+                raise serializers.ValidationError({
+                    "Correo": "Este correo ya está registrado."
+                })
 
         return data
+
 
 
 #Campaña
@@ -457,45 +463,62 @@ class CampanaSerializer(serializers.ModelSerializer):
         return campana
 
 
+
+
 from rest_framework import serializers
 from .models import Testimonio, Testimonio_texto
+from django.contrib.auth import get_user_model
 
-class TestimonioFullSerializer(serializers.ModelSerializer):
-    # Campos para crear el texto
-    Nombre = serializers.CharField(write_only=True)
-    Frase = serializers.CharField(write_only=True)
-    Foto_P = serializers.ImageField(write_only=True)  # Aquí acepta file directamente
+User = get_user_model()
 
-    # Para lectura
-    Testimonio_texto = serializers.SerializerMethodField()
+class TestimonioTextoSerializer(serializers.ModelSerializer):
+    # Construimos la URL completa de la foto
+    Foto_P = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Testimonio_texto
+        fields = ["Nombre", "Frase", "Foto_P"]
+
+    def get_Foto_P(self, obj):
+        if obj.Foto_P:
+            request = self.context.get("request")
+            if request is not None:
+                return request.build_absolute_uri(obj.Foto_P.url)
+            return obj.Foto_P.url
+        return None
+
+class TestimonioSerializer(serializers.ModelSerializer):
+    # Para creación
+    Nombre = serializers.CharField(write_only=True, required=False)
+    Frase = serializers.CharField(write_only=True, required=False)
+    Foto_P = serializers.ImageField(write_only=True, required=False)
+    CustomUser = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    # Para lectura: todos los textos asociados
+    Testimonio_texto = TestimonioTextoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Testimonio
-        fields = ["CustomUser", "Estado", "Nombre", "Frase", "Foto_P", "Testimonio_texto","fecha_publicacion"]
+        fields = ["CustomUser", "Estado", "Nombre", "Frase", "Foto_P", "Testimonio_texto", "fecha_publicacion"]
 
     def create(self, validated_data):
-        nombre = validated_data.pop("Nombre")
-        frase = validated_data.pop("Frase")
-        foto = validated_data.pop("Foto_P")
-        user = validated_data.pop("CustomUser")
+        nombre = validated_data.pop("Nombre", None)
+        frase = validated_data.pop("Frase", None)
+        foto = validated_data.pop("Foto_P", None)
 
-        # Crear Testimonio
-        testimonio = Testimonio.objects.create(CustomUser=user, **validated_data)
+        # Crear Testimonio principal
+        testimonio = Testimonio.objects.create(**validated_data)
 
-        # Crear Testimonio_texto con archivo subido
-        Testimonio_texto.objects.create(
-            Testimonio=testimonio,
-            Nombre=nombre,
-            Frase=frase,
-            Foto_P=foto
-        )
+        # Crear Testimonio_texto solo si hay datos
+        if nombre or frase or foto:
+            Testimonio_texto.objects.create(
+                Testimonio=testimonio,
+                Nombre=nombre or "",
+                Frase=frase or "",
+                Foto_P=foto
+            )
 
         return testimonio
-
-    def get_Testimonio_texto(self, obj):
-        textos = obj.Testimonio_texto.all()
-        return [{"Nombre": t.Nombre, "Frase": t.Frase, "Foto_P": t.Foto_P.url if t.Foto_P else None} for t in textos]
-
 
 
 
@@ -539,13 +562,22 @@ class TestimonioVideoSerializer(serializers.ModelSerializer):
 
 
 # ✅ Participacion
+from django.db import transaction
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from django.utils import timezone
+
+from .models import Participacion, Suscritos, Campana, Sangre  # importa tus modelos reales
+
 class ParticipacionSerializer(serializers.ModelSerializer):
+    # Campos de entrada (write_only)
+    Numero_cedula = serializers.CharField(write_only=True, required=True)
     email = serializers.EmailField(write_only=True, required=False, allow_blank=True)
     nombre = serializers.CharField(write_only=True, required=False, allow_blank=True)
-    apellido = serializers.CharField(write_only=True, required=False, allow_blank=True)
     createSubscription = serializers.BooleanField(write_only=True, required=False, default=False)
 
-    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    # Campo relacionado de salida: devuelve el id del suscrito (FK)
+    suscrito = serializers.PrimaryKeyRelatedField(source="suscritos", read_only=True)
     sangre = serializers.PrimaryKeyRelatedField(queryset=Sangre.objects.all(), required=False, allow_null=True)
     campana = serializers.PrimaryKeyRelatedField(queryset=Campana.objects.all())
 
@@ -553,64 +585,71 @@ class ParticipacionSerializer(serializers.ModelSerializer):
         model = Participacion
         fields = [
             "id",
-            "user",
+            "suscrito",           # read only: id del suscrito
+            "Numero_cedula",      # write only
             "email",
             "nombre",
-            "apellido",
             "sangre",
             "campana",
             "fecha_participacion",
             "createSubscription",
         ]
-        read_only_fields = ["id", "user", "fecha_participacion"]
+        read_only_fields = ["id", "suscrito", "fecha_participacion"]
 
     def validate(self, attrs):
-        email = (attrs.get("email") or "").strip().lower()
-        if not email:
-            raise serializers.ValidationError({"email": "Se requiere el correo para verificar/identificar al usuario."})
+        # Asegurar que exista Numero_cedula
+        numero = (attrs.get("Numero_cedula") or "").strip()
+        if not numero:
+            raise serializers.ValidationError({"Numero_cedula": "Se requiere Numero_cedula para identificar al suscrito."})
         return attrs
 
     @transaction.atomic
     def create(self, validated_data):
+        # Extraer los campos auxiliares
+        numero = (validated_data.pop("Numero_cedula") or "").strip()
         email = (validated_data.pop("email", "") or "").strip().lower()
-        nombre_payload = validated_data.pop("nombre", "").strip()
-        apellido_payload = validated_data.pop("apellido", "").strip()
+        nombre_payload = (validated_data.pop("nombre", "") or "").strip()
         create_sub = validated_data.pop("createSubscription", False)
         sangre_obj = validated_data.get("sangre", None)
         campana_obj = validated_data.get("campana")
 
-        user = CustomUser.objects.filter(email__iexact=email).first()
+        # 1) Intentar obtener suscrito por Numero_cedula (con bloqueo simple)
+        suscrito = Suscritos.objects.filter(Numero_cedula=numero).select_for_update().first()
 
-        if user:
-            if Participacion.objects.filter(user=user, campana=campana_obj).exists():
-                raise serializers.ValidationError("El usuario ya está inscrito en esta campaña.")
-            validated_data["user"] = user
-            if not sangre_obj:
-                sus = Suscritos.objects.filter(CustomUser=user).select_related("Sangre").first()
-                if sus:
-                    validated_data["sangre"] = sus.Sangre
+        if suscrito:
+            # verificar duplicado de participacion
+            if Participacion.objects.filter(suscritos=suscrito, campana=campana_obj).exists():
+                raise ValidationError({"detail": "El suscrito ya está inscrito en esta campaña."})
+
+            # Si no se proporcionó sangre en payload, intentar obtener desde registro de suscrito
+            if not sangre_obj and getattr(suscrito, "Sangre", None):
+                validated_data["sangre"] = suscrito.Sangre
+
+            validated_data["suscritos"] = suscrito
             participacion = Participacion.objects.create(**validated_data)
             return participacion
 
-        if not user and not create_sub:
-            raise serializers.ValidationError(
-                "No existe un usuario con ese correo. Envía createSubscription=true para crear el usuario automáticamente."
-            )
+        # 2) No existe suscrito
+        if not create_sub:
+            raise ValidationError({"detail": "No existe un suscrito con ese Numero_cedula. Envía createSubscription=true para crear el suscrito automáticamente."})
 
-        local_part = email.split("@")[0] if "@" in email else email
-        suggested_username = f"{local_part}_{int(time.time())}"
-        user = CustomUser.objects.create_user(username=suggested_username, email=email)
-        if nombre_payload:
-            user.first_name = nombre_payload
-        if apellido_payload:
-            user.last_name = apellido_payload
-        user.save()
-
+        # 3) Crear suscrito (asegúrate de llenar los campos requeridos)
+        suscrito_data = {
+            "Fecha": timezone.now(),
+            "Numero_cedula": numero,
+            "correo": email or None,
+            "nombre": nombre_payload or None,
+        }
+        # si tienes campo FK Sangre en Suscritos y vino sangre_obj, asignarlo
         if sangre_obj:
-            if not Suscritos.objects.filter(CustomUser=user, Sangre=sangre_obj).exists():
-                Suscritos.objects.create(CustomUser=user, Sangre=sangre_obj)
+            suscrito_data["Sangre"] = sangre_obj
 
-        validated_data["user"] = user
+        # Si tu modelo Suscritos tiene relacion a CustomUser y quieres crearla, añade lógica acá.
+        # Ejemplo: if you have CustomUser and email exists, link user; else leave CustomUser null.
+
+        suscrito = Suscritos.objects.create(**suscrito_data)
+
+        # 4) Finalmente crear participacion
+        validated_data["suscritos"] = suscrito
         participacion = Participacion.objects.create(**validated_data)
         return participacion
-

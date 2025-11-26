@@ -9,7 +9,7 @@ function Admin() {
 
       <div className='body-Admin'>
       <AdminSidebar/>
-      <div style={{ marginLeft: '240px', padding: '20px' }}>
+      <div /* style={{ marginLeft: '240px', padding: '20px' }} */>
         <Outlet />
       </div>
 

@@ -105,14 +105,7 @@ function Register() {
 
   return (
     <div className="registro-admin-wrapper">
-      <div className="left-side">
-        <img
-          src={"/mnt/data/e7ad0832-a7b5-4fda-9782-6ce462809582.png"}
-          alt="mockup-logo"
-          className="mockup-image"
-        />
-      </div>
-
+   
       <div className="right-side">
         <div className="card">
           <div className="card-header">

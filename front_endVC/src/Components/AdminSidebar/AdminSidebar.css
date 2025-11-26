@@ -63,6 +63,7 @@
   color: var(--muted);
   cursor: pointer;
   transition: var(--transition);
+  text-decoration: none;   
 }
 
 .nav-item:hover {

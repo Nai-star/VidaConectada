@@ -1,7 +1,7 @@
 // ServicioCampanas.js
 import { authorizedFetch } from "./auth";
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "http://192.168.100.34:8000/api";
 const CLOUDINARY_BASE = (import.meta.env.VITE_CLOUDINARY_BASE || "https://res.cloudinary.com/dfhdzszjp/").replace(/\/+$/, "");
 
 function buildCloudinaryUrl(publicId) {

@@ -10,6 +10,10 @@ import GaleriaVermas from '../Components/Galeria/GaleriaVermas';
 import Login from '../pages/Login/Login';
 import Register from '../Components/Register/Register';
 import Admin from '../pages/Admin/Admin';
+import Configuracion from '../Components/AdminSidebar/Configuraciones/Configuracion';
+import Dashboard from '../Components/AdminSidebar/Dashboard/Dashboard';
+import GestionUsuarios from '../Components/AdminSidebar/GestionUsuarios/GestionUsuarios';
+/* import AdminSidebar from '../Components/AdminSidebar/AdminSidebar'; */
 
 
 function Routing() {
@@ -27,22 +31,36 @@ function Routing() {
 
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
-        <Route path='/admin' element={<Admin/>}/>
+        {/* <Route path='/admin' element={<Admin/>}/> */}
+
+
+       
       
-        
-
-
-
 
         {/* Rutas anidadas del panel de administración */}
-        {/* <Route path="/admin" element={
-            <Private_route>
+        <Route path="/admin" element={
+           
               <Admin />
-            </Private_route>
+            
           }
-        > */}
-        {/* <Route path='/admin' element={<Admin/>}> */}
-        {/* Todo esto aparecerá dentro del <Outlet /> de Admin */}
+        >
+          {/* <Route path='/admin' element={<Admin/>}> */}
+          {/* 👇 Todo esto aparecerá dentro del <Outlet /> de Admin */}
+
+          <Route index element={<Dashboard/>}/>
+          <Route path='configuracion' element={<Configuracion/>}/>
+          <Route path='gestion_usuarios' element={<GestionUsuarios/>} />            {/* /admin */}
+         {/*  <Route path='productos' element={<ProductosAdmin/>} />  */} {/* /admin/productos */}
+          
+   
+        </Route>
+
+         
+
+
+
+
+       
 
         
       </Routes>    

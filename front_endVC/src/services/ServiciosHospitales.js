@@ -1,6 +1,6 @@
 // En un archivo como: 'hospitalesService.js'
 
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "http://192.168.100.34:8000/api";
 
 /** Obtiene la lista de hospitales y sus horarios desde la API */
 export async function obtenerRedDeBancos() {

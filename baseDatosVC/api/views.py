@@ -287,14 +287,14 @@ class Red_bancosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
 
 
 class Testimonio_textoListCreateView(ListCreateAPIView):
-    queryset = Testimonio.objects.all()
-    serializer_class = TestimonioFullSerializer
+    queryset = Testimonio_texto.objects.all()
+    serializer_class = TestimonioTextoSerializer
     permission_classes = [AllowAny]
 
 
 class Testimonio_textoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Testimonio.objects.all()
-    serializer_class = TestimonioFullSerializer
+    queryset = Testimonio_texto.objects.all()
+    serializer_class = TestimonioTextoSerializer
     permission_classes = [AllowAny]
 
 class Testimonio_videoListCreateView(ListCreateAPIView):

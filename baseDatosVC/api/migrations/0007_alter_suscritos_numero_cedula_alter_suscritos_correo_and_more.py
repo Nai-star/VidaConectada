@@ -10,19 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='suscritos',
-            name='Numero_cedula',
-            field=models.CharField(max_length=12, unique=True),
-        ),
-        migrations.AlterField(
-            model_name='suscritos',
-            name='correo',
-            field=models.CharField(max_length=150, unique=True),
-        ),
-        migrations.AlterField(
-            model_name='suscritos',
-            name='nombre',
-            field=models.CharField(max_length=200),
-        ),
+ 
     ]

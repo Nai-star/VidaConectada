@@ -1,4 +1,5 @@
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = "http://192.168.100.34:8000/api";
+
 
 /**
  * Une Urgente_Tip_Sang con tipo_sangre usando id_tipo_sangre.
