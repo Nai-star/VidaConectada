@@ -73,6 +73,7 @@ class Suscritos(models.Model):
     Fecha = models.DateTimeField(auto_now_add=True)
     nombre = models.CharField(max_length=200)
     correo = models.CharField( max_length=200, unique=True)
+    Telefono = models.CharField(max_length=15, null=True, blank=True) 
 
 
 class Provincia(models.Model):
@@ -240,12 +241,13 @@ class Participacion(models.Model):
     class Meta:
         db_table = "api_participacion"
         ordering = ["-fecha_participacion"]
-
-        # Valida que un usuario (por su correo) no pueda registrarse 2 veces a la misma campaña
         unique_together = (("suscritos", "campana"),)
 
     def __str__(self):
         if self.suscritos:
-            return f"{self.suscritos.nombre} {self.suscritos.apellido} - {self.suscritos.email}"
+            # usa los campos que realmente existen en tu modelo Suscritos
+            nombre = getattr(self.suscritos, "nombre", "")
+            correo = getattr(self.suscritos, "correo", "")
+            return f"{nombre} - {correo}"
         return "Participación sin usuario asignado"
 

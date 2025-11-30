@@ -1,6 +1,8 @@
 // src/Services/AdminServices.js
-const API_BASE = (import.meta.env.VITE_API_URL || "http://192.168.100.34:8000").replace(/\/$/, "") + "/api";
-const ADMIN_GROUP_ID = 1; // id del grupo admin en auth_group (ajusta si es otro)
+const API_BASE = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/$/, "") + "/api";
+
+/* const API_BASE = (import.meta.env.VITE_API_URL || "http://192.168.100.34:8000").replace(/\/$/, "") + "/api";
+ */const ADMIN_GROUP_ID = 1; // id del grupo admin en auth_group (ajusta si es otro)
 
 /**
  * Helper: parsea respuesta de error del backend (DRF) y devuelve un mensaje legible.

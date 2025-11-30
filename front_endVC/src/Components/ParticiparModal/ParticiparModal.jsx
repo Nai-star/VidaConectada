@@ -1,291 +1,218 @@
 import React, { useEffect, useState } from "react";
 import "../Suscripciones/modalSuscripcion.css";
-import axios from "axios";
-import { registerParticipante } from "../../services/ServicioParticipacion";
+import { registrarParticipacion } from "../../services/ServicioParticipacion";
+import { obtenerSuscritos, crearSuscripcion } from "../../services/ServicioSuscripcion";
 import { GetTiposSangre } from "../../services/Servicio_TS";
-import { checkCustomUser } from "../../services/ServicioCustomUser";
-import { FiBell } from "react-icons/fi";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://192.168.100.34:8000/api";
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+/*
+  ParticiparModal (corrección para que las <option> de tipo de sangre funcionen):
+  - Asegura que `form.tipo_sangre` contiene el ID del tipo de sangre (no el label).
+  - Renderiza las opciones según estructura flexible del API (id / id_tipo_sangre / labels variados).
+*/
 
 function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
   const [step, setStep] = useState(1);
-  const [form, setForm] = useState({ nombre: "", apellido: "", correo: "", tipo_sangre: "", cedula: "" });
+  const [form, setForm] = useState({
+    nombre: "",
+    correo: "",
+    cedula: "",
+    tipo_sangre: "", // aquí guardamos el ID (string) — importante
+    telefono: "",
+  });
+  const [tiposSangre, setTiposSangre] = useState([]); // guardamos la respuesta tal cual
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState({ type: "", text: "" });
-  const [isSubscribedUser, setIsSubscribedUser] = useState(false);
-  const [tiposSangre, setTiposSangre] = useState([]);
+  const [suscritoExistente, setSuscritoExistente] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
       setStep(1);
-      setForm({ nombre: "", apellido: "", correo: "", tipo_sangre: "", cedula: "" });
-      setIsSubscribedUser(false);
+      setSuscritoExistente(null);
       setMsg({ type: "", text: "" });
-      setLoading(false);
+      setForm({ nombre: "", correo: "", cedula: "", tipo_sangre: "", telefono: "" });
     }
   }, [isOpen]);
 
+  // Cargar tipos de sangre (guardamos lo que venga)
   useEffect(() => {
-    async function loadTipos() {
+    async function load() {
       try {
         const data = await GetTiposSangre();
-        if (!Array.isArray(data)) {
-          setTiposSangre([]);
-          return;
-        }
-        const normalized = data
-          .map((t) => {
-            const id = t.id ?? t.id_tipo_sangre ?? t.id_tipo;
-            const tipo = t.tipo ?? t.blood_type ?? t.tipo_sangre ?? t.tipo_sangre_text;
-            return { id, tipo };
-          })
-          .filter(Boolean);
-        setTiposSangre(normalized);
+        if (!Array.isArray(data)) return setTiposSangre([]);
+        setTiposSangre(data);
       } catch (e) {
         console.error("Error cargando tipos de sangre", e);
         setTiposSangre([]);
       }
     }
-    loadTipos();
+    load();
   }, []);
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-
-    // Si cambia el correo o la cédula volvemos a paso 1 y borramos estado de suscripción
-    if (name === "correo" || name === "cedula") {
-      setIsSubscribedUser(false);
-      setStep(1);
+    if (name === "telefono") {
+      const cleaned = (value || "").replace(/[^0-9+]/g, "").slice(0, 15);
+      setForm((f) => ({ ...f, telefono: cleaned }));
       setMsg({ type: "", text: "" });
+      return;
     }
+    setForm((f) => ({ ...f, [name]: value }));
+    if (name === "cedula") setMsg({ type: "", text: "" });
   };
 
-  const validarCorreo = () => {
-    const c = (form.correo || "").trim();
-    if (!c) return "Ingrese un correo";
-    if (!emailRegex.test(c)) return "Correo inválido";
-    return "";
+  const normalize = (s) => (s == null ? "" : String(s).trim().toLowerCase());
+
+  const findMatchingSuscrito = (list, cedulaBuscada) => {
+    if (!Array.isArray(list)) return null;
+    const target = normalize(cedulaBuscada);
+    return (
+      list.find((item) => {
+        if (!item || typeof item !== "object") return false;
+        const candidates = [
+          item.Numero_cedula,
+          item.numero_cedula,
+          item.NumeroCedula,
+          item.cedula,
+          item.Cedula,
+        ];
+        for (const cand of candidates) {
+          if (cand != null && normalize(cand) === target) return true;
+        }
+        // try nested objects
+        for (const key of Object.keys(item)) {
+          const val = item[key];
+          if (typeof val === "string" && normalize(val) === target) return true;
+          if (val && typeof val === "object") {
+            const nested = val.Numero_cedula ?? val.cedula ?? val.numero_cedula;
+            if (nested && normalize(nested) === target) return true;
+          }
+        }
+        return false;
+      }) || null
+    );
   };
 
-  const validarFormulario = () => {
-    if (!form.nombre.trim()) return "El nombre es requerido";
-    if (!form.apellido.trim()) return "El apellido es requerido";
-    if (!form.tipo_sangre) return "Selecciona tu tipo de sangre";
-    return "";
+  // Helper: obtener label del tipo de sangre (por su id)
+  const getTipoLabelById = (id) => {
+    if (id == null || id === "") return "";
+    const found = tiposSangre.find((t) => {
+      const tid = t.id_tipo_sangre ?? t.id;
+      return String(tid) === String(id);
+    });
+    if (!found) return "";
+    return found.blood_type ?? found.nombre ?? found.tipo ?? found.tipo_sangre ?? "";
   };
 
-  /**
-   * handleNextStep:
-   *  - primero busca por cédula en /api/suscritos/?Numero_cedula=...
-   *  - si encuentra: NO abre el formulario; en su lugar registra la participación de inmediato (createSubscription:false)
-   *  - si no encuentra: intenta buscar por email (checkCustomUser)
-   *  - si tampoco encuentra: avanza a step 2 para que el usuario complete sus datos (crear suscrito si aplica)
-   */
-  const handleNextStep = async (e) => {
+  const handleBuscarCedula = async (e) => {
     e.preventDefault();
     setMsg({ type: "", text: "" });
-
-    const error = validarCorreo();
-    if (error) return setMsg({ type: "error", text: error });
+    const ced = (form.cedula || "").trim();
+    if (!ced) return setMsg({ type: "error", text: "Ingrese la cédula." });
 
     setLoading(true);
     try {
-      // 0) Normalize inputs
-      const cedulaTrim = (form.cedula || "").trim();
-      const emailTrim = (form.correo || "").trim();
-
-      // 1) Si hay cédula, intentar buscar suscrito por cédula (tabla suscritos)
-      if (cedulaTrim) {
-        try {
-          const url = `${API_BASE_URL}/suscritos/?Numero_cedula=${encodeURIComponent(cedulaTrim)}`;
-          console.debug("Buscando suscrito por cédula:", url);
-          const resp = await axios.get(url);
-          let sus = null;
-          if (resp.status === 200 && resp.data) {
-            const d = resp.data;
-            if (Array.isArray(d) && d.length > 0) sus = d[0];
-            else if (d.results && Array.isArray(d.results) && d.results.length > 0) sus = d.results[0];
-            else if (typeof d === "object" && !Array.isArray(d)) sus = d;
-          }
-
-          if (sus) {
-            // Si encontramos suscrito por cédula: no abrir formulario.
-            // Preparamos payload usando los datos del suscrito y registramos participación automáticamente.
-            const nombreSus = sus.nombre ?? sus.name ?? "";
-            const correoSus = sus.correo ?? sus.email ?? emailTrim;
-            // intentar mapear sangre: si sus.Sangre es FK objeto o id
-            const sangreId = sus.Sangre?.id ?? sus.Sangre ?? sus.Sangre_id ?? sus.sangre_id ?? null;
-
-            setForm((f) => ({ ...f, nombre: nombreSus, correo: correoSus, tipo_sangre: sangreId || f.tipo_sangre, cedula: cedulaTrim }));
-            setIsSubscribedUser(true);
-            setMsg({ type: "info", text: "Cédula encontrada — registrando participación automáticamente..." });
-
-            // build payload for registerParticipante - adapt keys expected by your service
-            const payload = {
-              nombre: nombreSus,
-              apellido: sus.apellido ?? sus.last_name ?? form.apellido,
-              correo: correoSus,
-              // if your registerParticipante expects tipo_sangre text, try to map id->text via tiposSangre
-              tipo_sangre: mapTipoSangreIdToText(sangreId) || form.tipo_sangre,
-              campaignId: campaign?.id ?? campaign?.pk ?? campaign?._id,
-              createSubscription: false,
-              cedula: cedulaTrim,
-            };
-
-            try {
-              await registerParticipante(payload);
-              setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${nombreSus || "participante"}!` });
-              onParticipateSuccess && onParticipateSuccess(campaign);
-              setTimeout(() => onClose && onClose(), 1400);
-            } catch (errReg) {
-              console.error("Error registrando participacion para suscrito encontrado:", errReg);
-              const backendMsg = errReg?.response?.data ? JSON.stringify(errReg.response.data) : null;
-              setMsg({
-                type: "error",
-                text: backendMsg ? `Error: ${backendMsg}` : "No se pudo registrar la participación automáticamente. Intenta de nuevo.",
-              });
-            } finally {
-              setLoading(false);
-            }
-            return; // importante: no abrir siguiente formulario
-          }
-        } catch (errCed) {
-          // fallo la búsqueda por cédula (endpoint puede no existir o devolvió error); seguimos con búsqueda por email
-          console.debug("Busqueda por cedula falló o no devolvió resultado:", errCed?.response?.status ?? errCed);
-        }
+      const res = await obtenerSuscritos(`Numero_cedula=${encodeURIComponent(ced)}`);
+      let lista = [];
+      if (Array.isArray(res)) lista = res;
+      else if (res == null) lista = [];
+      else if (typeof res === "object") {
+        if (Array.isArray(res.results)) lista = res.results;
+        else if (Array.isArray(res.data)) lista = res.data;
+        else lista = [res];
       }
 
-      // 2) Si no encontramos por cédula, intentamos buscar por email (checkCustomUser)
-      let usuario = null;
-      try {
-        usuario = await checkCustomUser(emailTrim);
-      } catch (errEmailSearch) {
-        console.debug("checkCustomUser falló o no encontró por email:", errEmailSearch);
-        usuario = null;
-      }
+      const encontrado = findMatchingSuscrito(lista, ced);
 
-      if (!usuario) {
-        // no existe ni por cedula ni por email -> abrir formulario para completar datos
+      if (encontrado) {
+        // Obtener ID de sangre (si viene como objeto o id)
+        const sangreId = encontrado.Sangre ?? encontrado.Sangre_id ?? (encontrado.Sangre && encontrado.Sangre.id) ?? null;
+
+        setSuscritoExistente(encontrado);
+
+        setForm((f) => ({
+          ...f,
+          nombre: encontrado.nombre ?? f.nombre,
+          correo: encontrado.correo ?? f.correo,
+          telefono: encontrado.Telefono ?? f.telefono ?? "",
+          // Guardamos EL ID (no el texto). Esto es la corrección clave.
+          tipo_sangre: sangreId != null ? String(sangreId) : "",
+          cedula: ced,
+        }));
+
+        setMsg({ type: "success", text: "Suscrito encontrado. Revisa los datos (bloqueados) y confirma participación." });
         setStep(2);
-        setIsSubscribedUser(false);
-        setMsg({ type: "", text: "" });
-        return;
-      }
-
-      // 3) Usuario encontrado por email -> evaluar verificación y precargar como antes
-      const nombre = usuario.nombre ?? usuario.first_name ?? usuario.firstName ?? "";
-      const apellido = usuario.apellido ?? usuario.last_name ?? usuario.lastName ?? "";
-      const correo = (usuario.correo ?? usuario.email ?? emailTrim).toString();
-      const tipo_sangre = usuario.tipo_sangre ?? usuario.blood_type ?? usuario.tipo ?? "";
-
-      const verifiedFlag = usuario.is_verified ?? usuario.verified ?? usuario.email_verified;
-      const activeFlag = usuario.is_active ?? usuario.active;
-      const isVerified =
-        verifiedFlag === true || activeFlag === true || (verifiedFlag === undefined && activeFlag === undefined);
-
-      if (!isVerified) {
-        setForm((f) => ({ ...f, correo }));
+      } else {
+        setSuscritoExistente(null);
+        setMsg({ type: "info", text: "No se encontró la cédula. Complete los datos para crear el suscrito." });
         setStep(2);
-        setIsSubscribedUser(false);
-        setMsg({
-          type: "info",
-          text: "Se encontró un registro con ese correo, pero no está verificado. Completa los datos para registrarte/actualizar.",
-        });
-        return;
       }
-
-      // Usuario verificado → precargar y permitir confirmación (aún mostramos paso 2 pero campos en readOnly)
-      setForm({ nombre, apellido, correo, tipo_sangre, cedula: form.cedula });
-      setIsSubscribedUser(true);
-      setStep(2);
-      setMsg({ type: "info", text: `¡Hola de nuevo, ${nombre} ${apellido}! Confirma tu participación.` });
     } catch (err) {
-      console.error("Error en handleNextStep:", err);
-      const backendMsg = err?.response?.data ? JSON.stringify(err.response.data) : null;
-      setMsg({
-        type: "error",
-        text: backendMsg ? `Error de servidor: ${backendMsg}` : "Error al verificar el usuario. Intenta nuevamente.",
-      });
+      console.error("Error buscando suscrito:", err);
+      setSuscritoExistente(null);
+      setMsg({ type: "info", text: "No se encontró la cédula (o hubo un error). Complete los datos para crear el suscrito." });
+      setStep(2);
+    } finally {
       setLoading(false);
     }
   };
 
-  // Helper: intenta mapear un tipo_sangre id a su texto (si tiposSangre fue cargado)
-  const mapTipoSangreIdToText = (id) => {
-    if (!id) return null;
-    // tiposSangre entries tienen {id, tipo} donde tipo es texto
-    const found = tiposSangre.find((t) => String(t.id) === String(id) || t.id === id);
-    return found ? found.tipo : null;
-  };
-
-  const handleSubmit = async (e) => {
+  const handleFinalizar = async (e) => {
     e.preventDefault();
     setMsg({ type: "", text: "" });
-
-    const campaignId = campaign?.id ?? campaign?.pk ?? campaign?._id;
-
-    if (isSubscribedUser) {
-      try {
-        setLoading(true);
-        console.log("Enviando confirmación para usuario suscrito:", {
-          correo: form.correo,
-          tipo_sangre: form.tipo_sangre,
-          campaignId,
-        });
-        await registerParticipante({
-          nombre: form.nombre,
-          apellido: form.apellido,
-          correo: form.correo,
-          tipo_sangre: form.tipo_sangre,
-          campaignId,
-          createSubscription: false,
-          cedula: form.cedula,
-        });
-        setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${form.nombre}!` });
-        onParticipateSuccess && onParticipateSuccess(campaign);
-        setTimeout(() => onClose && onClose(), 1500);
-      } catch (err) {
-        console.error("Error registrando participación:", err);
-        const backendMsg = err?.response?.data ? JSON.stringify(err.response.data) : null;
-        setMsg({
-          type: "error",
-          text: backendMsg ? `Error: ${backendMsg}` : "Error al registrar la participación. Intenta de nuevo.",
-        });
-      } finally {
-        setLoading(false);
-      }
-      return;
-    }
-
-    // Nuevo usuario o no suscrito
-    const error = validarFormulario();
-    if (error) return setMsg({ type: "error", text: error });
+    setLoading(true);
 
     try {
-      setLoading(true);
-      console.log("Enviando registro nuevo participante:", { ...form, campaignId });
-      await registerParticipante({
-        nombre: form.nombre,
-        apellido: form.apellido,
-        correo: form.correo,
-        tipo_sangre: form.tipo_sangre,
-        campaignId,
-        createSubscription: true,
-        cedula: form.cedula,
-      });
-      setMsg({ type: "success", text: `Participación registrada. ¡Gracias, ${form.nombre}!` });
-      onParticipateSuccess && onParticipateSuccess(campaign);
-      setTimeout(() => onClose && onClose(), 1500);
+      const cedula = (form.cedula || "").trim();
+      if (!cedula) {
+        setMsg({ type: "error", text: "La cédula es requerida." });
+        setLoading(false);
+        return;
+      }
+
+      const tel = (form.telefono || "").trim();
+      if (tel && (tel.length < 6 || tel.length > 15)) {
+        setMsg({ type: "error", text: "El teléfono debe tener entre 6 y 15 caracteres." });
+        setLoading(false);
+        return;
+      }
+
+      // 1) Crear suscrito si no existe
+      if (!suscritoExistente) {
+        const nuevoPayload = {
+          Fecha: new Date().toISOString(),
+          Numero_cedula: cedula,
+          nombre: form.nombre || null,
+          correo: form.correo || null,
+          Telefono: tel === "" ? null : tel,
+        };
+
+        // si user escogió tipo de sangre, lo enviamos como id (número) o string según tu API
+        if (form.tipo_sangre) {
+          const parsed = Number(form.tipo_sangre);
+          nuevoPayload["Sangre"] = Number.isNaN(parsed) ? form.tipo_sangre : parsed;
+        }
+
+        console.log("Payload para crear suscrito:", nuevoPayload);
+        const creado = await crearSuscripcion(nuevoPayload);
+        console.log("crearSuscripcion - creado:", creado);
+      }
+
+      // 2) Registrar participacion
+      // IMPORTANTE: aquí enviamos solo los campos que el serializer espera.
+      await registrarParticipacion({ cedula, nombre: form.nombre, email: form.correo, campaignId: campaign?.id });
+
+      setMsg({ type: "success", text: "Participación registrada con éxito." });
+      onParticipateSuccess?.(campaign);
+      setTimeout(() => onClose(), 900);
     } catch (err) {
-      console.error("Error registrando participante (nuevo):", err);
-      const backendMsg = err?.response?.data ? JSON.stringify(err.response.data) : null;
-      setMsg({
-        type: "error",
-        text: backendMsg ? `Error: ${backendMsg}` : "Error al procesar el registro. Intenta de nuevo.",
-      });
+      console.error("Error finalizando participación:", err);
+      const server = err?.server || err?.response?.data;
+      const mensaje = server
+        ? typeof server === "object"
+          ? JSON.stringify(server)
+          : server
+        : (err.messageDetail || err.message || "Error al registrar.");
+      setMsg({ type: "error", text: mensaje });
     } finally {
       setLoading(false);
     }
@@ -293,73 +220,109 @@ function ParticiparModal({ isOpen, onClose, campaign, onParticipateSuccess }) {
 
   if (!isOpen) return null;
 
+  const inputsDisabled = !!suscritoExistente;
+
   return (
     <div className="sub-overlay" onClick={onClose}>
       <div className="sub-modal" onClick={(e) => e.stopPropagation()}>
-        <h3 className="sub-title">{isSubscribedUser ? `¡Hola de nuevo, ${form.nombre}!` : "Participa en la campaña"}</h3>
-        <p className="sub-subtitle">
-          {isSubscribedUser
-            ? `Confirma tu participación en "${campaign?.Titulo ?? campaign?.title ?? ""}".`
-            : step === 1
-            ? "Ingresa tu correo y cédula para comenzar"
-            : "Completa tus datos para participar"}
-        </p>
+        <h3 className="sub-title">{suscritoExistente ? `¡Hola de nuevo, ${form.nombre || ""}!` : "Participa en la campaña"}</h3>
 
-        <div className="sub-iconWrap">
-          <FiBell />
-        </div>
-
-        <form className="sub-form" onSubmit={step === 1 ? handleNextStep : handleSubmit}>
-          {step === 1 && (
-            <>
-              <div className="sub-row">
-                <div className="sub-field" style={{ flex: 1 }}>
-                  <label>Correo electrónico</label>
-                  <input name="correo" value={form.correo} onChange={onChange} placeholder="correo@ejemplo.com" autoFocus />
-                </div>
-                <div className="sub-field" style={{ width: 160 }}>
-                  <label>Cédula</label>
-                  <input name="cedula" value={form.cedula} onChange={onChange} placeholder="Número de cédula" />
-                </div>
+        {step === 1 && (
+          <form className="sub-form" onSubmit={handleBuscarCedula}>
+            <div className="sub-row">
+              <div className="sub-field">
+                <label>Cédula</label>
+                <input name="cedula" value={form.cedula} onChange={onChange} />
               </div>
-            </>
-          )}
+            </div>
 
-          {step === 2 && (
-            <>
-              <div className="sub-row">
+            {msg.text && <div className={`sub-alert ${msg.type}`}>{msg.text}</div>}
+
+            <button className="sub-btn" disabled={loading}>
+              {loading ? "Buscando..." : "Buscar cédula"}
+            </button>
+          </form>
+        )}
+
+        {step === 2 && (
+          <form className="sub-form" onSubmit={handleFinalizar}>
+            {!suscritoExistente ? (
+              <>
                 <div className="sub-field">
                   <label>Nombre</label>
-                  <input name="nombre" value={form.nombre} onChange={onChange} placeholder="Tu nombre" readOnly={isSubscribedUser} />
+                  <input name="nombre" value={form.nombre} onChange={onChange} />
                 </div>
+
                 <div className="sub-field">
-                  <label>Apellido</label>
-                  <input name="apellido" value={form.apellido} onChange={onChange} placeholder="Tu apellido" readOnly={isSubscribedUser} />
+                  <label>Correo</label>
+                  <input name="correo" value={form.correo} onChange={onChange} />
                 </div>
-              </div>
 
-              <div className="sub-field">
-                <label>Tipo de sangre</label>
-                <select name="tipo_sangre" value={form.tipo_sangre} onChange={onChange} disabled={isSubscribedUser && !!form.tipo_sangre}>
-                  <option value="">Selecciona tu tipo de sangre</option>
-                  {tiposSangre.map((t) => (
-                    <option key={t.id} value={t.tipo}>
-                      {t.tipo}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </>
-          )}
+                <div className="sub-field">
+                  <label>Teléfono</label>
+                  <input name="telefono" value={form.telefono} onChange={onChange} placeholder="Ej: 50688881234" />
+                </div>
 
-          {msg.text && <div className={`sub-alert ${msg.type}`}>{msg.text}</div>}
+                <div className="sub-field">
+                  <label>Tipo de sangre</label>
+                  <select name="tipo_sangre" value={form.tipo_sangre} onChange={onChange}>
+                    <option value="">Seleccione</option>
+                    {tiposSangre.map((t) => {
+                      const id = t.id_tipo_sangre ?? t.id;
+                      const label = t.blood_type ?? t.nombre ?? t.tipo ?? t.tipo_sangre ?? String(id);
+                      return (
+                        <option key={String(id)} value={String(id)}>
+                          {label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="sub-field">
+                  <label>Nombre</label>
+                  <input name="nombre" value={form.nombre} onChange={onChange} disabled={inputsDisabled} />
+                </div>
 
-          <button className="sub-btn" disabled={loading}>
-            {loading ? "Procesando..." : isSubscribedUser ? "Confirmar participación" : step === 1 ? "Siguiente" : "Participar"}
-          </button>
-        </form>
+                <div className="sub-field">
+                  <label>Correo</label>
+                  <input name="correo" value={form.correo} onChange={onChange} disabled={inputsDisabled} />
+                </div>
 
-        <p className="sub-footnote">Enviaremos información relevante y respetaremos tu privacidad.</p>
+                <div className="sub-field">
+                  <label>Teléfono (máx 15 caracteres)</label>
+                  <input name="telefono" value={form.telefono} onChange={onChange} placeholder="Ej: 50688881234" disabled={inputsDisabled} />
+                </div>
+
+                <div className="sub-field">
+                  <label>Tipo de sangre</label>
+                  <select name="tipo_sangre" value={form.tipo_sangre} onChange={onChange} disabled={inputsDisabled}>
+                    <option value="">Seleccione</option>
+                    {tiposSangre.map((t) => {
+                      const id = t.id_tipo_sangre ?? t.id;
+                      const label = t.blood_type ?? t.nombre ?? t.tipo ?? t.tipo_sangre ?? String(id);
+                      return (
+                        <option key={String(id)} value={String(id)}>
+                          {label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  {/* mostrar la etiqueta textual debajo (opcional) */}
+                  {form.tipo_sangre && <small>{getTipoLabelById(form.tipo_sangre)}</small>}
+                </div>
+              </>
+            )}
+
+            {msg.text && <div className={`sub-alert ${msg.type}`}>{msg.text}</div>}
+
+            <button className="sub-btn" disabled={loading}>
+              {loading ? "Guardando..." : suscritoExistente ? "Confirmar participación" : "Finalizar participación"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

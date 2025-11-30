@@ -4,7 +4,7 @@ import "./AdminSidebar.css";
 
 const ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "▦", path: "" },
-  { id: "banners", label: "Banners Principales", icon: "🖼️", path: "banners" },
+  { id: "banners", label: "Banners Principales", icon: "🖼️", path: "carusel_admin" },
   { id: "campanas", label: "Campañas", icon: "📅", path: "campanas" },
   { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "preguntas" },
   { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "tipos" },

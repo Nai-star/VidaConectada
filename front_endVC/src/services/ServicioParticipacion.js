@@ -1,63 +1,41 @@
+
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://192.168.100.34:8000/api";
+const candidates = [
+  import.meta.env.VITE_API_URL || "http://192.168.100.34:8000/api",
+  "http://127.0.0.1:8000/api",
+  "http://localhost:8000/api"
+];
 
-export const obtenerTiposSangre = async () => {
-  const response = await axios.get(`${API_BASE_URL}/sangre/`);
-  return response.data;
-};
+export const registrarParticipacion = async ({ cedula, nombre, email, campaignId }) => {
+  const payload = {
+    Numero_cedula: cedula,
+    nombre: nombre || "",
+    email: email || "",
+    campana: campaignId,
+  };
 
-export const registerParticipante = async (data) => {
-  try {
-    console.log("DATA RECIBIDA:", data);
+  console.log("PAYLOAD PARTICIPACION:", payload);
 
-    const email = data.correo || data.email;
-    const sangreTexto = (data.tipo_sangre || "").trim();
-    const campana = data.campaignId || data.campana;
-    const createSubscription = !!data.createSubscription; 
-    const cedula = data.cedula || data.Numero_cedula || data.numero_cedula || "";
-
-    if (!email) throw new Error("❌ Falta el correo");
-    if (!sangreTexto) throw new Error("❌ Falta el tipo de sangre");
-    if (!campana) throw new Error("❌ Falta el ID de campaña");
-
-    const tipos = await obtenerTiposSangre();
-    const tipo = tipos.find(t => 
-      t.tipo_sangre === sangreTexto || t.tipo === sangreTexto || t.blood_type === sangreTexto || String(t.id) === String(sangreTexto)
-    );
-
-    if (!tipo) {
-      console.log("Tipos recibidos:", tipos)
-      throw new Error(`Tipo de sangre inválido: ${sangreTexto}`);
+  for (const base of candidates) {
+    try {
+      console.log("Intentando POST en:", base + "/participacion/");
+      const response = await axios.post(`${base}/participacion/`, payload, { timeout: 8000 });
+      console.log("registrarParticipacion - success:", base, response.status, response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error al intentar con", base, error?.message || error);
+      if (error.response) {
+        console.error("server response:", error.response.status, error.response.data);
+        const err = new Error("Error al registrar participación");
+        err.status = error.response.status;
+        err.server = error.response.data;
+        throw err;
+      }
+      // si es fallo de conexión seguimos al siguiente candidate
     }
-
-    const payload = {
-      nombre: data.nombre,
-      apellido: data.apellido,
-      // enviar ambos para compatibilidad
-      email: email,
-      correo: email,
-      sangre: tipo.id,
-      campana: campana,
-      createSubscription: createSubscription,
-      // campo que el backend te está pidiendo
-      Numero_cedula: cedula,
-      // opcional (por compatibilidad)
-      cedula: cedula,
-    };
-
-    console.log("DATA ENVIADA:", payload);
-
-    const response = await axios.post(`${API_BASE_URL}/participacion/`, payload);
-    return response.data;
-
-  } catch (error) {
-    if (error.response && error.response.data) {
-      console.error("Backend error response:", error.response.data);
-      // re-lanzamos con detalle (tu modal ya maneja esto)
-      throw new Error(JSON.stringify(error.response.data));
-    }
-    console.error("Error registrando participación:", error);
-    throw error;
   }
+
+  const err = new Error("No se pudo conectar con el backend (timeout/conn refused). Revisa API_BASE_URL y que Django esté corriendo.");
+  throw err;
 };

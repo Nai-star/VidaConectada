@@ -1,8 +1,10 @@
 // ServicioSuscritos.axios.js
 import axios from "axios";
-import { getAccessToken, refreshJWT, setAuthTokens, getAuthTokens } from "./auth";
 
-const API_BASE = (import.meta.env.VITE_API_URL || "http://192.168.100.34:8000") + "/api";
+import { getAccessToken, refreshJWT, setAuthTokens, getAuthTokens } from "./auth";
+const API_BASE = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000") + "/api";
+
+/* const API_BASE = (import.meta.env.VITE_API_URL || "http://192.168.100.34:8000") + "/api"; */
 
 const client = axios.create({
   baseURL: API_BASE,
@@ -55,10 +57,27 @@ export async function obtenerSuscritoPorId(id) {
   return res.data;
 }
 
+// in ServicioSuscritos.axios.js
 export async function crearSuscripcion(payload) {
-  const res = await client.post("/suscritos/", payload);
-  return res.data;
+  try {
+    const res = await client.post("/suscritos/", payload);
+    return res.data;
+  } catch (error) {
+    // Re-throw the axios error but ensure response data is attached for UI
+    if (error.response) {
+      // include the server payload for the component
+      const serverData = error.response.data;
+      console.error("crearSuscripcion - server responded:", error.response.status, serverData);
+      // create a new error that keeps response property
+      const err = new Error("Validation error from server");
+      err.response = error.response;
+      throw err;
+    }
+    console.error("crearSuscripcion - request error:", error);
+    throw error;
+  }
 }
+
 
 export async function actualizarSuscrito(id, payload) {
   const res = await client.put(`/suscritos/${id}/`, payload);
@@ -77,3 +96,4 @@ export function buildSearchQuery({ q, page, page_size } = {}) {
   if (page_size) params.set("page_size", page_size);
   return params.toString();
 }
+

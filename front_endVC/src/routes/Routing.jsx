@@ -13,6 +13,7 @@ import Admin from '../pages/Admin/Admin';
 import Configuracion from '../Components/AdminSidebar/Configuraciones/Configuracion';
 import Dashboard from '../Components/AdminSidebar/Dashboard/Dashboard';
 import GestionUsuarios from '../Components/AdminSidebar/GestionUsuarios/GestionUsuarios';
+import CaruselAdmin from '../Components/CaruselAdmin/CaruselAdmin';
 /* import AdminSidebar from '../Components/AdminSidebar/AdminSidebar'; */
 
 
@@ -49,7 +50,8 @@ function Routing() {
 
           <Route index element={<Dashboard/>}/>
           <Route path='configuracion' element={<Configuracion/>}/>
-          <Route path='gestion_usuarios' element={<GestionUsuarios/>} />            {/* /admin */}
+          <Route path='gestion_usuarios' element={<GestionUsuarios/>} />    
+          <Route path='carusel_admin' element={<CaruselAdmin/>} />       
          {/*  <Route path='productos' element={<ProductosAdmin/>} />  */} {/* /admin/productos */}
           
    

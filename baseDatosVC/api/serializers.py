@@ -176,27 +176,40 @@ class SuscritosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Suscritos
         fields = "__all__"
+        extra_kwargs = {
+            "Telefono": {"required": False, "allow_null": True, "allow_blank": True},
+        }
 
     def validate(self, data):
-        cedula = data.get("Numero_cedula")
-        correo = data.get("Correo")  # <- Ajusta según el nombre real en tu modelo
+        # ... (Validaciones existentes para cedula y correo)
 
-        # Detecta si es edición (self.instance existe) o creación
+        cedula = data.get("Numero_cedula")
+        correo = data.get("correo") # Asegúrate de que este nombre coincida con tu modelo: 'correo' o 'Correo'
+        
+        # --- NUEVA VALIDACIÓN PARA TELÉFONO ---
+        telefono = data.get("Telefono") 
         suscrito_id = self.instance.id if self.instance else None
 
-        # --- Validar CÉDULA ---
+        if telefono:
+            if Suscritos.objects.filter(Telefono=telefono).exclude(id=suscrito_id).exists():
+                raise serializers.ValidationError({
+                    "Telefono": "Este número de teléfono ya está registrado."
+                })
+        
+        # --- Validaciones existentes para CÉDULA ---
         if cedula:
             if Suscritos.objects.filter(Numero_cedula=cedula).exclude(id=suscrito_id).exists():
                 raise serializers.ValidationError({
                     "Numero_cedula": "Esta cédula ya pertenece a un suscrito."
                 })
 
-        # --- Validar CORREO ---
+        # --- Validaciones existentes para CORREO ---
         if correo:
-            if Suscritos.objects.filter(Correo__iexact=correo).exclude(id=suscrito_id).exists():
-                raise serializers.ValidationError({
-                    "Correo": "Este correo ya está registrado."
-                })
+            # Asumiendo que el campo en el modelo es 'correo' (minúscula)
+            if Suscritos.objects.filter(correo__iexact=correo).exclude(id=suscrito_id).exists():
+                 raise serializers.ValidationError({
+                     "correo": "Este correo ya está registrado."
+                 })
 
         return data
 
@@ -560,36 +573,23 @@ class TestimonioVideoSerializer(serializers.ModelSerializer):
 
     
 
-
-# ✅ Participacion
-from django.db import transaction
-from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from django.utils import timezone
-
-from .models import Participacion, Suscritos, Campana, Sangre  # importa tus modelos reales
-
 class ParticipacionSerializer(serializers.ModelSerializer):
-    # Campos de entrada (write_only)
     Numero_cedula = serializers.CharField(write_only=True, required=True)
     email = serializers.EmailField(write_only=True, required=False, allow_blank=True)
     nombre = serializers.CharField(write_only=True, required=False, allow_blank=True)
     createSubscription = serializers.BooleanField(write_only=True, required=False, default=False)
 
-    # Campo relacionado de salida: devuelve el id del suscrito (FK)
     suscrito = serializers.PrimaryKeyRelatedField(source="suscritos", read_only=True)
-    sangre = serializers.PrimaryKeyRelatedField(queryset=Sangre.objects.all(), required=False, allow_null=True)
     campana = serializers.PrimaryKeyRelatedField(queryset=Campana.objects.all())
 
     class Meta:
         model = Participacion
         fields = [
             "id",
-            "suscrito",           # read only: id del suscrito
-            "Numero_cedula",      # write only
+            "suscrito",
+            "Numero_cedula",
             "email",
             "nombre",
-            "sangre",
             "campana",
             "fecha_participacion",
             "createSubscription",
@@ -597,59 +597,104 @@ class ParticipacionSerializer(serializers.ModelSerializer):
         read_only_fields = ["id", "suscrito", "fecha_participacion"]
 
     def validate(self, attrs):
-        # Asegurar que exista Numero_cedula
         numero = (attrs.get("Numero_cedula") or "").strip()
         if not numero:
-            raise serializers.ValidationError({"Numero_cedula": "Se requiere Numero_cedula para identificar al suscrito."})
+            raise serializers.ValidationError({"Numero_cedula": "Se requiere Numero_cedula."})
         return attrs
+    
+from django.utils import timezone
+from rest_framework.exceptions import ValidationError
+from django.db import transaction
+import traceback
 
-    @transaction.atomic
-    def create(self, validated_data):
-        # Extraer los campos auxiliares
-        numero = (validated_data.pop("Numero_cedula") or "").strip()
-        email = (validated_data.pop("email", "") or "").strip().lower()
-        nombre_payload = (validated_data.pop("nombre", "") or "").strip()
+@transaction.atomic
+def create(self, validated_data):
+        # Extraer y normalizar datos que NO son campos directos del modelo Participacion
+        numero = (validated_data.pop("Numero_cedula", "") or "").strip()
+        email = (validated_data.pop("email", "") or "").strip() or None
+        nombre_payload = (validated_data.pop("nombre", "") or "").strip() or None
         create_sub = validated_data.pop("createSubscription", False)
-        sangre_obj = validated_data.get("sangre", None)
-        campana_obj = validated_data.get("campana")
 
-        # 1) Intentar obtener suscrito por Numero_cedula (con bloqueo simple)
+        # campana ya estará en validated_data como objeto (PrimaryKeyRelatedField)
+        campana_obj = validated_data.get("campana", None)
+
+        # Eliminar claves que podrían colarse y provocar TypeError
+        validated_data.pop("sangre", None)
+        validated_data.pop("Sangre", None)
+        validated_data.pop("Numero_cedula", None)
+
+        # Debug corto
+        print("Participacion.create() — numero:", numero, "campana:", campana_obj)
+        print("Participacion.create() — validated_data (rest):", list(validated_data.keys()))
+
+        # Buscar suscrito con lock
         suscrito = Suscritos.objects.filter(Numero_cedula=numero).select_for_update().first()
+        print("Participacion.create() — suscrito encontrado:", bool(suscrito))
 
+        # ----------------- Caso: suscrito ya existe -----------------
         if suscrito:
-            # verificar duplicado de participacion
+            # Si ya existe participacion para esta campaña → error controlado
             if Participacion.objects.filter(suscritos=suscrito, campana=campana_obj).exists():
                 raise ValidationError({"detail": "El suscrito ya está inscrito en esta campaña."})
 
-            # Si no se proporcionó sangre en payload, intentar obtener desde registro de suscrito
-            if not sangre_obj and getattr(suscrito, "Sangre", None):
-                validated_data["sangre"] = suscrito.Sangre
+            # Construir kwargs explícitos (solo campos válidos del modelo Participacion)
+            create_kwargs = {
+                "suscritos": suscrito,
+                "campana": campana_obj,
+            }
 
-            validated_data["suscritos"] = suscrito
-            participacion = Participacion.objects.create(**validated_data)
-            return participacion
+            # Asignar sangre desde el suscrito si aplica
+            try:
+                sangre_val = getattr(suscrito, "Sangre", None)
+                if sangre_val is not None:
+                    create_kwargs["sangre"] = sangre_val
+            except Exception:
+                pass
 
-        # 2) No existe suscrito
+            try:
+                created = Participacion.objects.create(**create_kwargs)
+                return created
+            except Exception as e:
+                print("Error creando Participacion (suscrito existente):", str(e))
+                print(traceback.format_exc())
+                raise ValidationError({"detail": "Error creando participación: " + str(e)})
+
+        # ----------------- Caso: suscrito NO existe -----------------
         if not create_sub:
-            raise ValidationError({"detail": "No existe un suscrito con ese Numero_cedula. Envía createSubscription=true para crear el suscrito automáticamente."})
+            raise ValidationError({"detail": "No existe un suscrito con esa cédula. Envíe createSubscription=true para crearlo."})
 
-        # 3) Crear suscrito (asegúrate de llenar los campos requeridos)
+        # Crear nuevo suscrito
         suscrito_data = {
             "Fecha": timezone.now(),
             "Numero_cedula": numero,
-            "correo": email or None,
-            "nombre": nombre_payload or None,
+            "correo": email,
+            "nombre": nombre_payload,
         }
-        # si tienes campo FK Sangre en Suscritos y vino sangre_obj, asignarlo
-        if sangre_obj:
-            suscrito_data["Sangre"] = sangre_obj
 
-        # Si tu modelo Suscritos tiene relacion a CustomUser y quieres crearla, añade lógica acá.
-        # Ejemplo: if you have CustomUser and email exists, link user; else leave CustomUser null.
+        # Mapear sangre si vino en payload inicial
+        sangre_payload = self.initial_data.get("sangre") or self.initial_data.get("Sangre")
+        if sangre_payload:
+            try:
+                suscrito_data["Sangre_id"] = int(sangre_payload)
+            except Exception:
+                suscrito_data["Sangre_id"] = sangre_payload
 
-        suscrito = Suscritos.objects.create(**suscrito_data)
+        print("Creando Suscrito con:", suscrito_data)
+        suscrito = Suscritos.objects.create(**{k: v for k, v in suscrito_data.items() if v is not None})
 
-        # 4) Finalmente crear participacion
-        validated_data["suscritos"] = suscrito
-        participacion = Participacion.objects.create(**validated_data)
-        return participacion
+        # Preparar kwargs para la participacion ligada al suscrito creado
+        create_kwargs = {"suscritos": suscrito, "campana": campana_obj}
+        try:
+            sangre_val = getattr(suscrito, "Sangre", None)
+            if sangre_val is not None:
+                create_kwargs["sangre"] = sangre_val
+        except Exception:
+            pass
+
+        try:
+            created = Participacion.objects.create(**create_kwargs)
+            return created
+        except Exception as e:
+            print("Error creando Participacion tras crear Suscrito:", str(e))
+            print(traceback.format_exc())
+            raise ValidationError({"detail": "Error creando la participación: " + str(e)})

@@ -89,5 +89,6 @@ urlpatterns = [
    
     path('participacion/', ParticipacionListCreateView.as_view(), name="crear y listar participaciones"),
     path('participacion/<int:pk>', ParticipacionDetailView.as_view(), name="actualizar y eliminar participacion"),
+    path("suscritos/buscar/", buscar_suscrito_por_cedula),
 
 ]

@@ -315,6 +315,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 			serializer_class = CustomTokenObtainPairSerializer
 
 
+from rest_framework import status
+from rest_framework.response import Response
+from django.db import IntegrityError, transaction
+
 #✅ Participacion
 class ParticipacionListCreateView(ListCreateAPIView):
     queryset = Participacion.objects.all()
@@ -322,26 +326,101 @@ class ParticipacionListCreateView(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         print("=== NUEVA PETICION /api/participacion/ ===")
-        print("request.data:", request.data)  # muestra exactamente lo que llega
+        print("request.data:", request.data)
+        data = request.data or {}
 
-        serializer = self.get_serializer(data=request.data)
+        numero = (data.get("Numero_cedula") or "").strip()
+        campana_id = data.get("campana") or data.get("campana_id")
+        create_sub = data.get("createSubscription") or data.get("createSubscription", False)
+
+        if not numero or not campana_id:
+            return Response({"detail": "Numero_cedula y campana son requeridos."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # obtener instancia de campana
         try:
-            serializer.is_valid(raise_exception=True)
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            print("Participación creada:", serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        except ValidationError as ve:
-            # Imprime errores legibles en consola de Django
-            print("ValidationError:", serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            # Otros errores
-            print("Error inesperado al crear participacion:", str(e))
-            return Response({"detail": "Error interno"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+            camp = Campana.objects.get(pk=campana_id)
+        except Campana.DoesNotExist:
+            return Response({"detail": "Campana no encontrada."}, status=status.HTTP_400_BAD_REQUEST)
 
+        try:
+            with transaction.atomic():
+                suscrito = Suscritos.objects.select_for_update().filter(Numero_cedula=numero).first()
+
+                if suscrito:
+                    # evitar duplicados
+                    if Participacion.objects.filter(suscritos=suscrito, campana=camp).exists():
+                        return Response({"detail": "El suscrito ya está inscrito en esta campaña."}, status=status.HTTP_400_BAD_REQUEST)
+
+                    create_kwargs = {"suscritos": suscrito, "campana": camp}
+                    # asignar sangre si existe en suscrito
+                    if getattr(suscrito, "Sangre", None) is not None:
+                        create_kwargs["sangre"] = suscrito.Sangre
+
+                    p = Participacion.objects.create(**create_kwargs)
+                    serializer = self.get_serializer(p)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+                # si no existe suscrito
+                if not create_sub:
+                    return Response({"detail": "No existe suscrito con esa cédula. Envíe createSubscription=true para crearlo."}, status=status.HTTP_400_BAD_REQUEST)
+
+                # crear suscrito (tomando campos seguros desde request.data)
+                sus_data = {
+                    "Fecha": timezone.now(),
+                    "Numero_cedula": numero,
+                    "nombre": data.get("nombre") or None,
+                    "correo": data.get("email") or data.get("correo") or None,
+                    "Telefono": data.get("Telefono") or data.get("telefono") or None,
+                }
+                sangre_payload = data.get("sangre") or data.get("Sangre") or None
+                if sangre_payload:
+                    try:
+                        sus_data["Sangre_id"] = int(sangre_payload)
+                    except Exception:
+                        sus_data["Sangre_id"] = sangre_payload
+
+                suscrito = Suscritos.objects.create(**{k: v for k, v in sus_data.items() if v is not None})
+
+                create_kwargs = {"suscritos": suscrito, "campana": camp}
+                if getattr(suscrito, "Sangre", None) is not None:
+                    create_kwargs["sangre"] = suscrito.Sangre
+
+                p = Participacion.objects.create(**create_kwargs)
+                serializer = self.get_serializer(p)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except IntegrityError as ie:
+            print("IntegrityError creando participacion:", str(ie))
+            return Response({"detail": "Error de integridad", "error": str(ie)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            import traceback
+            tb = traceback.format_exc()
+            print("Error inesperado al crear participacion:", str(e))
+            print(tb)
+            return Response({"detail": "Error interno", "error": str(e), "traceback": tb}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+  
 class ParticipacionDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Participacion.objects.all()
     serializer_class = ParticipacionSerializer
     permission_classes = [AllowAny]
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Suscritos
+from .serializers import SuscritosSerializer
+
+@api_view(['GET'])
+def buscar_suscrito_por_cedula(request):
+    cedula = request.GET.get('cedula')
+
+    if not cedula:
+        return Response({"error": "Debe enviar la cédula"}, status=400)
+
+    try:
+        suscrito = Suscritos.objects.get(Numero_cedula=cedula)
+    except Suscritos.DoesNotExist:
+        return Response({"error": "No encontrado"}, status=404)
+
+    serializer = SuscritosSerializer(suscrito)
+    return Response(serializer.data)

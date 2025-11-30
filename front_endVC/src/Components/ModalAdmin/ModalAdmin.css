@@ -1,0 +1,178 @@
+/* Estilos para el fondo y la caja modal */
+.modal-overlay {
+    /* Estilos para el fondo oscuro */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    /* Estilos para la caja del formulario */
+    background: #fff;
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Sombra sutil */
+    padding: 24px;
+    width: 90%;
+    max-width: 450px; /* Ancho máximo similar al de la imagen */
+    color: #333;
+    position: relative;
+}
+
+/* Encabezados y texto */
+.modal-box h2 {
+    font-size: 1.5rem; /* Título "Nuevo Banner" */
+    color: #000;
+    margin-top: 0;
+    font-weight: 600; /* Seminegrita */
+}
+
+.modal-box > p {
+    /* Descripción "Configura un nuevo banner..." */
+    color: #666;
+    margin-bottom: 20px;
+}
+
+/* Estilos para los campos de formulario (label e input) */
+.modal-box label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600; /* Seminegrita para el label */
+    font-size: 0.9rem;
+    color: #000;
+}
+
+.modal-box input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 4px;
+    box-sizing: border-box; /* Incluir padding y borde en el ancho */
+    font-size: 1rem;
+}
+
+.modal-box input[type="text"]::placeholder {
+    color: #aaa; /* Color del placeholder */
+}
+
+/* Filas de Switch/Toggle (Mostrar filtro oscuro, Mostrar texto) */
+.switch-row {
+    display: flex;
+    justify-content: space-between; /* Espaciar el texto del switch */
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee; /* Línea separadora sutil */
+}
+
+.switch-row:first-of-type {
+    border-top: 1px solid #eee;
+}
+
+.switch-row span {
+    /* Texto del switch */
+    display: flex;
+    flex-direction: column;
+    font-size: 1rem;
+    color: #333;
+}
+
+.switch-row span small {
+    /* Texto de ayuda debajo del principal */
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* Estilos para el Footer y botones */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end; /* Alinear botones a la derecha */
+    gap: 10px; /* Espacio entre botones */
+    margin-top: 24px;
+}
+
+.modal-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.btn-cancelar {
+    background-color: transparent;
+    color: #666;
+    border: 1px solid #ccc;
+}
+
+.btn-cancelar:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-guardar {
+    /* Estilo del botón "Agregar Banner" (rojo/salmón) */
+    background-color: #ff6347; /* Un color similar al de la imagen */
+    color: white;
+}
+
+.btn-guardar:hover {
+    background-color: #e5533c; /* Un rojo más oscuro al pasar el ratón */
+}
+
+/* ---------------------------------------------------- */
+/* ESTILOS DEL SWITCH (Toggle) */
+/* Estos estilos hacen que el input checkbox parezca un switch */
+/* ---------------------------------------------------- */
+
+.switch-row input[type="checkbox"] {
+    /* Ocultar el checkbox nativo */
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Contenedor visual del switch (el 'track' o la pista) */
+.switch-row input[type="checkbox"] + label::before {
+    content: '';
+    display: inline-block;
+    width: 44px; /* Ancho del switch */
+    height: 24px; /* Alto del switch */
+    background-color: #ccc; /* Color gris (apagado) */
+    border-radius: 12px;
+    position: relative;
+    top: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* El 'thumb' o la perilla del switch */
+.switch-row input[type="checkbox"] + label::after {
+    content: '';
+    display: block;
+    width: 20px; /* Tamaño de la perilla */
+    height: 20px;
+    background-color: #fff;
+    border-radius: 50%;
+    position: relative;
+    top: -19px; /* Ajustar posición vertical */
+    left: 2px; /* Posición inicial */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+/* Estado ACTIVADO (el checkbox está marcado) */
+.switch-row input[type="checkbox"]:checked + label::before {
+    background-color: #ff6347; /* Color rojo (encendido) */
+}
+
+.switch-row input[type="checkbox"]:checked + label::after {
+    transform: translateX(20px); /* Mover a la derecha */
+}

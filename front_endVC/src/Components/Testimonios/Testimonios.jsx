@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getTestimoniosTexto, getTestimoniosVideo } from "../../services/ServicioTestimonio";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
-import "swiper/css";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import "./testimonios.css";
 
 function Testimonios() {
@@ -13,58 +13,63 @@ function Testimonios() {
     const cargarDatos = async () => {
       const texto = await getTestimoniosTexto();
       const video = await getTestimoniosVideo();
+
       setTestimoniosTexto(texto);
       setTestimoniosVideo(video);
     };
     cargarDatos();
   }, []);
 
+  // Configuración de Slider react-slick
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 5000, // 5 segundos
+    arrows: true,
+  };
+
   return (
     <section className="testimonios-section">
       <h2 className="titulo">Testimonios</h2>
 
       <div className="contenedor-testimonios">
-        {/* Testimonios de texto */}
+        {/* ---- Testimonios de texto ---- */}
         <div className="testimonios-texto">
           <h3>Lo que dicen</h3>
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={20}
-            loop={true}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            modules={[Autoplay]}
-          >
+          <Slider {...sliderSettings}>
             {testimoniosTexto.map((t) => (
-              <SwiperSlide key={t.id}>
-                <div className="caja-texto">
-                  <img src={t.Foto_P} className="foto-testimonio" alt="Foto testimonio" />
-                  <p className="frase">“{t.Frase}”</p>
-                  <p className="nombre">{t.Nombre}</p>
-                </div>
-              </SwiperSlide>
+              <div className="caja-texto" key={t.id}>
+                <img
+                  src={t.Foto_P}
+                  className="foto-testimonio"
+                  alt={t.Nombre}
+                />
+                <p className="frase">“{t.Frase}”</p>
+                <p className="nombre">{t.Nombre}</p>
+              </div>
             ))}
-          </Swiper>
+          </Slider>
         </div>
 
-        {/* Testimonios de video */}
+        {/* ---- Testimonios de video ---- */}
         <div className="testimonios-video">
           <h3>Experiencias en video</h3>
-          <Swiper
-            slidesPerView={1}
-            spaceBetween={20}
-            loop={true}
-            autoplay={{ delay: 5000, disableOnInteraction: false }}
-            modules={[Autoplay]}
-          >
+          <Slider {...sliderSettings}>
             {testimoniosVideo.map((v) => (
-              <SwiperSlide key={v.id}>
-                <div className="video-container">
-                  <video className="video-testimonio" src={v.video.Video} controls />
-                  <p className="video-texto">{v.video.Descripcion}</p>
-                </div>
-              </SwiperSlide>
+              <div className="video-container" key={v.id}>
+                <video
+                  className="video-testimonio"
+                  src={v.video.Video}
+                  controls
+                />
+                <p className="video-texto">{v.video.Descripcion}</p>
+              </div>
             ))}
-          </Swiper>
+          </Slider>
         </div>
       </div>
     </section>

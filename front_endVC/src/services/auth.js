@@ -1,6 +1,8 @@
 // Manejo de tokens JWT (SimpleJWT): guardar/leer/refresh
 
 const API_URL = import.meta.env.VITE_API_URL || "http://192.168.100.34:8000";
+/* const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"; */
+
 
 const TOKENS_KEY = "vc_tokens"; // {access, refresh}
 

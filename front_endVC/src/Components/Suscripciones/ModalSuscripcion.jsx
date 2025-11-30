@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./modalSuscripcion.css";
 import { crearSuscripcion } from "../../services/ServicioSuscripcion";
 import { GetTiposSangre } from "../../services/Servicio_TS";
-// import { checkCustomUser, checkSuscripcion, createUser } from "../../services/ServicioCustomUser";
+// Asegúrate de importar estas funciones si las usas, si no, déjalas comentadas o bórralas
+// import { checkCustomUser, checkSuscripcion, createUser } from "../../services/ServicioCustomUser"; 
 import { FiBell } from "react-icons/fi";
 
 /* ---------- Aux: extraer y normalizar mensajes del servidor (incluye traducción inglés->es) ---------- */
@@ -15,6 +16,10 @@ function mapEnglishServerMessageToSpanish(msg = "") {
   }
   if (/already exists/i.test(s) && /correo|email/i.test(s)) {
     return "Este correo ya está registrado.";
+  }
+  // 💡 NUEVO: Manejo de error de unicidad para Telefono
+  if (/already exists/i.test(s) && /telefono|phone/i.test(s)) {
+    return "Este número de teléfono ya está registrado.";
   }
   if (/unique constraint/i.test(s) && /numero/i.test(s)) {
     return "Esta cédula ya está registrada.";
@@ -38,7 +43,7 @@ function parseAxiosError(err) {
 
   // Si el backend devuelve un objeto con campos, priorizamos campos específicos
   if (typeof data === "object" && !Array.isArray(data)) {
-    // Normalizar claves que puedas recibir (Numero_cedula, numero_cedula, correo, email, etc.)
+    // Normalizar claves que puedas recibir (Numero_cedula, numero_cedula, correo, email, telefono, etc.)
     const pick = (keys) => {
       for (const k of keys) {
         if (data[k]) return data[k];
@@ -51,6 +56,10 @@ function parseAxiosError(err) {
 
     const correo = pick(["correo", "email", "Correo", "e-mail"]);
     if (correo) return Array.isArray(correo) ? String(correo[0]) : String(correo);
+    
+    // 💡 NUEVO: Manejo de errores para el campo Telefono
+    const telefono = pick(["Telefono", "telefono"]);
+    if (telefono) return Array.isArray(telefono) ? String(telefono[0]) : String(telefono);
 
     if (data.detail) return String(data.detail);
     if (data.non_field_errors) return Array.isArray(data.non_field_errors) ? String(data.non_field_errors[0]) : String(data.non_field_errors);
@@ -87,7 +96,7 @@ function ModalSuscripcion({ isOpen, onClose }) {
   const [customUser, setCustomUser] = useState(null);
   const [isExisting, setIsExisting] = useState(false);
   const [error, setError] = useState("");
-  const [fieldErrors, setFieldErrors] = useState({}); // { Numero_cedula: "...", correo: "..." }
+  const [fieldErrors, setFieldErrors] = useState({}); // { Numero_cedula: "...", correo: "...", Telefono: "..." }
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -95,6 +104,8 @@ function ModalSuscripcion({ isOpen, onClose }) {
     Numero_cedula: "",
     nombre: "",
     correo: "",
+    // 💡 NUEVO: Añadir Telefono al estado
+    Telefono: "", 
     Sangre: "",
   });
 
@@ -112,7 +123,7 @@ function ModalSuscripcion({ isOpen, onClose }) {
     fetchData();
   }, []);
 
-  // Buscar usuario / suscripción cuando se bluree el input de cédula
+  // Buscar usuario / suscripción cuando se bluree el input de cédula (mantener igual)
   const handleBuscarUsuario = async (e) => {
     try {
       setError("");
@@ -126,21 +137,18 @@ function ModalSuscripcion({ isOpen, onClose }) {
       setLoading(true);
 
       // Si tienes funciones para chequear usuario/suscripción, descomenta e importa:
-      // const user = await checkCustomUser(cedula);
-      // const suscrito = await checkSuscripcion(cedula);
-      // En este componente no asumimos que existan; así que solo limpias/llenas si hay.
       let user = null;
       let suscrito = null;
-      if (typeof window.checkCustomUser === "function") {
-        user = await window.checkCustomUser(cedula);
-      } else if (typeof checkCustomUser === "function") {
-        user = await checkCustomUser(cedula);
-      }
-      if (typeof window.checkSuscripcion === "function") {
-        suscrito = await window.checkSuscripcion(cedula);
-      } else if (typeof checkSuscripcion === "function") {
-        suscrito = await checkSuscripcion(cedula);
-      }
+      // if (typeof window.checkCustomUser === "function") {
+      //   user = await window.checkCustomUser(cedula);
+      // } else if (typeof checkCustomUser === "function") {
+      //   user = await checkCustomUser(cedula);
+      // }
+      // if (typeof window.checkSuscripcion === "function") {
+      //   suscrito = await window.checkSuscripcion(cedula);
+      // } else if (typeof checkSuscripcion === "function") {
+      //   suscrito = await checkSuscripcion(cedula);
+      // }
 
       setLoading(false);
 
@@ -157,6 +165,8 @@ function ModalSuscripcion({ isOpen, onClose }) {
           ...prev,
           nombre: user.nombre ?? prev.nombre,
           correo: user.correo ?? prev.correo,
+          // 💡 NOTA: Si tu CustomUser tiene campo de teléfono, agrégalo aquí:
+          // Telefono: user.Telefono ?? prev.Telefono, 
           Numero_cedula: cedula,
         }));
         setIsExisting(true);
@@ -165,7 +175,8 @@ function ModalSuscripcion({ isOpen, onClose }) {
       } else {
         setCustomUser(null);
         setIsExisting(false);
-        setForm((prev) => ({ ...prev, nombre: "", correo: "", Numero_cedula: cedula }));
+        // Limpiar el campo Telefono si no se encuentra el usuario
+        setForm((prev) => ({ ...prev, nombre: "", correo: "", Telefono: "", Numero_cedula: cedula }));
         setError("");
         setSuccess("");
       }
@@ -176,7 +187,7 @@ function ModalSuscripcion({ isOpen, onClose }) {
     }
   };
 
-  // Manejo de inputs
+  // Manejo de inputs (mantener igual)
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -190,6 +201,8 @@ function ModalSuscripcion({ isOpen, onClose }) {
     if (!form.Numero_cedula?.toString().trim()) fe.Numero_cedula = "La cédula es obligatoria.";
     if (!form.nombre?.toString().trim()) fe.nombre = "El nombre es obligatorio.";
     if (!form.correo?.toString().trim()) fe.correo = "El correo es obligatorio.";
+    // 💡 NUEVO: Añadir validación para el campo Telefono
+    if (!form.Telefono?.toString().trim()) fe.Telefono = "El teléfono es obligatorio.";
     if (!form.Sangre) fe.Sangre = "Debe seleccionar un tipo de sangre.";
     return fe;
   };
@@ -210,12 +223,16 @@ function ModalSuscripcion({ isOpen, onClose }) {
     try {
       setLoading(true);
 
-      // Payload que esperará tu serializer (ajusta si tu backend usa otros nombres)
+      // Payload que esperará tu serializer
       const payload = {
         Numero_cedula: form.Numero_cedula,
+        nombre: form.nombre,  
         correo: form.correo,
+        // 💡 NUEVO: Incluir el campo Telefono en el payload
+        Telefono: form.Telefono, 
         Sangre: form.Sangre,
-        ...(customUser?.id ? { CustomUser: customUser.id } : {}),
+        // Si usas CustomUser y es un FK, necesitas enviar el ID
+        // ...(customUser?.id ? { CustomUser: customUser.id } : {}), 
       };
 
       const response = await crearSuscripcion(payload);
@@ -224,7 +241,8 @@ function ModalSuscripcion({ isOpen, onClose }) {
       if (response?.id) {
         setSuccess("¡Suscripción creada con éxito!");
         setError("");
-        setForm({ Numero_cedula: "", nombre: "", correo: "", Sangre: "" });
+        // 💡 NUEVO: Limpiar el campo Telefono en el formulario
+        setForm({ Numero_cedula: "", nombre: "", correo: "", Telefono: "", Sangre: "" });
         setCustomUser(null);
         setIsExisting(false);
       } else {
@@ -234,30 +252,43 @@ function ModalSuscripcion({ isOpen, onClose }) {
       setLoading(false);
       console.error("Error en submit:", err);
 
-      // Primero, si el backend devolvió un objeto con errores por campo, mostramos por campo
+      // Primero, si el backend devolvió un objeto con errores por campo
       const respData = err?.response?.data;
       if (respData && typeof respData === "object" && !Array.isArray(respData)) {
         const newFieldErrors = {};
-        // chequeamos varias variantes de claves posibles
+        
+        // Cédula
         if (respData.Numero_cedula || respData.numero_cedula) {
-          const v = respData.Numero_cedula ?? respData.numero_cedula;
-          newFieldErrors.Numero_cedula = Array.isArray(v) ? v[0] : String(v);
+            const v = respData.Numero_cedula ?? respData.numero_cedula;
+            newFieldErrors.Numero_cedula = Array.isArray(v) ? v[0] : String(v);
         }
+        // Correo
         if (respData.correo || respData.email) {
-          const v = respData.correo ?? respData.email;
-          newFieldErrors.correo = Array.isArray(v) ? v[0] : String(v);
+            const v = respData.correo ?? respData.email;
+            newFieldErrors.correo = Array.isArray(v) ? v[0] : String(v);
         }
+        // 💡 NUEVO: Telefono
+        if (respData.Telefono || respData.telefono) {
+            const v = respData.Telefono ?? respData.telefono;
+            newFieldErrors.Telefono = Array.isArray(v) ? v[0] : String(v);
+        }
+
         if (Object.keys(newFieldErrors).length) {
-          // traducir si hace falta (por si backend devolvió mensaje en inglés dentro del campo)
+          // Traducciones
           if (newFieldErrors.Numero_cedula) {
             newFieldErrors.Numero_cedula = mapEnglishServerMessageToSpanish(newFieldErrors.Numero_cedula);
           }
           if (newFieldErrors.correo) {
             newFieldErrors.correo = mapEnglishServerMessageToSpanish(newFieldErrors.correo);
           }
+          // 💡 NUEVO: Traducir Telefono
+          if (newFieldErrors.Telefono) {
+            newFieldErrors.Telefono = mapEnglishServerMessageToSpanish(newFieldErrors.Telefono);
+          }
+          
           setFieldErrors(newFieldErrors);
-          // mostrar mensaje general (prioriza cédula)
-          setError(newFieldErrors.Numero_cedula || newFieldErrors.correo || "Error de validación.");
+          // Mostrar mensaje general (prioriza errores por campo)
+          setError(newFieldErrors.Numero_cedula || newFieldErrors.correo || newFieldErrors.Telefono || "Error de validación.");
           return;
         }
       }
@@ -323,6 +354,20 @@ function ModalSuscripcion({ isOpen, onClose }) {
             />
             {fieldErrors.correo && <small className="field-error">{fieldErrors.correo}</small>}
           </div>
+
+          {/* 💡 NUEVO: CAMPO TELÉFONO */}
+          <div className="sub-field">
+            <label>Teléfono:</label>
+            <input
+              type="tel"
+              name="Telefono"
+              value={form.Telefono}
+              onChange={handleChange}
+              placeholder="Número de teléfono (ej. 8091234567)"
+            />
+            {fieldErrors.Telefono && <small className="field-error">{fieldErrors.Telefono}</small>}
+          </div>
+          {/* 💡 FIN NUEVO */}
 
           {/* TIPO DE SANGRE */}
           <div className="sub-field">
