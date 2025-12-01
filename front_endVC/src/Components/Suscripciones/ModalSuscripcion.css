@@ -127,3 +127,18 @@
 @media (max-width: 560px) {
   .sub-row { grid-template-columns: 1fr; }
 }
+
+.close-btn {
+    position: absolute;
+    top: 30px;
+    right: 60px;
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    color: #596b7a;
+    font-size: 25px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color .2s, color .2s;
+}

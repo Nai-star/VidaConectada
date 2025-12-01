@@ -34,30 +34,51 @@ function Testimonios() {
 
   return (
     <section className="testimonios-section">
-      <h2 className="titulo">Testimonios</h2>
+    <section className="hero-testimonios">
+    <div className="hero-inner">
+      <div className="pill">
+        <span className="pill-icon">❤</span>
+        <span className="pill-text">Historias Reales</span>
+      </div>
 
+      <h2 className="hero-title">Voces que Inspiran a Donar</h2>
+
+      <p className="hero-desc">
+        Descubre las experiencias de donadores y familias cuyas vidas han sido transformadas por el acto de donar sangre
+      </p>
+    </div>
+  </section>
       <div className="contenedor-testimonios">
         {/* ---- Testimonios de texto ---- */}
         <div className="testimonios-texto">
-          <h3>Lo que dicen</h3>
+          <h3 className="hero-title">Lo que dicen</h3>
           <Slider {...sliderSettings}>
             {testimoniosTexto.map((t) => (
               <div className="caja-texto" key={t.id}>
-                <img
-                  src={t.Foto_P}
-                  className="foto-testimonio"
-                  alt={t.Nombre}
-                />
+                
+                {/* Frase */}
                 <p className="frase">“{t.Frase}”</p>
-                <p className="nombre">{t.Nombre}</p>
+
+                {/* Foto + Nombre */}
+                <div className="testimonio-info">
+                  <img
+                    src={t.Foto_P}
+                    alt={t.Nombre}
+                    className="foto-circular"
+                  />
+
+                  <div className="nombre-badge">{t.Nombre}</div>
+                </div>
+
               </div>
             ))}
           </Slider>
+
         </div>
 
         {/* ---- Testimonios de video ---- */}
         <div className="testimonios-video">
-          <h3>Experiencias en video</h3>
+          <h3 className="hero-title">Experiencias en video</h3>
           <Slider {...sliderSettings}>
             {testimoniosVideo.map((v) => (
               <div className="video-container" key={v.id}>

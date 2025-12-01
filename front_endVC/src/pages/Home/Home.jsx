@@ -43,7 +43,7 @@ function Home() {
 
         <p className="alerta-sangre"><b className="alerta-roja">¡Tu ayuda es crucial!</b> Estos tipos de sangre tienen niveles críticos en los bancos de sangre de Costa Rica. Una donación puede salvar vidas hoy mismo.</p>
         
-        <div>Testimoninos</div>
+
         <Testimonios/>
 
 
@@ -61,8 +61,12 @@ function Home() {
         <RequisitosDonacion />
 
         <BeneficiosDonar/>
+        
+        <hr className="hr-brillo" />
+        <Campanas/>
+        <hr className="hr-brillo" />
 
-        <section className="cta-hero">
+                <section className="cta-hero">
           <h3 className="cta-title">¿Listo para ser un héroe?</h3>
           <p className="cta-subtitle">
             Miles de personas en Costa Rica necesitan transfusiones cada año. Tu donación puede
@@ -79,12 +83,11 @@ function Home() {
           </div>
         </section>
 
-        <Campanas/>
-
         <Galeria/>
 
+
+
         <PreguntasFrecuentes/>
-        <BuzonPreguntas/>
         
 
         <Contactanos/>

@@ -1,216 +1,204 @@
-/* 🌈 Sección principal */
-.bz-wrap {
-  padding: 36px 20px 48px;
+/* Fondo difuminado (overlay) */
+.bz-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  display: grid;
+  place-items: center;
+  z-index: 1100;
+
+  /* fade-in */
+  animation: bz-sub-fade .25s ease forwards;
+  opacity: 0;
+}
+@keyframes bz-sub-fade { to { opacity: 1; } }
+
+/* Caja modal con entrada "pop" */
+.bz-modal-panel {
+  width: min(720px, 92vw);
+  background: #fff;
+  border: 1px solid #ebeff5;
+  border-radius: 14px;
+  box-shadow: 0 22px 60px rgba(0,0,0,0.18);
+  padding: 18px 18px 8px;
   text-align: center;
-  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  background: linear-gradient(180deg, #ffffff 0%, #fff4f4 100%);
+  font-family: "Inter", system-ui, Segoe UI, Roboto, sans-serif;
+
+  transform: translateY(12px) scale(0.98);
+  opacity: 0;
+  animation: bz-sub-pop .28s cubic-bezier(.2,.8,.2,1) forwards;
+}
+@keyframes bz-sub-pop {
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }
 
-/* 🩸 Título principal */
-.bz-title {
+/* Título / subtítulo del modal */
+.bz-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 12px 4px;
+}
+.bz-modal-header .bz-title.modal-title {
+  margin: 6px 0 4px;
   color: #c62828;
+  font-size: 30px;
   font-weight: 700;
-  font-size: 32px;
-  margin: 0 0 6px;
   display: inline-flex;
   align-items: center;
   gap: 10px;
 }
-
-.bz-icon {
-  font-size: 24px;
-}
-
-.bz-subtitle {
-  color: #5a6b7a;
-  margin-bottom: 18px;
-}
-
-/* 📦 Card del formulario */
-.bz-card {
-  max-width: 760px;
-  margin: 0 auto;
-  background: #fff;
-  border: 1px solid #e7e7e7;
-  border-radius: 12px;
-  padding: 18px 18px 22px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.06);
-  text-align: left;
-
-  /* Animación de entrada */
-  transform: translateY(6px);
-  opacity: 0;
-  animation: bz-in .35s ease forwards;
-}
-
-@keyframes bz-in {
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* 🧱 Seguridad de medidas */
-.bz-card,
-.bz-card * {
-  box-sizing: border-box;
-}
-
-/* 🧩 Contenedor del formulario */
-.bz-form {
-  display: grid;
-  gap: 12px;
-}
-
-/* Cada grupo de campo */
-.bz-field {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-/* ✍️ Labels e inputs */
-.bz-label {
+.bz-modal-subtitle {
+  color: #596b7a;
+  margin: 0 0 10px;
   font-size: 14px;
-  color: #2c3e50;
-  margin: 10px 0 6px;
-  display: block;
 }
 
-/* Inputs y textarea seguros */
+/* Icono circular (si quieres usarlo dentro del header o arriba) */
+.bz-iconWrap {
+  width: 64px; height: 64px;
+  margin: 6px auto 12px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #3861d6;
+  display: grid; place-items: center;
+  font-size: 28px;
+}
+
+/* Formulario (ajustes para que siga estilo sub- ) */
+.modal-card { /* ya aplicado en el JSX como clase extra */
+      margin: 0 auto 8px;
+    display: flex;
+    max-width: 560px;
+    text-align: left;
+    padding: 12px 14px 14px;
+    flex-direction: column;
+}
+
+/* filas y campos */
+.sub-row-like, .bz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sub-row-like .bz-field, .bz-row .bz-field { margin-top: 10px; }
+
+.bz-field, .sub-field { display: flex; flex-direction: column; margin-top: 10px; }
+.bz-field label, .sub-field label { font-size: 13px; color: #2a3b4c; margin-bottom: 6px; }
+
+/* inputs y selects estilo */
 .bz-input,
 .bz-textarea,
-.bz-select {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  border: 1px solid #ebeef3;
+.bz-select,
+.sub-field input,
+.sub-field select {
+  border: 1px solid #e7ebf2;
   background: #f3f5f8;
   border-radius: 8px;
   padding: 10px 12px;
-  color: #1f2a37;
   outline: none;
-  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease, transform .1s ease;
+  transition: border-color .2s, box-shadow .2s, background-color .2s, transform .1s;
+  color: #1f2a37;
 }
-
 .bz-input:focus,
 .bz-textarea:focus,
-.bz-select:focus {
+.bz-select:focus,
+.sub-field input:focus,
+.sub-field select:focus {
   background: #fff;
-  border-color: #c0d7ff;
-  box-shadow: 0 0 0 3px rgba(64,128,255,.15);
+  border-color: #b9d0ff;
+  box-shadow: 0 0 0 3px rgba(56,97,214,.18);
   transform: translateY(-1px);
 }
 
-/* Textarea ajustable solo en altura */
+/* Textarea ajustes */
 .bz-textarea {
   resize: vertical;
   min-height: 120px;
 }
 
-/* 🧊 Nota azul informativa */
-.bz-note {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-left: 4px solid #3b82f6;
-  background: #eef4ff;
-  color: #263a66;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* 🔔 Mensajes de estado */
+/* Alertas */
 .bz-alert {
   margin-top: 12px;
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 14px;
-  transition: all .25s ease;
-  opacity: 0;
-  transform: translateY(4px);
-  animation: bz-pop .25s ease forwards;
+  animation: bz-sub-pop2 .22s ease forwards;
+  opacity: 0; transform: translateY(4px);
 }
+@keyframes bz-sub-pop2 { to { opacity: 1; transform: translateY(0); } }
+.bz-alert.success { background:#e9f8ef; color:#1b5e20; border:1px solid #b8e6c7; }
+.bz-alert.error { background:#ffecec; color:#b71c1c; border:1px solid #ffc7c7; }
 
-@keyframes bz-pop {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.bz-alert.success {
-  background: #e9f8ef;
-  color: #1b5e20;
-  border: 1px solid #b8e6c7;
-}
-
-.bz-alert.error {
-  background: #ffecec;
-  color: #b71c1c;
-  border: 1px solid #ffc7c7;
-}
-
-/* ❤️ Botón principal con micro interacciones */
+/* Botones (gradiente principal y outline para cancelar) */
 .bz-btn {
-  margin-top: 14px;
+  margin-top: 12px;
   width: 100%;
-  background: #c62828;
+  background: linear-gradient(90deg, #1d4ed8, #0f46c9);
   color: #fff;
   border: none;
   border-radius: 8px;
   padding: 12px;
   font-weight: 600;
   cursor: pointer;
-  transition: background .2s ease, transform .12s ease, box-shadow .2s ease;
-  box-shadow: 0 6px 14px rgba(198,40,40,.18);
+  box-shadow: 0 10px 18px rgba(29,78,216,.18);
+  transition: transform .12s ease, box-shadow .2s ease, filter .15s ease;
+}
+.bz-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 24px rgba(29,78,216,.22); filter: brightness(1.02); }
+.bz-btn:active { transform: translateY(0); }
+.bz-btn:disabled { opacity: .75; cursor: not-allowed; }
+
+/* botón outline (usar clase extra .outline) */
+.bz-btn.outline {
+  background: transparent;
+  color: #333;
+  border: 1px solid #ddd;
+  box-shadow: none;
+  width: auto;
+  padding: 10px 14px;
 }
 
-.bz-btn:hover {
-  background: #b22222;
-  transform: translateY(-1px);
+/* footnote / privacidad */
+.bz-footnote {
+  margin: 8px 0 16px;
+  text-align: center;
+  color: #6a7b8b;
+  font-size: 13px;
+}
+.bz-privacy {
+  margin: 0 0 12px;
+  color: #718194;
+  font-size: 12px;
 }
 
-.bz-btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 10px rgba(198,40,40,.18);
+/* close button pequeño */
+.bz-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  padding: 6px;
+  cursor: pointer;
+  color: #394149;
+  border-radius: 6px;
+}
+.bz-modal-close:hover { background: rgba(0,0,0,0.04); }
+
+/* trigger tipo link para usar en FAQ */
+.faq-open-buzon {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  display: inline;
 }
 
-.bz-btn:disabled {
-  opacity: .7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* 🧍‍♀️ Dos columnas (ejemplo nombre + correo) */
-.bz-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.bz-row .bz-field {
-  min-width: 0;
-}
-
-/* 📱 Responsivo */
-@media (max-width: 640px) {
-  .bz-row {
-    grid-template-columns: 1fr;
-  }
-}
-
+/* responsive: filas y modal */
 @media (max-width: 560px) {
-  .bz-wrap {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .bz-card {
-    padding: 16px 14px 18px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  .sub-row-like, .bz-row { grid-template-columns: 1fr; }
+  .bz-modal-panel { max-width: 96%; width: 96vw; padding: 12px; }
+  .modal-card { padding: 10px; }
+  .bz-modal-header .modal-title { font-size: 18px; }
 }

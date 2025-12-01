@@ -127,3 +127,90 @@
     grid-template-columns: 1fr;
   }
 }
+
+.button-77-red {
+  align-items: center;
+  appearance: none;
+  background-clip: padding-box;
+  background-color: transparent;
+  border: none;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  justify-content: center;
+  line-height: 24px;
+  min-height: 60px;
+  padding: 18px 28px;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  vertical-align: middle;
+  border-radius: 10px;
+  z-index: 0;
+  transition: all 0.2s ease;
+}
+
+.button-77-red:before,
+.button-77-red:after {
+  border-radius: 10px;
+}
+
+.button-77-red:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(198, 40, 40, 0.35); /* rojo suave detrás */
+  z-index: -2;
+}
+
+.button-77-red:after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 10px;
+
+  /* 🔥 DEGRADADO ROJO PRO */
+  background-image: linear-gradient(
+    92deg,
+    #d32f2f 0%,
+    #c62828 60%,
+    #b71c1c 100%
+  );
+
+  z-index: -1;
+  transition: all 120ms ease-out;
+}
+
+/* Hover */
+.button-77-red:hover:not(:disabled):after {
+  inset: 0px;
+}
+
+/* Active (clic) */
+.button-77-red:active:not(:disabled) {
+  color: #eee;
+}
+
+.button-77-red:active:not(:disabled):after {
+  inset: 4px;
+  background-image:
+    linear-gradient(0deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .25)),
+    linear-gradient(92deg, #d32f2f 0%, #c62828 60%, #b71c1c 100%);
+}
+
+/* Disabled */
+.button-77-red:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (min-width: 768px) {
+  .button-77-red {
+    padding: 19px 32px;
+  }
+}

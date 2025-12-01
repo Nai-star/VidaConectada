@@ -121,3 +121,27 @@
   .stat-card { min-width: 150px; }
   .stat-value { font-size: 24px; }
 }
+
+.hr-brillo {
+  position: relative;
+  height: 4px;
+  border: none;
+  background: #cc0000;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.hr-brillo::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+  animation: brillo 2s linear infinite;
+}
+
+@keyframes brillo {
+  0% { left: -50%; }
+  100% { left: 100%; }
+}

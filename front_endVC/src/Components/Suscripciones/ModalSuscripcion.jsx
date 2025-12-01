@@ -139,17 +139,7 @@ function ModalSuscripcion({ isOpen, onClose }) {
       // Si tienes funciones para chequear usuario/suscripción, descomenta e importa:
       let user = null;
       let suscrito = null;
-      // if (typeof window.checkCustomUser === "function") {
-      //   user = await window.checkCustomUser(cedula);
-      // } else if (typeof checkCustomUser === "function") {
-      //   user = await checkCustomUser(cedula);
-      // }
-      // if (typeof window.checkSuscripcion === "function") {
-      //   suscrito = await window.checkSuscripcion(cedula);
-      // } else if (typeof checkSuscripcion === "function") {
-      //   suscrito = await checkSuscripcion(cedula);
-      // }
-
+    
       setLoading(false);
 
       if (suscrito?.id) {

@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "./requisitosDonacion.css";
 import { obtenerRequisitos } from "../../services/ServicioRequisitos";
+import TestDonacionModal from "./TestDonacionModal/TestDonacionModal";
 import { FaClipboardList, FaCheckCircle } from "react-icons/fa";
 
 function RequisitosDonacion() {
   const [requisitos, setRequisitos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     obtenerRequisitos()
@@ -43,14 +45,15 @@ function RequisitosDonacion() {
             y que te mantengas hidratado. Evita alimentos grasosos el día de la donación.
           </div>
 
-          <button className="req-btn">Ver Guía Completa</button>
+          {/* <button className="req-btn">Ver Guía Completa</button> */}
         </div>
       )}
 
       <p className="req-footer">
-        ¿Tienes dudas sobre si puedes donar?{" "}
-        <a href="/contacto">Contacta con nosotros</a>
+        ¿Tienes dudas sobre si puedes donar?
       </p>
+      <button className="button-77-red" role="button" onClick={() => setOpen(true)}>Hace el siguiente test para saberlo</button>
+        <TestDonacionModal isOpen={open} onClose={() => setOpen(false)} />
     </section>
   );
 }

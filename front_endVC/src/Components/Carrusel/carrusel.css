@@ -102,17 +102,18 @@
 }
 
 /* --- Dots de react-slick --- */
-.banner-slider .slick-dots {
+/* .banner-slider .slick-dots {
   position: absolute;
   bottom: 18px;
   left: 0;
   right: 0;
   z-index: 11;
-}
+} */
 
 .banner-slider .slick-dots li button:before {
   font-size: 10px;
   opacity: 0.6;
+  color: rgba(0, 0, 0, 0);
   /* Puedes ajustar el color aquí si quieres */
 }
 

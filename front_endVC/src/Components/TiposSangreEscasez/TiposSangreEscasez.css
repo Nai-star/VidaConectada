@@ -4,7 +4,7 @@
 .tipos-sangre-container {
   padding: 40px 20px;
   text-align: center;
-  background-color: #f8f8f8; /* Un fondo ligeramente gris claro */
+  background-color: #f8f8f800; /* Un fondo ligeramente gris claro */
 }
 
 /* Encabezados y subtítulo */
@@ -40,11 +40,11 @@
 /* Estilo base de la tarjeta */
 .tarjeta-sangre {
   background-color: white;
-  border: 1px solid #f0e0e0; /* Borde rojo muy claro */
+ 
   border-radius: 10px;
   padding: 30px 20px;
   width: 200px; /* Ancho fijo para las tarjetas */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Sombra suave */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.315); /* Sombra suave */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,7 +87,7 @@
   font-weight: bold;
   color: #d9534f; /* Rojo fuerte */
   padding: 5px 15px;
-  border: 1px solid #d9534f;
+  border: none;
   border-radius: 5px;
   margin-bottom: 15px;
   background-color: #fcecec; /* Fondo muy claro para la etiqueta */

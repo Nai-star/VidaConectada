@@ -1,7 +1,7 @@
 import { authorizedFetch } from "./auth";
 
 /* const API_URL = (import.meta.env.VITE_API_URL || "http://192.168.100.90:8000").replace(/\/+$/, ""); */
-const API_URL = (import.meta.env.VITE_API_URL || "http://192.168.100.34:8000").replace(/\/+$/, "");
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 const CLOUDINARY_BASE = (import.meta.env.VITE_CLOUDINARY_BASE || "https://res.cloudinary.com/dfhdzszjp/").replace(/\/+$/, "");
 

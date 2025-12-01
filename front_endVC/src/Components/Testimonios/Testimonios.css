@@ -1,5 +1,6 @@
 .testimonios-section {
-  background: rgba(128, 128, 128, 0.2); /* gris transparente */
+   background: radial-gradient(circle at 10% 30%, rgba(242, 220, 220, 0.45), rgba(255,255,255,0) 30%),
+              linear-gradient(180deg, rgba(255, 250, 250, 1) 0%, rgba(255,245,245,1) 100%);
   padding: 60px 30px;
   text-align: center;
 }
@@ -26,16 +27,6 @@
   width: 50%;
 }
 
-.caja-texto {
-
-  padding: 25px;
-  border-radius: 20px;
-  text-align: center;
-  height: 100%; /* misma altura para sincronizar con video */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
 
 .foto-testimonio {
   width: 90px;
@@ -58,32 +49,6 @@
   font-weight: bold;
 }
 
-.video-container {
-  position: relative;
-  width: 100%;
-  max-width: 450px;
-  margin: 0 auto;
-  border-radius: 20px;
-  overflow: hidden;
-}
-
-.video-testimonio {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 20px;
-}
-
-.video-texto {
-  position: absolute;
-  top: 1px;
-  left: 10px;
-  color: #fff;
-  padding: 5px 5px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-
 /* Animación suave en transición */
 .swiper-slide {
   transition: transform 0.8s ease, opacity 0.8s ease;
@@ -91,4 +56,478 @@
 
 .slick-prev::before, .slick-next::before{
   color:rgba(127, 255, 212, 0);
+}
+
+/* Nuevo estilo para video-container (simula .gp-item) */
+.video-container {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden; /* NECESARIO para que la media se recorte al hacer scale */
+    box-shadow: 0 10px 30px rgba(2,6,23,0.06); /* Simular el card-shadow */
+    cursor: pointer;
+}
+/* Modificación para video-testimonio (simula .gp-media) */
+.video-testimonio {
+    width: 580px;
+    height: auto;
+    object-fit: cover;
+    border-radius: 20px; /* Mantenemos el border-radius del borde exterior para consistencia, aunque se cortará por el overflow del contenedor */
+    display: block; /* Para asegurar que las transiciones funcionen correctamente */
+    transition: transform .35s ease; /* Transición para el zoom */
+    transform-origin: center;
+}
+
+/* Efecto de HOVER: Zoom */
+.video-container:hover .video-testimonio {
+    transform: scale(1.05); /* Aplica el zoom */
+}
+
+/* Modificación para video-texto (simula .gp-caption) */
+.video-texto {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0; /* Colocar en la parte inferior */
+    padding: 12px;
+    background: linear-gradient(0deg, rgba(0,0,0,0.68), rgba(0,0,0,0.35) 60%, rgba(0,0,0,0));
+    color: #fff;
+    font-size: 1rem; /* Ajustar el tamaño de fuente */
+    line-height: 1.3;
+    opacity: 0; /* Inicialmente oculto */
+    transform: translateY(6px); /* Pequeño desplazamiento inicial */
+    transition: opacity .28s ease, transform .28s ease; /* Transición para aparecer */
+    z-index: 5;
+    pointer-events: none; /* No bloquear clics en los controles del video */
+}
+
+/* Efecto de HOVER: Mostrar el texto */
+.video-container:hover .video-texto {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto; /* Permitir interacción si se necesita */
+}
+
+
+
+/* Limita ancho y separa columnas */
+.contenedor-testimonios {
+  display: flex;
+  gap: 40px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+/* Cada columna ocupa la mitad (ajusta en mobile) */
+.testimonios-texto,
+.testimonios-video {
+  width: 50%;
+}
+
+/* ============================
+   Estilos tarjeta - mockup
+   ============================ */
+.caja-texto {
+  box-sizing: border-box;
+  position: relative;            /* para posicionar avatar y elementos absolutos */
+  background: #ffffff;
+  border-radius: 30px;
+  padding: 48px 48px 48px; /* espacio inferior extra para avatar/badge */
+  overflow: hidden;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Quotation icon (esquina superior izquierda).
+   Usamos pseudo-elemento para no necesitar imagen */
+.caja-texto::before {
+  content: "“";
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  font-size: 44px;
+  color: rgba(255, 102, 102, 0.18); /* rosa suave */
+  font-weight: 700;
+  line-height: 1;
+  transform: translateY(-4px);
+  font-family: Georgia, "Times New Roman", serif;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Texto de la frase: estilo tipo mockup */
+.frase {
+  font-size: 20px;
+  line-height: 1.7;
+  color: #2f3b44; /* gris azulado oscuro */
+  max-width: 85%;
+  margin: 28px auto 20px auto;
+  text-align: left; /* en mockup el texto está alineado a la izquierda */
+  font-weight: 400;
+}
+
+/* Nombre y rol situados cerca del avatar en la parte inferior izquierda */
+.nombre {
+  font-size: 15px;
+  font-weight: 700;
+  color: #26343a;
+  margin-top: 12px;
+}
+
+/* Si tienes un rol/ocupación, usa .sub-rol o reaprovecha .nombre + span */
+.nombre + .rol {
+  display: block;
+  color: #e23a3a; /* rojo corporativo para el rol */
+  font-size: 13px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+/* ============================
+   Avatar / Badge circular (inferior izquierda)
+   ============================ */
+.testimonio-badge {
+  position: absolute;
+  left: 28px;
+  bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 6;
+}
+
+/* círculo grande con anillos suaves (como mockup) */
+.testimonio-badge .avatar-circle {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #ff6b6b 0%, #e23a3a 60%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 26px;
+  box-shadow: 0 8px 22px rgba(226, 58, 58, 0.12);
+  border: 8px solid rgba(255, 95, 95, 0.08); /* halo sutil */
+}
+
+/* Texto junto al avatar (nombre y rol) */
+.testimonio-badge .meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transform: translateY(6px); /* alineación visual */
+}
+
+.testimonio-badge .meta .nombre-badge {
+  color: #26343a;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.testimonio-badge .meta .rol-badge {
+  color: #e23a3a;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* ============================
+   Dots / Paginación centrada con punto activo rojo
+   ============================ */
+.slick-dots {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex ;
+  gap: 12px;
+  z-index: 10;
+  padding: 0;
+  margin: 0;
+}
+
+.slick-dots li {
+  margin: 0 6px;
+}
+
+.slick-dots li button {
+  width: 12px;
+  height: 6px;
+  padding: 0;
+  border-radius: 3px;
+  background: rgba(158, 158, 158, 0.25);
+  border: none;
+  transition: all .22s ease;
+}
+
+/* botón activo — barra roja */
+.slick-dots li.slick-active button {
+  width: 28px;
+  height: 6px;
+  background: #e23a3a;
+  border-radius: 6px;
+}
+
+/* ============================
+   Adaptaciones responsive
+   ============================ */
+@media (max-width: 920px) {
+  .contenedor-testimonios {
+    flex-direction: column;
+    gap: 28px;
+  }
+  .testimonios-texto, .testimonios-video {
+    width: 100%;
+  }
+
+  .caja-texto {
+    padding: 32px 20px 90px 20px;
+    border-radius: 20px;
+    min-height: 320px;
+  }
+
+  .testimonio-badge {
+    left: 20px;
+    bottom: 10px;
+  }
+
+  .slick-prev { left: 6px; }
+  .slick-next { right: 6px; }
+}
+
+/* ============================
+   Pequeños detalles decorativos
+   ============================ */
+/* círculos/parches rosados en esquinas */
+.caja-texto::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  top: -60px;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle at 20% 20%, rgba(226,58,58,0.06) 0%, rgba(226,58,58,0.0) 60%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+.slick-dots li button:before {
+    font-family: 'slick';
+    font-size: 6px;
+    line-height: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    content: '•';
+    text-align: center;
+    opacity: .25;
+    color: rgba(0, 0, 0, 0);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.slick-dots li.slick-active button:before {
+    opacity: .75;
+    color: rgba(0, 0, 0, 0);
+}
+
+
+
+/* Foto circular */
+.foto-circular {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 25px auto 10px auto;
+  display: block;
+}
+
+/* Frase */
+.frase {
+  font-size: 22px;
+  line-height: 1.4;
+  margin-bottom: 30px;
+}
+
+/* Contenedor foto + nombre */
+.testimonio-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Nombre */
+.nombre-badge {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* ===========================
+   HERO / HEADER para testimonios
+   =========================== */
+.hero-testimonios {
+ 
+  padding: 48px 20px 28px 20px;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  padding-top: 4px;
+}
+
+/* Pill (badge) con icono */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(226,58,58,0.08);
+  color: #b32d2d;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 25px;
+  margin: 0 auto 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+   animation: floatGlow 3s ease-in-out infinite;
+}
+
+
+@keyframes floatGlow {
+  0% {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(255,0,0,0.15);
+  }
+  50% {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 20px rgba(255,0,0,0.25);
+  }
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(255,0,0,0.15);
+  }
+}
+
+/* Icono dentro del pill (puedes usar SVG o texto) */
+.pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(226,58,58,0.98);
+  color: #fff;
+  font-size: 20px;
+  line-height: 1;
+  box-shadow: 0 4px 10px rgba(226,58,58,0.12);
+}
+
+/* Título principal */
+.hero-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #7a3337; /* tono rojizo oscuro */
+  margin: 8px 0 10px;
+}
+
+/* Descripción centrada, ancho controlado */
+.hero-desc {
+  max-width: 880px;
+  margin: 0 auto 22px;
+  color: #47595f; /* gris azulado */
+  font-size: 16px;
+  line-height: 1.6;
+  padding: 0 18px;
+}
+
+/* Contenedor para las dos etiquetas de columna */
+.columns-labels {
+  max-width: 1100px;
+  margin: 24px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+}
+
+/* Etiqueta izquierda (alineada a la izquierda del contenedor) */
+.columns-labels .col-left,
+.columns-labels .col-right {
+  font-size: 15px;
+  color: #3b3b3b;
+  font-weight: 600;
+  padding: 6px 8px;
+}
+
+/* Ajuste: si quieres que el texto sea menos prominente */
+.columns-labels .col-left { text-align: left; }
+.columns-labels .col-right { text-align: right; }
+
+/* Línea fina decorativa opcional (debajo de labels) */
+.columns-labels::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -12px;
+  width: 220px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(226,58,58,0.06), rgba(226,58,58,0.14));
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* ===========================
+   Responsive tweaks
+   =========================== */
+@media (max-width: 920px) {
+  .hero-title {
+    font-size: 20px;
+  }
+  .hero-desc {
+    font-size: 15px;
+    padding: 0 14px;
+  }
+  .columns-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin-top: 20px;
+  }
+  .columns-labels::after { display: none; }
+  .columns-labels .col-left,
+  .columns-labels .col-right {
+    text-align: center;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .pill { font-size: 14px; padding: 8px 14px; }
+  .pill-icon { width: 18px; height: 18px; font-size: 11px; }
+  .hero-title { font-size: 18px; }
+  .hero-desc { font-size: 14px; max-width: 92%; }
 }

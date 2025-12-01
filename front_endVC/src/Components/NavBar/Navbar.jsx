@@ -59,7 +59,7 @@ function Navbar() {
         
         </li>
         <li className="navbar-btn-item">
-          <HashLink smooth to="/homepage#donar" onClick={cerrarMenu}>
+          <HashLink smooth to="/home#campanas" onClick={cerrarMenu}>
             <button className="btn-participar">Participar</button>
           </HashLink>
         </li>
