@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./modalSuscripcion.css";
 import { crearSuscripcion } from "../../services/ServicioSuscripcion";
 import { GetTiposSangre } from "../../services/Servicio_TS";
-import { checkCustomUser} from "../../services/ServicioCustomUser";
+
 
 import { FiBell } from "react-icons/fi";
 
