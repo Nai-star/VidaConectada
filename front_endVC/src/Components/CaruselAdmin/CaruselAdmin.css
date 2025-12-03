@@ -244,3 +244,12 @@
     width: 80px; /* Columna de acciones */
     text-align: center;
 }
+
+.ojito-btn.visible {
+  color: #2ecc71;
+}
+
+.ojito-btn.oculto {
+  color: #999;
+  filter: grayscale(100%);
+}

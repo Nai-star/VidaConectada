@@ -8,7 +8,7 @@ const ITEMS = [
   { id: "campanas", label: "Campañas", icon: "📅", path: "campanas" },
   { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "preguntas" },
   { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "tipos" },
-  { id: "requisitos", label: "Requisitos para Donar", icon: "📋", path: "requisitos" },
+  { id: "requisitos", label: "Requisitos para Donar", icon: "📋", path: "requisitos_admin" },
   { id: "usuarios", label: "Usuarios", icon: "👥", path: "gestion_usuarios" },
   { id: "config", label: "Configuración", icon: "⚙️", path: "configuracion" },
 ];

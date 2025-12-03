@@ -1,0 +1,288 @@
+/* -------------------------------------------------------------------- */
+/* 1. LAYOUT GENERAL Y ENCABEZADO */
+/* -------------------------------------------------------------------- */
+.requisitos-admin-container {
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fuente moderna */
+    background-color: #f8f9fa; 
+    min-height: 100vh;
+}
+
+.requisitos-admin-container h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.requisitos-admin-container > p {
+    color: #6c757d; /* Gris sutil */
+    margin-bottom: 25px;
+}
+
+/* -------------------------------------------------------------------- */
+/* 2. VISTA PREVIA (PREVIEW BOX) */
+/* -------------------------------------------------------------------- */
+.preview-box {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef; /* Borde muy sutil */
+}
+
+/* Título de la vista previa */
+.preview-box h2 {
+    /* El texto "Vista Previa - Requisitos Visibles (11)" */
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #dc3545; /* Rojo de la marca */
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+.requisitos-grid {
+    display: grid;
+    /* Dos columnas iguales con buen espacio */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 15px 30px; 
+}
+
+.requisito-item {
+    display: flex;
+    align-items: flex-start; /* Alinear arriba si el texto es largo */
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.requisito-icon {
+    /* Ícono de check verde (simulado con un span o emoji) */
+    color: #28a745; 
+    font-size: 1.2rem;
+    margin-right: 10px;
+    /* Aseguramos que el icono no se encoja */
+    flex-shrink: 0; 
+}
+
+/* -------------------------------------------------------------------- */
+/* 3. LISTA DE REQUISITOS (LISTA BOX Y TABLA) */
+/* -------------------------------------------------------------------- */
+.lista-box {
+    background: white;
+    border-radius: 8px;
+    padding: 20px 0; /* Padding lateral, la tabla se extenderá */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+}
+
+.lista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 20px 20px 20px; /* Padding interno consistente */
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.lista-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* Botón "Nuevo Requisito" */
+.btn-nuevo {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-nuevo:hover {
+    background-color: #c82333;
+}
+
+/* Estilos de la Tabla */
+.tabla-requisitos {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-requisitos th {
+    /* Encabezados de la tabla */
+    background-color: #f7f7f7;
+    text-align: left;
+    padding: 12px 20px; /* Padding lateral */
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.tabla-requisitos td {
+    /* Celdas de la tabla */
+    padding: 15px 20px; /* Padding lateral */
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    color: #495057;
+    font-size: 0.95rem;
+}
+
+.tabla-requisitos tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilo para el estado "Visible" */
+.estado-visible {
+    background-color: #d4edda; /* Fondo verde claro */
+    color: #155724; /* Texto verde oscuro */
+    padding: 4px 10px;
+    border-radius: 12px; /* Más redondeado */
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Estilo para el estado "Oculto" (si se usa) */
+.estado-oculto {
+    background-color: #f8d7da; /* Fondo rojo claro */
+    color: #721c24; /* Texto rojo oscuro */
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+
+/* -------------------------------------------------------------------- */
+/* 4. BOTONES DE ACCIÓN (LÁPIZ Y BASURA) */
+/* -------------------------------------------------------------------- */
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 8px; /* Área de clic más grande */
+    margin: 0 2px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-icon.edit-icon {
+    /* Color lápiz (azul suave) */
+    color: #007bff; 
+}
+.btn-icon.delete-icon {
+    /* Color basura (rojo) */
+    color: #dc3545; 
+}
+
+/* Ajustes de ancho para las últimas columnas */
+.tabla-requisitos th:nth-last-child(2), .tabla-requisitos td:nth-last-child(2) {
+    width: 15%; /* Columna Estado */
+    text-align: center;
+}
+.tabla-requisitos th:last-child, .tabla-requisitos td:last-child {
+    width: 10%; /* Columna Acciones */
+    text-align: center;
+}
+
+/* Fondo oscuro transparente */
+.modal-admin-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Caja del modal */
+.modal-admin-content {
+  background: white;
+  width: 420px;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  border: 1px solid #e9ecef;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.modal-admin-content h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Input */
+.input-text {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+/* Checkbox */
+.label-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Botones */
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-save {
+  background-color: #28a745; /* Verde */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-save:hover {
+  background-color: #218838;
+}
+
+.btn-cancel {
+  background-color: #6c757d; /* Gris */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-cancel:hover {
+  background-color: #5a6268;
+}

@@ -60,3 +60,47 @@ export async function checkCustomUser(email) {
   // Si ninguno devolvió, retornamos null (no existe o no hay endpoint compatible)
   return null;
 }
+
+/* ============================================================
+   🔹 5. CREAR Banner (Admin) — acepta archivo o URL
+============================================================ */
+export async function crearBannerAdminArchivoUrl(data) {
+  const url = `${API_URL}/api/carusel/`;
+  const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
+
+  // data debe traer: { file?, url?, texto, filtro_oscuro, mostrar_texto }
+  const formData = new FormData();
+
+  // Si envía archivo (Blob/File)
+  if (data.file instanceof File) {
+    formData.append("imagen", data.file);
+  }
+
+  // Si envía URL (en string)
+  if (data.url && !data.file) {
+    formData.append("imagen", data.url);
+  }
+
+  formData.append("texto", data.texto || "");
+  formData.append("filtro_oscuro", data.filtro_oscuro ? "true" : "false");
+  formData.append("mostrar_texto", data.mostrar_texto ? "true" : "false");
+  formData.append("estado", "true");
+
+  try {
+    const res = await fetcher(url, {
+      method: "POST",
+      body: formData, // NO JSON
+    });
+
+    if (!res.ok) {
+      console.error("ServicioCarrusel (admin): error creando banner", await res.text());
+      throw new Error("Error al crear banner (admin)");
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("ServicioCarrusel: error interno creando banner admin", error);
+    throw error;
+  }
+}
+

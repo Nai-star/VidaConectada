@@ -1,0 +1,141 @@
+/* -------------------------------------------------------------------- */
+/* 1. OVERLAY Y CAJA BASE DEL MODAL */
+/* -------------------------------------------------------------------- */
+.modal-overlay {
+    /* Mantener el fondo oscuro y fijo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente más claro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    /* Caja del modal con tema claro */
+    background: #ffffff; /* Fondo blanco */
+    border-radius: 12px; /* Bordes más redondeados */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); 
+    padding: 30px;
+    width: 90%;
+    max-width: 400px; /* Un poco más estrecho que el de banner */
+    color: #333; /* Texto oscuro */
+    position: relative;
+    border: none;
+}
+
+/* Botón de cierre 'X' */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-button:hover {
+    color: #555;
+}
+
+/* -------------------------------------------------------------------- */
+/* 2. ENCABEZADOS Y TEXTO */
+/* -------------------------------------------------------------------- */
+.modal-box h2 {
+    font-size: 1.4rem; 
+    color: #000;
+    margin-top: 0;
+    font-weight: 600;
+}
+
+.modal-box > p {
+    /* Descripción ("Agrega un nuevo requisito para donar sangre") */
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+}
+
+/* -------------------------------------------------------------------- */
+/* 3. CAMPOS DE FORMULARIO (LABEL, INPUT) */
+/* -------------------------------------------------------------------- */
+.modal-box label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600; 
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.modal-box input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 25px;
+    background-color: #f9f9f9; /* Fondo muy claro para el input */
+    color: #333;
+    border: 1px solid #ccc; 
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-box input[type="text"]:focus {
+    border-color: #ff6961; /* Resaltado similar al rojo de los botones */
+    box-shadow: 0 0 0 3px rgba(255, 105, 97, 0.2);
+    outline: none;
+}
+
+.modal-box input[type="text"]::placeholder {
+    color: #999; 
+    font-style: italic;
+}
+
+/* -------------------------------------------------------------------- */
+/* 4. FOOTER Y BOTONES (MODAL-FOOTER) */
+/* -------------------------------------------------------------------- */
+.modal-footer {
+    display: flex;
+    justify-content: flex-end; 
+    gap: 15px; 
+    margin-top: 30px;
+    padding-top: 10px;
+}
+
+.modal-footer button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+/* Botón "Cancelar" (Blanco con texto oscuro) */
+.btn-cancelar {
+    background-color: #f0f0f0;
+    color: #555;
+    border: 1px solid #ddd;
+}
+
+.btn-cancelar:hover {
+    background-color: #e0e0e0;
+}
+
+/* Botón "Agregar Requisito" / "Guardar Cambios" (Rojo/Rosa) */
+.btn-guardar {
+    background-color: #ff6961; /* Rojo claro/coral de la imagen */
+    color: white;
+}
+
+.btn-guardar:hover {
+    background-color: #e65c53; 
+}

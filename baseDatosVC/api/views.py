@@ -104,11 +104,21 @@ class SuscritosListCreateView(ListCreateAPIView):
 
       
 
-
 class SuscritosDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Suscritos.objects.all()
     serializer_class = SuscritosSerializer
     permission_classes = [AllowAny]
+
+    def perform_destroy(self, instance):
+        # Eliminar participaciones relacionadas
+        instance.participaciones.all().delete()
+        
+        # Si tienes otros modelos relacionados:
+        # instance.testimonio_texto_set.all().delete()
+        # instance.testimonio_video_set.all().delete()
+
+        # Finalmente eliminar el suscrito
+        instance.delete()
 
 
 
@@ -218,7 +228,7 @@ class RequisitosListCreateView(ListCreateAPIView):
 class  RequisitosRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset =  Requisitos.objects.all()
     serializer_class =  RequisitosSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 #Carrusel
 class CaruselListCreateView(ListCreateAPIView):
@@ -234,7 +244,7 @@ class CaruselListCreateView(ListCreateAPIView):
 class CaruselRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     queryset = carusel.objects.all()
     serializer_class =  CaruselSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 #galeria
 

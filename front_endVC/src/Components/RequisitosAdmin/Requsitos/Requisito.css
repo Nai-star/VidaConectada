@@ -1,0 +1,203 @@
+/* -------------------------------------------------------------------- */
+/* ESTILOS GENERALES DEL CONTENEDOR */
+/* -------------------------------------------------------------------- */
+.requisitos-admin-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa; 
+}
+
+/* Título de la sección */
+.requisitos-admin-container h1 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+/* Descripción */
+.requisitos-admin-container > p {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* -------------------------------------------------------------------- */
+/* ESTILOS DE LA VISTA PREVIA (PREVIEW) */
+/* -------------------------------------------------------------------- */
+.preview-box {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.preview-box h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #dc3545; 
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.requisitos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px 30px;
+}
+
+.requisito-item {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: #333;
+}
+
+.requisito-icon {
+    color: #28a745; 
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+/* -------------------------------------------------------------------- */
+/* ESTILOS DE LA LISTA / TABLA DE REQUISITOS */
+/* -------------------------------------------------------------------- */
+.lista-box {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.lista-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.lista-header h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+/* Botón "Nuevo Requisito" */
+.btn-nuevo {
+    background-color: #dc3545; 
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-nuevo:hover {
+    background-color: #c82333;
+}
+
+/* Estilos de la Tabla */
+.tabla-requisitos {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-requisitos th {
+    background-color: #f7f7f7;
+    text-align: left;
+    padding: 12px 15px;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #ddd;
+}
+
+.tabla-requisitos td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+}
+
+.tabla-requisitos tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Estilo para texto inactivo en la columna de Requisito */
+.inactivo-text {
+  color: #aaa; /* Texto gris para requisitos inactivos/ocultos */
+}
+
+/* === ESTILOS PARA LA COLUMNA ESTADO (Activo/Inactivo) === */
+.estado-activo {
+    background-color: #d4edda; /* Fondo verde claro */
+    color: #155724; /* Texto verde oscuro */
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+.estado-inactivo {
+    background-color: #f8d7da; /* Fondo rojo claro */
+    color: #721c24; /* Texto rojo oscuro */
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* === ESTILOS PARA LA COLUMNA ACCIONES === */
+.actions-cell {
+    /* Contenedor para alinear los botones en línea */
+    display: flex;
+    justify-content: center; /* Centrar los botones horizontalmente */
+    gap: 5px; /* Espacio entre los botones */
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 8px; /* Aumenta el área de clic */
+    transition: background-color 0.2s;
+    border-radius: 4px;
+}
+
+.btn-icon:hover {
+    background-color: #f0f0f0;
+}
+
+.btn-icon.edit-icon {
+    color: #007bff; 
+    font-size: 1.2rem;
+}
+.btn-icon.delete-icon {
+    color: #dc3545; 
+    font-size: 1.2rem;
+}
+
+/* Estilo específico para el botón del Ojo */
+.ojito-btn {
+  /* No necesita color específico, usa el color base del emoji */
+  font-size: 1.2rem;
+}
+.ojito-btn.oculto {
+  /* Bajar la opacidad cuando el requisito no es visible */
+  opacity: 0.4;
+}
+
+/* Ajustes de ancho de columnas */
+.tabla-requisitos th:nth-child(2), .tabla-requisitos td:nth-child(2) {
+    width: 150px; /* Columna Estado (para que quepa el badge) */
+    text-align: center;
+}
+.tabla-requisitos th:nth-child(3), .tabla-requisitos td:nth-child(3) {
+    width: 150px; /* Columna Acciones */
+    text-align: center;
+}

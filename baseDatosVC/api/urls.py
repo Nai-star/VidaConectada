@@ -32,7 +32,7 @@ urlpatterns = [
 
     # Suscritos
     path('suscritos/', SuscritosListCreateView.as_view(), name="crear y listar suscritos"),
-    path('suscritos/<int:pk>', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),
+    path('suscritos/<int:pk>/', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),
     
     # Lugar de campaña
 
@@ -63,6 +63,7 @@ urlpatterns = [
 
     #carrusel
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
+     path('carusel/<int:pk>/', CaruselRetrieveUpdateDestroyAPIView.as_view(), name="actualizar y eliminar respuestas"),
 
     path('Cantones/', CantonesListCreateView.as_view(), name="crear y listar cantones"),
   

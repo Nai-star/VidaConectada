@@ -14,6 +14,7 @@ import Configuracion from '../Components/AdminSidebar/Configuraciones/Configurac
 import Dashboard from '../Components/AdminSidebar/Dashboard/Dashboard';
 import GestionUsuarios from '../Components/AdminSidebar/GestionUsuarios/GestionUsuarios';
 import CaruselAdmin from '../Components/CaruselAdmin/CaruselAdmin';
+import Requisitos from '../Components/RequisitosAdmin/Requsitos/Requisitos';
 /* import AdminSidebar from '../Components/AdminSidebar/AdminSidebar'; */
 
 
@@ -52,7 +53,7 @@ function Routing() {
           <Route path='configuracion' element={<Configuracion/>}/>
           <Route path='gestion_usuarios' element={<GestionUsuarios/>} />    
           <Route path='carusel_admin' element={<CaruselAdmin/>} />       
-         {/*  <Route path='productos' element={<ProductosAdmin/>} />  */} {/* /admin/productos */}
+          <Route path='requisitos_admin' element={<Requisitos/>} />       
           
    
         </Route>

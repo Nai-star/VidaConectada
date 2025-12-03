@@ -185,3 +185,102 @@ export async function eliminarBanner(id) {
 
   return true;
 }
+export async function cambiarEstadoBanner(id, nuevoEstado) {
+  try {
+    const response = await authorizedFetch(`${API_URL}/api/carusel/${id}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ estado: nuevoEstado }), // ← ← AQUÍ EL CAMBIO
+    });
+
+    if (!response.ok) {
+      throw new Error("Error cambiando estado del banner");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("ServicioCarrusel: error cambiando estado", error);
+    throw error;
+  }
+}
+
+
+/* ============================================================
+   🔹 5. CREAR Banner (Admin) — acepta archivo o URL
+============================================================ */
+// NUEVO SERVICIO PARA ADMIN – NO ROMPE NADA DE LO EXISTENTE
+export async function crearBannerAdmin({ file, url, texto, filtro_oscuro, mostrar_texto }) {
+  try {
+    let formData = new FormData();
+
+    // Si viene archivo, lo envías
+    if (file) {
+      formData.append("imagen", file);
+    }
+
+    // Si viene URL, también
+    if (url) {
+      formData.append("imagen_url", url);
+    }
+
+    // Texto
+    formData.append("texto", texto || "");
+
+    // Booleanos
+    formData.append("filtro_oscuro", filtro_oscuro);
+    formData.append("mostrar_texto", mostrar_texto);
+
+    // ⭐⭐⭐ CONSTANTE PARA QUE SIEMPRE SE GUARDEN ACTIVOS ⭐⭐⭐
+    formData.append("estado", "true");
+
+    const response = await fetch("http://localhost:8000/api/carusel/", {
+      method: "POST",
+      body: formData, // No se usa headers porque FormData ya pone el boundary
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("ServicioCarrusel (admin): error creando banner", errorData);
+      throw new Error("Error al crear banner (admin)");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("ServicioCarrusel: error interno creando banner admin", error);
+    throw error;
+  }
+}
+/* ============================================================
+   🔹 6. ACTUALIZAR Banner (Admin)
+============================================================ */
+export async function actualizarBannerAdmin(id, { texto, showText, darkFilter, image }) {
+  try {
+    const formData = new FormData();
+
+    if (image) {
+      formData.append("imagen", image);
+    }
+
+    if (texto !== undefined) formData.append("texto", texto);
+    if (showText !== undefined) formData.append("mostrar_texto", showText ? "true" : "false");
+    if (darkFilter !== undefined) formData.append("filtro_oscuro", darkFilter ? "true" : "false");
+
+    const response = await fetch(`${API_URL}/api/carusel/${id}/`, {
+      method: "PATCH",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error("ServicioCarrusel (admin): error actualizando banner", errorData);
+      throw new Error("Error al actualizar banner (admin)");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("ServicioCarrusel: fallo interno actualizando banner admin", error);
+    throw error;
+  }
+}

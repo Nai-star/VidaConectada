@@ -1,214 +1,250 @@
-/* GestionUsuarios.css */
+/* GestionUsuarios.css - pegar todo */
+/* Variables y theme */
 :root{
-  --bg: #f5f8fb;
-  --card: #ffffff;
-  --muted: #6b7280;
-  --text: #0f172a;
-  --border: #e6eef6;
-  --accent: #7c3aed;
-  --green: #10b981;
-  --danger: #ef4444;
+  --bg: #F6F8FA;
+  --card-bg: #FFFFFF;
+  --muted: #7B8A90;
+  --text: #122029;
+  --border: rgba(34,48,58,0.06);
+  --primary: #EE3E38;
+  --accent: #0087F0;
+  --soft: #F1F5F8;
+  --stat-radius: 12px;
+  --radius: 8px;
+  --shadow-soft: 0 6px 20px rgba(18,24,28,0.06);
+  --font-system: Inter, "Helvetica Neue", Arial, sans-serif;
 }
 
-.gestion-usuarios-page {
-  padding: 28px;
+.gestion-usuarios-page{
+  padding: 28px 18px;
   background: var(--bg);
-  min-height: 100vh;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family: var(--font-system);
   color: var(--text);
+  min-height: calc(100vh - 40px);
+  box-sizing: border-box;
 }
 
-/* header */
-.gestion-usuarios-page header h1 {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 700;
-}
-.gestion-usuarios-page header p {
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 13px;
-}
-
-/* search */
-.search-row {
-  margin-top: 18px;
-}
-.search-row input {
-  width: 100%;
-  padding: 12px 16px;
+.admin-content-area{
+  background: var(--card-bg);
+  padding: 28px;
   border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  box-shadow: 0 1px 0 rgba(16,24,40,0.02);
-  font-size: 14px;
-  color: var(--text);
+  box-shadow: var(--shadow-soft);
+  max-width: 1180px;
+  margin: 0 auto;
 }
 
-/* stats row */
-.stats-row {
-  display: flex;
-  gap: 16px;
-  margin-top: 18px;
+/* Header */
+.gestion-usuarios-page header h1{ margin:0; font-size:20px; font-weight:700; color:var(--text); }
+.gestion-usuarios-page header p{ margin:6px 0 18px; color:var(--muted); font-size:13px; }
+
+/* Search */
+.search-row{ display:flex; justify-content:center; margin-bottom:22px; }
+.search-input-wrap{ width:100%; max-width:980px; position:relative; }
+.search-input-wrap input{
+  width:100%; padding:14px 18px; padding-left:48px; border-radius:12px;
+  border:1px solid rgba(34,48,58,0.06); background:#FBFDFF; font-size:14px; color:var(--text);
 }
-.stat-card {
-  flex: 1;
-  background: var(--card);
-  border-radius: 10px;
-  padding: 16px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border: 1px solid var(--border);
-  min-height: 78px;
+.search-input-wrap .search-icon{ position:absolute; left:14px; top:50%; transform:translateY(-50%); width:18px; height:18px; opacity:0.7; }
+
+/* Stats */
+.stats-row{ display:flex; gap:18px; margin:20px 0 18px; }
+.stat-card{ flex:1; background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.6)); border-radius:var(--stat-radius); padding:18px; border:1px solid var(--border); min-height:94px; display:flex; flex-direction:column; justify-content:center; }
+.stat-card strong{ font-size:13px; color:var(--muted); margin-bottom:6px; display:block; }
+.stat-number{ font-size:24px; font-weight:700; color:var(--text); }
+.stat-meta{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+/* Tabs */
+.tabs{ display:flex; gap:8px; margin-bottom:14px; }
+.tabs button{ background:#fff; border:1px solid var(--border); padding:8px 12px; border-radius:999px; font-weight:600; color:var(--muted); cursor:pointer; font-size:13px; }
+.tabs button.active{ color:var(--primary); box-shadow:0 4px 12px rgba(14,22,26,0.03); border-color: rgba(238,62,56,0.12); }
+
+/* Table */
+.table-wrap{ overflow-x:auto; margin-top:6px; }
+.users-table{ width:100%; border-collapse:collapse; font-size:14px; min-width:900px; }
+.users-table thead th{ text-align:left; padding:14px 12px; font-size:13px; color:var(--muted); font-weight:600; border-bottom:1px solid var(--border); background:transparent; }
+.users-table tbody tr{ background:#fff; }
+.users-table tbody tr:hover{ background:#fbfdff; }
+.users-table td{ padding:12px; border-bottom:1px solid #F3F4F5; vertical-align:middle; color:var(--text); }
+
+/* User column */
+.user-info{ display:flex; align-items:center; gap:12px; }
+.user-icon{ width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(76,90,106,0.06), rgba(76,90,106,0.02)); color:var(--accent); font-weight:700; flex:0 0 44px; }
+.user-info strong{ font-size:14px; display:block; color:var(--text); font-weight:700; }
+.meta{ font-size:12px; color:var(--muted); margin-top:4px; }
+
+/* Contact */
+.contact-info{ display:flex; flex-direction:column; gap:4px; }
+
+/* Badges */
+.badge{ display:inline-flex; align-items:center; justify-content:center; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; }
+.blood-type-badge{ width: 35px; display: flex; background:#fff4f4; color:#c73b3b; border:1px solid rgba(199,59,59,0.06); padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px; }
+.donor-type-badge{display: flex;  padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; }
+.donor-type-badge.regular{display: flex;  background:#ecffef; color:#1d8b3a; border:1px solid rgba(29,139,58,0.06); }
+.donor-type-badge.primera-vez{ display: flex; background:#e6f7ff; color:#0b6fbf; border:1px solid rgba(11,111,191,0.06); }
+.donor-type-badge.ocasional{display: flex;  background:#fff8ec; color:#b36b00; border:1px solid rgba(179,107,0,0.06); }
+
+/* Campaign count */
+.campaign-count-badge{ display:inline-flex; min-width:36px; height:36px; align-items:center; justify-content:center; border-radius:999px; background:#f6f8fa; font-weight:700; color:var(--text); }
+
+/* Actions */
+.actions-cell{ white-space:nowrap; display:flex; gap:8px; align-items:center; }
+.btn-details{ background:#F7F9FB; border:1px solid var(--border); padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:600; }
+.btn-delete{ background:transparent; border:0; color:var(--primary); cursor:pointer; padding:6px; }
+
+/* Modal */
+.modal-overlay{ position:fixed; inset:0; background:rgba(20,24,31,0.45); display:flex; align-items:center; justify-content:center; z-index:1200; -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); animation: modal-fade 160ms ease; }
+.modal-detalle-usuario{ width:520px; max-width:calc(100% - 32px); background:#fff; border-radius:12px; box-shadow:0 10px 40px rgba(18,24,28,0.16); padding:18px 20px; position:relative; color:var(--text); }
+.close-btn{ position:absolute; top:12px; right:12px; background:#fff; border:1px solid rgba(0,0,0,0.04); border-radius:6px; width:30px; height:30px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+.modal-header h3{ margin:0; font-size:16px; color:#122029; font-weight:700; }
+.modal-header p{ margin:4px 0 0 0; font-size:12px; color:var(--muted); }
+
+/* user overview */
+.user-overview{ display:flex; align-items:center; gap:14px; padding:12px 0; border-bottom:1px solid var(--border); margin-bottom:14px; }
+.user-icon-large{ width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:linear-gradient(180deg, rgba(76,90,106,0.04), rgba(76,90,106,0.02)); font-weight:700; }
+.user-name-type strong{ font-size:15px; color:var(--text); }
+
+/* detail grid */
+.detail-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px 22px; padding-top:12px; }
+.detail-item{ display:flex; flex-direction:column; gap:6px; padding:8px 0; }
+.detail-item .label{ font-size:11px; color:#8c9aa3; font-weight:700; text-transform:uppercase; }
+.detail-item .value{ font-size:13px; color:#22303a; font-weight:600; }
+
+@media (max-width: 920px){
+  .users-table{ min-width:720px; }
+  .stats-row{ flex-direction:column; gap:12px; }
 }
-.stat-card .icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
+@media (max-width:460px){
+  .modal-detalle-usuario{ width: calc(100% - 20px); padding:14px; }
+  .detail-grid{ grid-template-columns: 1fr; gap:10px; }
+}
+@keyframes modal-fade{ from{opacity:0} to{opacity:1} }
+
+/* Botón Ver Detalles */
+.btn-details {
+  background-color: #ffffff; /* fondo blanco */
+  color: #4C5A6A; /* texto gris oscuro */
+  border: 1px solid #d1d5db; /* borde gris claro */
+  border-radius: 6px; /* esquinas redondeadas */
+  padding: 6px 12px; /* espacio interno */
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-details:hover {
+  background-color: #f0f0f0;
+  border-color: #a1a1a1;
+}
+
+.btn-delete {
+  background-color: #ffffff;
+  color: #ef4444;
+  border-radius: 6px;
+  padding: 6px;
+  cursor: pointer;
+  margin-left: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, rgba(124,58,237,0.08), rgba(124,58,237,0.02));
-  font-size: 20px;
-}
-.stat-card .title {
-  font-size: 13px;
-  color: var(--muted);
-}
-.stat-card .value {
-  font-size: 20px;
-  font-weight: 700;
-  margin-top: 6px;
+  transition: all 0.2s ease;
 }
 
-/* tabs */
-.tabs {
-  margin-top: 18px;
-  display: flex;
-  gap: 8px;
-}
-.tab {
-  background: transparent;
-  border: 1px solid transparent;
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 13px;
-  cursor: pointer;
-}
-.tab.active {
-  background: var(--card);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 6px rgba(16,24,40,0.04);
+.btn-delete:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
 }
 
-/* table */
-.table-wrap {
-  margin-top: 16px;
-}
-.users-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--card);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 6px rgba(16,24,40,0.03);
-}
-.users-table thead th {
-  background: #fbfdff;
-  padding: 12px 16px;
-  text-align: left;
-  font-weight: 600;
-  color: var(--text);
-  font-size: 13px;
-  border-bottom: 1px solid #f3f6f9;
-}
-.users-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid #f3f6f9;
-  font-size: 14px;
-  color: var(--text);
+/* Tamaño del ícono */
+.btn-delete svg {
+  width: auto;
+  height: 27px; /* Ajusta la altura según sea necesario */
 }
 
-/* user column */
-.user-col {
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
-.avatar {
-  width:36px;
-  height:36px;
-  border-radius:50%;
-  background: #eef2ff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
-}
-.user-name { font-weight:600; }
-.user-meta { color:var(--muted); font-size:12px; margin-top:4px; }
 
-/* contact */
-.contact-line { font-size:13px; color:var(--muted); }
+/* Opcional: ajustar altura consistente con la tabla */
+.actions-cell button {
+  min-width: 70px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
-/* badges */
-.badge {
-  display:inline-block;
-  padding:6px 8px;
-  border-radius:999px;
-  font-size:12px;
-  background:#eef2f7;
-  color: #0f172a;
+/* --- Estilos para la Columna Contacto --- */
+.contact-info {
+    font-size: 0.9em;
 }
-.badge.green { background: #ecfdf5; color: #065f46; }
-.badge.blue { background: #eef2ff; color: #1e3a8a; }
-.badge.purple { background: #f5f3ff; color: #5b21b6; }
 
-/* buttons */
-.btn {
-  border:1px solid var(--border);
-  background: var(--card);
-  padding: 8px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
+.contact-email-row,
+.contact-phone-row {
+    display: flex;
+    align-items: center;
+    gap: 6px; /* Espacio entre el icono y el texto */
+    padding: 2px 0;
 }
-.btn.small { font-size: 13px; margin-right: 6px; }
-.btn.danger { border-color: rgba(239,68,68,0.12); color: var(--danger); }
 
-/* modal */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(10, 11, 13, 0.45);
-  z-index: 60;
+.contact-email-row .contact-icon {
+    color: #4C5A6A; /* Color oscuro para el ícono de email */
 }
-.modal {
-  width: 420px;
-  background: var(--card);
-  border-radius: 8px;
-  padding: 18px;
-  box-shadow: 0 12px 40px rgba(2,6,23,0.2);
-  position: relative;
+
+.contact-phone-row .contact-icon {
+    color: #555; /* Color para el ícono de teléfono */
 }
-.modal-close {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 16px;
+
+.contact-info .meta {
+    font-size: 0.9em; /* Para la cédula/teléfono */
+    color: #777;
+    margin-top: 2px;
 }
-.detail-header { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
-.avatar-large {
-  width:56px; height:56px; border-radius:50%;
-  background:#eef2ff; display:flex; align-items:center; justify-content:center; font-size:26px;
+
+/* --- Estilos para la Columna Tipo de Sangre (Blood Badge) --- */
+
+/* Estilo Base del Badge de Tipo de Sangre */
+.blood-type-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #333;
+    border-radius: 20px;
+    font-size: 0.85em;
+    min-width: 60px; /* Ancho mínimo para consistencia */
 }
-.detail-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-top:6px; color:var(--text); }
-.detail-grid strong { display:block; color:var(--muted); font-size:12px; margin-bottom:4px; }
+
+.blood-type-badge .blood-icon {
+    width: 14px; /* Tamaño de la gota */
+    height: 14px;
+    color: red; /* Color base de la gota */
+    margin-right: 4px; /* Espacio entre gota y texto */
+    transform: rotate(180deg);
+}
+
+/* Colores de fondo y gota por tipo, siguiendo un patrón similar al de la imagen */
+/* La gota en la imagen parece ser siempre roja, solo cambia el fondo y el color del texto si lo deseas. */
+
+
+.blood-type-badge.O-pos .blood-icon,
+.blood-type-badge.O-neg .blood-icon {
+    color: #c00;
+}
+
+
+.blood-type-badge.A-pos .blood-icon,
+.blood-type-badge.A-neg .blood-icon {
+    color: #a00; /* Gota roja */
+}
+
+
+.blood-type-badge.B-pos .blood-icon,
+.blood-type-badge.B-neg .blood-icon {
+    color: #a00; /* Gota roja */
+}
+
+
+.blood-type-badge.AB-pos .blood-icon,
+.blood-type-badge.AB-neg .blood-icon {
+    color: #a00; /* Gota roja */
+}

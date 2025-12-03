@@ -1,92 +1,70 @@
-// ServicioSuscritos.axios.js
-import axios from "axios";
+// /src/services/ServicioSuscripcion.js
+import { authorizedFetch, getAccessToken } from "./auth";
 
-import { getAccessToken, refreshJWT, setAuthTokens, getAuthTokens } from "./auth";
-const API_BASE = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000") + "/api";
+const API_BASE = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api") ;
 
-/* const API_BASE = (import.meta.env.VITE_API_URL || "http://192.168.100.34:8000") + "/api"; */
+async function handleFetch(path, opts = {}) {
+  const url = API_BASE.replace(/\/+$/, "") + path;
+  const res = await authorizedFetch(url, opts);
 
-const client = axios.create({
-  baseURL: API_BASE,
-  headers: { "Content-Type": "application/json" },
-  // timeout: 10000,
-});
+  // Si authorizedFetch devolvió un fetch Response, parsear JSON si hay contenido.
+  if (!res) throw new Error("No response from authorizedFetch");
 
-// Request interceptor: añade Authorization si hay access token
-client.interceptors.request.use((config) => {
-  const access = getAccessToken();
-  if (access) config.headers.Authorization = `Bearer ${access}`;
-  return config;
-});
-
-// Response interceptor: si 401 y tenemos refresh, intentamos refresh y reintentar una vez
-client.interceptors.response.use(
-  (res) => res,
-  async (error) => {
-    const original = error.config;
-    const status = error.response?.status;
-    // Evitar bucles: solo reintentar una vez por petición
-    if (status === 401 && !original._retry) {
-      original._retry = true;
-      try {
-        // refreshJWT() en tu auth.js actualiza localStorage con nuevos tokens
-        const newAccess = await refreshJWT();
-        // axios no lee automáticamente el localStorage para esta instancia,
-        // así que actualizo header y reintento
-        original.headers.Authorization = `Bearer ${newAccess}`;
-        return client(original);
-      } catch (errRefresh) {
-        // si refresh falla, limpiar tokens y propagar error
-        setAuthTokens(null);
-        return Promise.reject(error);
-      }
+  // Si res is a Response-like object:
+  if (typeof res.json === "function") {
+    // manejar errores HTTP
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      let payload = text;
+      try { payload = JSON.parse(text); } catch {}
+      const err = new Error(`HTTP ${res.status} ${res.statusText}`);
+      err.status = res.status;
+      err.server = payload;
+      throw err;
     }
-    return Promise.reject(error);
+    // Si status 204 no tiene body
+    if (res.status === 204) return null;
+    return await res.json();
   }
-);
 
-// Servicios
+  // Si authorizedFetch ya devolvió un objeto ya parseado (por compatibilidad)
+  return res;
+}
+
+// Servicios exportados
 export async function obtenerSuscritos(query = "") {
-  const url = query ? `/suscritos/?${query}` : "/suscritos/";
-  const res = await client.get(url);
-  return res.data;
+  const path = query ? `/suscritos/?${query}` : "/suscritos/";
+  return handleFetch(path);
 }
 
 export async function obtenerSuscritoPorId(id) {
-  const res = await client.get(`/suscritos/${id}/`);
-  return res.data;
+  return handleFetch(`/suscritos/${id}/`);
 }
 
-// in ServicioSuscritos.axios.js
 export async function crearSuscripcion(payload) {
-  try {
-    const res = await client.post("/suscritos/", payload);
-    return res.data;
-  } catch (error) {
-    // Re-throw the axios error but ensure response data is attached for UI
-    if (error.response) {
-      // include the server payload for the component
-      const serverData = error.response.data;
-      console.error("crearSuscripcion - server responded:", error.response.status, serverData);
-      // create a new error that keeps response property
-      const err = new Error("Validation error from server");
-      err.response = error.response;
-      throw err;
-    }
-    console.error("crearSuscripcion - request error:", error);
-    throw error;
-  }
+  return handleFetch("/suscritos/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
-
 
 export async function actualizarSuscrito(id, payload) {
-  const res = await client.put(`/suscritos/${id}/`, payload);
-  return res.data;
+  return handleFetch(`/suscritos/${id}/`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
 }
 
 export async function eliminarSuscrito(id) {
-  const res = await client.delete(`/suscritos/${id}/`);
-  return res.status === 204 ? null : res.data;
+  try {
+    return await handleFetch(`/suscritos/${id}/`, { method: "DELETE" });
+  } catch (err) {
+    // Si el servidor responde 404 -> devolver null (indica "no existía")
+    if (err && err.status === 404) {
+      return null;
+    }
+    throw err;
+  }
 }
 
 export function buildSearchQuery({ q, page, page_size } = {}) {
@@ -97,3 +75,41 @@ export function buildSearchQuery({ q, page, page_size } = {}) {
   return params.toString();
 }
 
+// Participaciones
+export async function obtenerParticipaciones(query = "") {
+  const path = query ? `/participacion/?${query}` : "/participacion/";
+  return handleFetch(path);
+}
+
+export async function obtenerParticipacionesPorSuscrito(suscritoId) {
+  try {
+    return await handleFetch(`/participacion/?suscrito=${suscritoId}`);
+  } catch (err) {
+    const all = await obtenerParticipaciones();
+    return (Array.isArray(all) ? all : []).filter((p) => {
+      const sid = p.suscrito ?? p.suscrito_id ?? p.Suscrito ?? p.usuario ?? null;
+      return sid === suscritoId;
+    });
+  }
+}
+
+
+// calcularTipoDonante (mantener la versión robusta que ya tienes)
+export function calcularTipoDonante(participaciones = []) {
+  if (!Array.isArray(participaciones)) participaciones = [];
+
+  const campanasSet = new Set();
+  participaciones.forEach((p) => {
+    const id = p.campana ?? p.campana_id ?? p.campaign ?? p.campaign_id ?? p.campaignId ?? null;
+    const maybe = typeof id === "object" ? (id?.id ?? id?.pk ?? null) : id;
+    if (maybe != null) campanasSet.add(String(maybe));
+  });
+
+  const count = campanasSet.size;
+
+  if (count === 1) return "Primera vez";
+  if (count > 8) return "Frecuente";
+  if (count > 5) return "Regular";
+  if (count > 1 && count <= 5) return "Ocasional";
+  return "No Donante";
+}

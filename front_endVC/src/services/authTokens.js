@@ -11,12 +11,16 @@ export const getAccessToken = () => {
 export const authorizedFetch = async (url, options = {}) => {
   const token = getAccessToken();
 
-  const headers = {
-    "Content-Type": "application/json",
+  let headers = {
     ...(options.headers || {}),
   };
 
-  // Si existe token, se añade al header
+  // ❗ Si el body NO es FormData, agregamos JSON
+  if (!(options.body instanceof FormData)) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  // Token
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
