@@ -7,6 +7,7 @@ urlpatterns = [
         # Usuarios
     path('usuarios/', CustomUserListCreateView.as_view(), name="crear_listar_usuarios"),
     path('usuarios/<int:pk>/', CustomUserDetailView.as_view(), name="detalle_usuario"),
+    path('user/', UsuarioActualView.as_view(), name="user-actual"),
 
     # Login admin (endpoint específico)
     path('login/admin/', AdminLoginView.as_view(), name='login_admin'),
@@ -54,8 +55,8 @@ urlpatterns = [
     path('buzon/<int:pk>', BuzonDetailView.as_view(), name="actualizar y eliminar mensaje de buzón"),
 
     # Respuestas
-    path('respuestas/', RespuestaListCreateView.as_view(), name="crear y listar respuestas"),
-    path('respuesta/<int:pk>', RespuestaDetailView.as_view(), name="actualizar y eliminar respuestas"),
+    path('respuestas/', RespuestaListCreateView.as_view(), name="respuestas-list-create"),
+    path('respuesta/<int:pk>/', RespuestaDetailView.as_view(), name="respuesta-detail"),
     
     #Sangre urgente
     path('urgente_tip_sang/', Urgente_Tip_SangListCreateView.as_view(), name="crear y listar urgentes"),

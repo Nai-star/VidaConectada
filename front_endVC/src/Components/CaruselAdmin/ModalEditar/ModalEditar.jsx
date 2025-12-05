@@ -13,10 +13,11 @@ export default function ModalEditar({ cerrar, recargar, banner }) {
 
   const handleGuardar = async () => {
     try {
+      // Usar las claves que espera el servicio: showText y darkFilter
       await actualizarBannerAdmin(banner.id, {
         texto,
-        mostrar_texto: mostrarTexto,
-        filtro_oscuro: filtroOscuro,
+        showText: mostrarTexto,
+        darkFilter: filtroOscuro,
       });
 
       recargar();

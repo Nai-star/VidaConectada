@@ -213,45 +213,45 @@ export async function cambiarEstadoBanner(id, nuevoEstado) {
 // NUEVO SERVICIO PARA ADMIN – NO ROMPE NADA DE LO EXISTENTE
 export async function crearBannerAdmin({ file, url, texto, filtro_oscuro, mostrar_texto }) {
   try {
-    let formData = new FormData();
+    const formData = new FormData();
 
-    // Si viene archivo, lo envías
     if (file) {
       formData.append("imagen", file);
     }
 
-    // Si viene URL, también
     if (url) {
       formData.append("imagen_url", url);
     }
 
-    // Texto
+    // Texto (permitimos vacío)
     formData.append("texto", texto || "");
 
-    // Booleanos
-    formData.append("filtro_oscuro", filtro_oscuro);
-    formData.append("mostrar_texto", mostrar_texto);
+    // Booleanos convertidos a string (DRF lo necesita así)
+    formData.append("filtro_oscuro", filtro_oscuro ? "true" : "false");
+    formData.append("mostrar_texto", mostrar_texto ? "true" : "false");
 
-    // ⭐⭐⭐ CONSTANTE PARA QUE SIEMPRE SE GUARDEN ACTIVOS ⭐⭐⭐
+    // Siempre activo al crear
     formData.append("estado", "true");
 
     const response = await fetch("http://localhost:8000/api/carusel/", {
       method: "POST",
-      body: formData, // No se usa headers porque FormData ya pone el boundary
+      body: formData,
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       console.error("ServicioCarrusel (admin): error creando banner", errorData);
       throw new Error("Error al crear banner (admin)");
     }
 
     return await response.json();
+
   } catch (error) {
     console.error("ServicioCarrusel: error interno creando banner admin", error);
     throw error;
   }
 }
+
 /* ============================================================
    🔹 6. ACTUALIZAR Banner (Admin)
 ============================================================ */

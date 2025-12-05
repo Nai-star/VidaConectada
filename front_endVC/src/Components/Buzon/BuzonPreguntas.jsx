@@ -26,15 +26,19 @@ function BuzonPreguntas({ isOpen, onClose }) {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+
     const err = validate();
     if (err) {
       setStatus({ type: "error", msg: err });
       return;
     }
+
     try {
       setLoading(true);
       setStatus({ type: "", msg: "" });
+
       await crearConsultaBuzon(form);
+
       setStatus({
         type: "success",
         msg: "¡Gracias! Tu consulta fue enviada al equipo. Te responderemos pronto.",
@@ -50,32 +54,23 @@ function BuzonPreguntas({ isOpen, onClose }) {
     }
   };
 
-  // close on ESC
   useEffect(() => {
     if (!isOpen) return;
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-    };
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen, onClose]);
 
-  // focus management
   useEffect(() => {
     if (isOpen) {
       previouslyFocused.current = document.activeElement;
-      setTimeout(() => {
-        firstFieldRef.current?.focus();
-      }, 0);
+      setTimeout(() => firstFieldRef.current?.focus(), 0);
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
       previouslyFocused.current?.focus?.();
     }
-    // cleanup
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -84,10 +79,7 @@ function BuzonPreguntas({ isOpen, onClose }) {
     <div
       className="bz-modal-overlay"
       ref={overlayRef}
-      onMouseDown={(e) => {
-        // click fuera del panel => cerrar
-        if (e.target === overlayRef.current) onClose();
-      }}
+      onMouseDown={(e) => { if (e.target === overlayRef.current) onClose(); }}
       role="dialog"
       aria-modal="true"
       aria-labelledby="bz-modal-title"
@@ -98,11 +90,7 @@ function BuzonPreguntas({ isOpen, onClose }) {
             <FiMessageSquare className="bz-icon" />
             Buzón de Preguntas
           </h3>
-          <button
-            aria-label="Cerrar"
-            className="bz-modal-close"
-            onClick={onClose}
-          >
+          <button aria-label="Cerrar" className="bz-modal-close" onClick={onClose}>
             ✕
           </button>
         </header>
@@ -144,32 +132,17 @@ function BuzonPreguntas({ isOpen, onClose }) {
             onChange={onChange}
             disabled={loading}
           />
-            <br />
+          <br />
           <div className="bz-note">
-            <strong>Nota:</strong>{" "}
-            Las preguntas seleccionadas para publicar en la sección de FAQ serán
-            mostradas de forma anónima para proteger tu privacidad.
+            <strong>Nota:</strong> Las preguntas seleccionadas para FAQ serán anónimas.
           </div>
 
-          {status.msg && (
-            <div className={`bz-alert ${status.type}`}>
-              {status.msg}
-            </div>
-          )}
+          {status.msg && <div className={`bz-alert ${status.type}`}>{status.msg}</div>}
 
           <div style={{ display: "flex", gap: 10 }}>
             <button className="bz-btn" type="submit" disabled={loading}>
               {loading ? "Enviando..." : "Enviar Consulta"}
             </button>
-            {/* <button
-              type="button"
-              className="bz-btn outline"
-              onClick={onClose}
-              disabled={loading}
-              style={{ width: 140 }}
-            >
-              Cancelar
-            </button> */}
           </div>
         </form>
       </div>

@@ -6,9 +6,10 @@ const ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "▦", path: "" },
   { id: "banners", label: "Banners Principales", icon: "🖼️", path: "carusel_admin" },
   { id: "campanas", label: "Campañas", icon: "📅", path: "campanas" },
-  { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "preguntas" },
-  { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "tipos" },
+  { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "admin_buzon" },
+  { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "TS" },
   { id: "requisitos", label: "Requisitos para Donar", icon: "📋", path: "requisitos_admin" },
+  { id: "red_bancos", label: "Red de Bancos ", icon: "🏥", path: "red_bancos" },
   { id: "usuarios", label: "Usuarios", icon: "👥", path: "gestion_usuarios" },
   { id: "config", label: "Configuración", icon: "⚙️", path: "configuracion" },
 ];

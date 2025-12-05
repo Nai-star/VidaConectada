@@ -193,7 +193,7 @@ class Red_bancos(models.Model):
     horarios = models.CharField(max_length=100)
     hora = models.CharField(max_length=100)
     Contacto  = models.CharField(max_length=100)
-    Notas  = models.CharField(max_length=100)
+    Notas  = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
        return f"{self.nombre_hospi}"

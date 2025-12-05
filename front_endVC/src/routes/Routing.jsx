@@ -16,7 +16,9 @@ import GestionUsuarios from '../Components/AdminSidebar/GestionUsuarios/GestionU
 import CaruselAdmin from '../Components/CaruselAdmin/CaruselAdmin';
 import Requisitos from '../Components/RequisitosAdmin/Requsitos/Requisitos';
 /* import AdminSidebar from '../Components/AdminSidebar/AdminSidebar'; */
-
+import RedBancos from "../Components/AdminSidebar/RedBancos/RedBancos";
+import AdminBuzon from '../Components/AdminSidebar/AdminBuzon/AdminBuzon';
+import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
 
 function Routing() {
 
@@ -53,8 +55,11 @@ function Routing() {
           <Route path='configuracion' element={<Configuracion/>}/>
           <Route path='gestion_usuarios' element={<GestionUsuarios/>} />    
           <Route path='carusel_admin' element={<CaruselAdmin/>} />       
-          <Route path='requisitos_admin' element={<Requisitos/>} />       
-          
+          <Route path='requisitos_admin' element={<Requisitos/>} /> 
+          <Route path='admin_buzon' element={<AdminBuzon/>} />  
+              
+          <Route path='red_bancos' element={<RedBancos/>} />  
+          <Route path='TS' element={<TipoSangre/>} />  
    
         </Route>
 

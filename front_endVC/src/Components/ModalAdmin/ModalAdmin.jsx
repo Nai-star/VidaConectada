@@ -4,7 +4,7 @@ import "./ModalAdmin.css";
 
 export default function CaruselAdmin({ cerrar, recargar }) {
   const [form, setForm] = useState({
-    imagen: "",
+    imagen: null,
     texto: "",
     filtro_oscuro: false,
     mostrar_texto: true,
@@ -25,22 +25,12 @@ export default function CaruselAdmin({ cerrar, recargar }) {
 
   const guardar = async () => {
     try {
-      const formData = new FormData();
-
-      // 🔥 ARCHIVO O URL (si no hay archivo)
-      formData.append("imagen", form.imagen ?? "");
-
-      // 🔥 CAMPOS TEXTO
-      formData.append("texto", form.texto ?? "");
-
-      // 🔥 BOOLEANS DEBEN SER STRINGS (DRF NO ACEPTA BOOLEANOS DIRECTOS)
-      formData.append("filtro_oscuro", form.filtro_oscuro ? "true" : "false");
-      formData.append("mostrar_texto", form.mostrar_texto ? "true" : "false");
-
-      // 🔥 SIEMPRE GUARDARLO ACTIVO AL CREAR
-      formData.append("estado", "true");
-
-      await crearBannerAdmin(formData);
+      await crearBannerAdmin({
+        file: form.imagen,
+        texto: form.texto ?? "",
+        filtro_oscuro: form.filtro_oscuro ? "true" : "false",
+        mostrar_texto: form.mostrar_texto ? "true" : "false",
+      });
 
       recargar();
       cerrar();
@@ -52,7 +42,6 @@ export default function CaruselAdmin({ cerrar, recargar }) {
   return (
     <div className="modal-overlay">
       <div className="modal-box">
-
         <h2>Nuevo Banner</h2>
         <p>Configura un nuevo banner para tu carrusel</p>
 
@@ -80,7 +69,6 @@ export default function CaruselAdmin({ cerrar, recargar }) {
             Filtro oscuro
             <small>Oscurece la imagen para resaltar el texto</small>
           </span>
-
           <div>
             <input 
               id="switch-filtro" 
@@ -99,7 +87,6 @@ export default function CaruselAdmin({ cerrar, recargar }) {
             Mostrar texto
             <small>Activa o desactiva la visualización del texto</small>
           </span>
-
           <div>
             <input 
               id="switch-texto" 
@@ -118,7 +105,6 @@ export default function CaruselAdmin({ cerrar, recargar }) {
             Estado
             <small>Define si el banner estará activo o inactivo</small>
           </span>
-
           <div>
             <input 
               id="switch-estado" 
@@ -140,8 +126,8 @@ export default function CaruselAdmin({ cerrar, recargar }) {
             Agregar Banner
           </button>
         </div>
-
       </div>
     </div>
   );
 }
+

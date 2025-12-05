@@ -1,0 +1,210 @@
+/* TipoSangre.css (corregido) */
+
+/* contenedor general */
+.blood-dashboard-container {
+  padding: 20px;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  color: #222;
+}
+
+/* header */
+.header-top { margin-bottom: 12px; }
+.titulo { margin: 0; font-size: 20px; font-weight: 700; color: #0f172a; }
+.sub { margin: 2px 0 12px 0; color: #6b7280; font-size: 13px; }
+
+/* alerta */
+.alerta-general {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fff5f5;
+  border: 1px solid #f5c6cb;
+  color: #7a1515;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+}
+.alerta-icon { font-size: 22px; margin-top: 2px; }
+.alerta-body strong { display:block; margin-bottom:6px; }
+.alerta-text { margin: 0 0 8px 0; color:#7a1515; font-size: 13px; }
+.alerta-lista { display:flex; gap:8px; flex-wrap:wrap; }
+.alerta-chip {
+  background: #fff;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* colores chips alerta (clases válidas: Urgente, Baja-disponibilidad) */
+.alerta-chip.Urgente {
+  background:#fff5f5;
+  color:#991b1b;
+  border-color:#f8c0c0;
+}
+.alerta-chip.Baja-disponibilidad {
+  background:#fffaf0;
+  color:#92400e;
+  border-color:#f2d9a8;
+}
+
+/* tarjeta tabla */
+.card.tabla-card { background:#fff; border-radius:10px; padding:0; border:1px solid #e6e9ee; margin-bottom:18px; overflow:hidden; }
+.card-header { padding:16px 20px; border-bottom:1px solid #f1f3f6; background:#fbfcfd; }
+.card-header h3 { margin:0; font-size:15px; }
+
+/* tabla */
+.tabla-container { padding: 12px 20px; overflow:auto; }
+.tabla-sangre { width:100%; border-collapse: collapse; min-width:900px; }
+.tabla-sangre thead th {
+  text-align:left; font-size:13px; color:#475569; padding:12px 8px; border-bottom:1px solid #eef2f6;
+}
+.tabla-sangre tbody tr { border-bottom:1px solid #f3f5f8; }
+.tabla-sangre td { padding:12px 8px; font-size:14px; color:#1f2937; vertical-align:middle; }
+.tipo-col { display:flex; align-items:center; gap:10px; }
+.icono-sangre { font-size:16px; }
+.tipo-text { font-weight:600; }
+
+/* estado chips */
+.estado-chip {
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:600;
+  text-transform:none;
+}
+.estado-chip.Normal {
+  background:#ecfdf5;
+  color:#065f46;
+  border:1px solid rgba(6,95,70,0.08);
+}
+.estado-chip.Baja-disponibilidad {
+  background:#fffbeb;
+  color:#92400e;
+  border:1px solid rgba(146,64,14,0.08);
+}
+.estado-chip.Urgente {
+  background:#fff1f2;
+  color:#991b1b;
+  border:1px solid rgba(153,27,27,0.08);
+}
+
+/* icono sangre según estado (small) */
+.icono-sangre.Normal { color:#10b981; }
+.icono-sangre.Baja-disponibilidad { color:#f59e0b; }
+.icono-sangre.Urgente { color:#ef4444; }
+
+/* acciones */
+.col-acciones { width:140px; text-align:right; }
+.acciones { display:flex; justify-content:flex-end; gap:10px; align-items:center; }
+.acciones-btn { background:#f3f4f6; border:1px solid #e6e9ee; padding:6px 10px; border-radius:6px; cursor:pointer; }
+.dot-btn { background:transparent; border:1px solid #e6e9ee; padding:6px; border-radius:8px; cursor:pointer; }
+.acciones-dropdown { position: relative; }
+.acciones-dropdown .dropdown-menu {
+  display:none;
+  position:absolute;
+  right:0;
+  top:36px;
+  background:white;
+  border:1px solid #eef2f6;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+  border-radius:8px;
+  min-width:180px;
+  z-index:20;
+}
+.acciones-dropdown:hover .dropdown-menu { display:block; }
+.dropdown-item { display:block; padding:8px 12px; width:100%; text-align:left; background:transparent; border:none; cursor:pointer; font-size:13px; color:#111827; }
+.dropdown-item:hover { background:#f8fafc; }
+
+/* resumen grid */
+.resumen-grid {
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top:16px;
+}
+.resumen-card { padding:16px; border-radius:10px; border:1px solid #e6e9ee; display:flex; flex-direction:column; gap:8px; min-height:88px; }
+.resumen-head { display:flex; align-items:center; gap:12px; }
+.icono-card { font-size:20px; }
+.resumen-count { font-size:22px; font-weight:700; margin:0; color:#0f172a; }
+.resumen-small { margin:0; font-size:12px; color:#6b7280; }
+
+/* resumen colors */
+.resumen-card.normal { background:#ffffff; }
+.resumen-card.normal .icono-card { color:#10b981; }
+.resumen-card.baja .icono-card { color:#f59e0b; }
+.resumen-card.urgente .icono-card { color:#ef4444; }
+
+/* responsive */
+@media (max-width: 980px){
+  .resumen-grid { grid-template-columns: repeat(1, 1fr); }
+  .tabla-sangre { min-width: 700px; }
+}
+/* ---------- Sección Escasez (tarjetas) ---------- */
+.escasez-section {
+  margin: 18px 0 28px 0;
+  text-align: center;
+}
+.escasez-grid {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.escasez-card {
+  width: 220px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 22px 18px 18px 18px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.drop-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+  box-shadow: 0 6px 18px rgba(15,23,42,0.04);
+}
+.drop-icon { font-size: 34px; color: #ef4444; filter: drop-shadow(0 6px 14px rgba(239,68,68,0.12)); }
+
+/* cuerpo tarjeta */
+.escasez-body .blood-type {
+  font-weight: 700;
+  font-size: 34px;
+  color: #1f2937;
+}
+.badge {
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:700;
+  margin-top:4px;
+  font-size:13px;
+}
+.badge.Urgente {
+  background:#fee2e2;
+  color:#991b1b;
+}
+.badge.Baja-disponibilidad {
+  background:#fffbeb;
+  color:#92400e;
+}
+.escasez-note { font-size:13px; color:#6b7280; margin-top:6px; }
+
+/* small responsive tweak */
+@media (max-width: 640px) {
+  .escasez-grid { gap: 12px; }
+  .escasez-card { width: 180px; padding: 18px; }
+  .drop-wrap { width: 50px; height: 50px; }
+  .drop-icon { font-size: 28px; }
+}

@@ -14,6 +14,14 @@ from django.contrib.auth.models import Group
 
 
 #Usuarios
+from django.contrib.auth.models import User
+from rest_framework import serializers
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email", "first_name", "last_name"]
+
 class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
@@ -350,11 +358,16 @@ class BuzonSerializer(serializers.ModelSerializer):
         fields = ['id', 'Nombre_persona', 'correo', 'pregunta', 'estado', 'fecha']
 
 class RespuestaSerializer(serializers.ModelSerializer):
-    Buzon = BuzonSerializer(read_only=True) 
+    Buzon_id = serializers.PrimaryKeyRelatedField(
+        queryset=Buzon.objects.all(),
+        source='Buzon',
+        write_only=True
+    )
+
     class Meta:
         model = Respuesta
-        fields = ['id', 'Respuesta_P', 'estado', 'Fecha', 'CustomUser', 'Buzon']
-
+        fields = '__all__'
+        read_only_fields = ['id', 'Fecha', 'CustomUser', 'Buzon']
 
 
 
@@ -382,16 +395,17 @@ class GaleriaSerializer(serializers.ModelSerializer):
 class Red_bancosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Red_bancos
-        fields = '__all__'
+        fields = ['id', 'nombre_hospi', 'horarios', 'hora', 'Contacto', 'Notas']
 
 
-class CaruselSerializer(serializers.ModelSerializer):
- 
-    imagenes = serializers.SerializerMethodField()
 
 
 # ---------------- Carusel ----------------
+# serializers.py (o donde tengas CaruselSerializer)
+
+
 class CaruselSerializer(serializers.ModelSerializer):
+    texto = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     class Meta:
         model = carusel
@@ -402,6 +416,8 @@ class CaruselSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         nuevo_estado = data.get('estado', True)
+        if 'texto' not in data:
+            data['texto'] = ""
         if nuevo_estado:
             activos = carusel.objects.filter(estado=True)
             if self.instance:

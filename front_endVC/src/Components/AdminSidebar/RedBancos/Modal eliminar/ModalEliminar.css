@@ -1,0 +1,52 @@
+.modal-eliminar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 900;
+}
+
+.modal-eliminar {
+  background: white;
+  padding: 25px;
+  width: 350px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  text-align: center;
+}
+
+.modal-eliminar h3 {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.modal-eliminar p {
+  margin-bottom: 20px;
+}
+
+.modal-eliminar-btns {
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn-cancelar {
+  background: #ccc;
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-eliminar {
+  background: #e63946;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}

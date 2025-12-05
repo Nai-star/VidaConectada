@@ -5,7 +5,7 @@ import { FaQuestionCircle } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
 import BuzonPreguntas from "../../Components/Buzon/BuzonPreguntas";
 
-function PreguntasFrecuentes() {
+function PreguntasFrecuentes({ currentUser }) {
   const [faqs, setFaqs] = useState([]);
   const [openId, setOpenId] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,30 +22,25 @@ function PreguntasFrecuentes() {
 
   const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
 
-  // Intentamos ordenar por fecha si existe alguno de estos campos
+  // Ordenar por fecha si existe
   const sortedFaqs = useMemo(() => {
     if (!faqs || faqs.length === 0) return [];
     const dateKeys = ["created_at", "createdAt", "fecha", "fecha_creacion"];
     const hasDateKey = (item) =>
       dateKeys.find((k) => item?.[k] !== undefined && item?.[k] !== null);
-    // si ninguna pregunta tiene fecha, devolvemos tal cual
     const anyHasDate = faqs.some(hasDateKey);
     if (!anyHasDate) return [...faqs];
 
-    // función para obtener timestamp o 0 si no hay fecha
     const getTime = (item) => {
       const key = dateKeys.find((k) => item?.[k] !== undefined && item?.[k] !== null);
       const val = key ? item[key] : null;
-      // intentar parsear string o número
       const t = val ? Date.parse(val) : NaN;
       return Number.isFinite(t) ? t : 0;
     };
 
-    // ordenar descendente (más reciente primero)
     return [...faqs].sort((a, b) => getTime(b) - getTime(a));
   }, [faqs]);
 
-  // Determina la lista que se renderiza según showAll
   const visibleFaqs = useMemo(() => {
     if (showAll) return sortedFaqs;
     return sortedFaqs.slice(0, 5);
@@ -69,10 +64,7 @@ function PreguntasFrecuentes() {
             {visibleFaqs.map((q) => {
               const isOpen = q.id === openId;
               return (
-                <article
-                  key={q.id}
-                  className={`faq-item ${isOpen ? "open" : ""}`}
-                >
+                <article key={q.id} className={`faq-item ${isOpen ? "open" : ""}`}>
                   <button
                     className="faq-q"
                     onClick={() => toggle(q.id)}
@@ -101,9 +93,11 @@ function PreguntasFrecuentes() {
             })}
           </div>
 
-          {/* Botón Ver más / Ver menos: solo si hay más de 5 preguntas */}
           {sortedFaqs.length > 5 && (
-            <div className="faq-subtitle" style={{ textAlign: "center", marginTop: 12 }}>
+            <div
+              className="faq-subtitle"
+              style={{ textAlign: "center", marginTop: 12 }}
+            >
               <button
                 className="faq-open-buzon"
                 onClick={() => setShowAll((s) => !s)}
@@ -119,7 +113,13 @@ function PreguntasFrecuentes() {
                   padding: 6,
                 }}
               >
-                {showAll ? <b>Ver menos</b> : <><b>Ver más</b> ({sortedFaqs.length - 5} restantes)</>}
+                {showAll ? (
+                  <b>Ver menos</b>
+                ) : (
+                  <>
+                    <b>Ver más</b> ({sortedFaqs.length - 5} restantes)
+                  </>
+                )}
               </button>
             </div>
           )}
@@ -130,7 +130,13 @@ function PreguntasFrecuentes() {
         ¿No encontraste tu respuesta?{" "}
         <button
           className="faq-open-buzon"
-          onClick={() => setModalOpen(true)}
+          onClick={() => {
+            if (!currentUser?.token) {
+              alert("Debes iniciar sesión para enviar preguntas.");
+              return;
+            }
+            setModalOpen(true);
+          }}
           aria-haspopup="dialog"
         >
           <b>Envíanos tu pregunta</b>
@@ -140,6 +146,7 @@ function PreguntasFrecuentes() {
       <BuzonPreguntas
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
+        user={currentUser} // <-- pasar usuario logueado
       />
     </section>
   );
