@@ -8,18 +8,18 @@
   --shadow: 0 4px 12px rgba(13,34,56,0.12);
 }
 
-/* GRID */
 .campanas-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--gap);
-  width: 100%;
-  max-width: var(--max-width);
-  margin-top: 28px;
-  box-sizing: border-box;
-  align-items: flex-start;
+    display: flex;
+    padding: 25px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--gap);
+    width: 100%;
+    max-width: var(--max-width);
+    margin-top: 28px;
+    box-sizing: border-box;
+    align-items: flex-start;
+    flex-direction: column;
 }
-
 /* TARJETA */
 /* ----- TARJETAS ----- */
 .campana-card {
@@ -177,20 +177,6 @@
   --max-width: 1200px; /* Definir el ancho máximo */
 }
 
-/* ---------------------------------------------------- */
-/* :bulb: CORRECCIÓN DE LAYOUT (GRID) */
-/* ---------------------------------------------------- */
-.campanas-container {
-  display: grid;
-  /* :bulb: CAMBIO CLAVE: Permite que el grid decida el número de columnas (mínimo 300px) */
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--gap);
-  width: 100%;
-  max-width: var(--max-width);
-  margin-top: 28px;
-  box-sizing: border-box;
-  align-items: flex-start; /* Evita que las tarjetas se estiren verticalmente */
-}
 
 /* ---------------------------------------------------- */
 /* :bulb: CORRECCIÓN DE TARJETA */

@@ -75,3 +75,37 @@ export async function GetTiposSangre() {
     throw error;
   }
 }
+
+export async function actualizarEstadoUrgencia(id, body) {
+  try {
+    const res = await fetch(`${API_URL}/urgente_tip_sang/${id}/`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      throw new Error("Error al actualizar el estado de urgencia");
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error actualizando estado de urgencia:", error);
+    throw error;
+  }
+}
+export async function getUrgentesRaw() {
+  const res = await fetch(`${API_URL}/urgente_tip_sang/`);
+  if (!res.ok) throw new Error("Error obteniendo urgente_tip_sang");
+  return await res.json();
+}
+export async function crearUrgente(body) {
+  const res = await fetch(`${API_URL}/urgente_tip_sang/`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  return res;
+}

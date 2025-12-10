@@ -5,7 +5,7 @@ import "./AdminSidebar.css";
 const ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: "▦", path: "" },
   { id: "banners", label: "Banners Principales", icon: "🖼️", path: "carusel_admin" },
-  { id: "campanas", label: "Campañas", icon: "📅", path: "campanas" },
+  { id: "campanas", label: "Campañas", icon: "📅", path: "CampanaAdmin" },
   { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "admin_buzon" },
   { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "TS" },
   { id: "requisitos", label: "Requisitos para Donar", icon: "📋", path: "requisitos_admin" },

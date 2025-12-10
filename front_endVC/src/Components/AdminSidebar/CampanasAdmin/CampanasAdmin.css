@@ -1,0 +1,184 @@
+/* Estilos Generales y Reseteo */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6; /* Fondo gris claro */
+    margin: 20px;
+    padding: 0;
+}
+
+/* --- Encabezado Principal --- */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: baseline;
+    margin-bottom: 20px;
+    flex-direction: column;
+    
+}
+
+.title-section h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.title-section p {
+    font-size: 14px;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Botón "Crear Nueva Campaña" */
+.btn-new-campaign {
+    background-color: #dc3545; /* Rojo */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    text-transform: capitalize;
+}
+
+.btn-new-campaign:hover {
+    background-color: #c82333;
+}
+
+/* Icono dentro del botón (asumiendo que se usa un icono de fuente o SVG) */
+.btn-new-campaign::before {
+    content: '+'; /* Usando un '+' como marcador de posición */
+    font-weight: bold;
+    font-size: 18px;
+    margin-right: 5px;
+}
+
+/* --- Estilos de la Tabla --- */
+.campaign-table-container {
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: visible; /* 🔥 FIX */
+}
+
+
+.campaign-table {
+    width: 100%;
+    border-collapse: collapse; /* Quita los bordes dobles de la tabla */
+}
+
+/* Encabezados de la Tabla (Thead) */
+.campaign-table thead th {
+    background-color: #f8f9fa; /* Fondo muy claro para el encabezado */
+    color: #495057;
+    font-weight: 600;
+    padding: 15px 10px;
+    text-align: left;
+    border-bottom: 2px solid #e9ecef; /* Separador */
+    font-size: 14px;
+}
+
+/* Filas de la Tabla (Tbody) */
+.campaign-table tbody tr {
+    border-bottom: 1px solid #e9ecef; /* Separador de fila */
+}
+
+.campaign-table tbody tr:hover {
+    background-color: #f0f0f0; /* Efecto hover sutil */
+}
+
+.campaign-table tbody td {
+    padding: 15px 10px;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #343a40;
+}
+
+/* Estilo para las celdas 'Imagen' */
+.campaign-table td:first-child {
+    width: 50px; /* Ancho fijo para la columna de la imagen */
+}
+
+/* Contenedor de la Imagen */
+.campaign-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 4px; /* Bordes ligeramente redondeados */
+    object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsión */
+    vertical-align: middle;
+}
+
+/* Estilos de las celdas de 'Campaña' (Título y Subtítulo) */
+.campaign-details strong {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 2px;
+}
+
+.campaign-details span {
+    display: block;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+/* Iconos de Fecha/Hora y Ubicación */
+.date-time, .location-text {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #495057;
+}
+
+.date-time span, .location-text span {
+    margin-right: 5px; /* Espacio para el icono */
+    /* Aquí se usarían íconos de fuente (ej. Font Awesome) o SVGs */
+}
+
+/* --- Tags de Estado --- */
+.status-tag {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    display: inline-block;
+    min-width: 65px; /* Para asegurar un ancho similar entre tags */
+}
+
+/* Estado 'Expirada' - Amarillo */
+.status-expired {
+    background-color: #fff3cd; /* Fondo amarillo muy claro */
+    color: #856404; /* Texto marrón/oscuro */
+    border: 1px solid #ffeeba;
+}
+
+/* Estado 'Finalizada' - Verde/Azul (similar al de la imagen) */
+.status-finished {
+    background-color: #d1ecf1; /* Fondo verde/azul claro */
+    color: #0c5460; /* Texto oscuro */
+    border: 1px solid #bee5eb;
+}
+
+/* --- Botones de Acción (Iconos) --- */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.action-button {
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 16px; /* Para el icono */
+    line-height: 1;
+}
+
+.action-button:hover {
+    color: #dc3545; /* Rojo al pasar el ratón */
+}

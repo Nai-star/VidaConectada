@@ -52,7 +52,7 @@ class CustomUserDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UsuarioActualView(APIView):
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     def get(self, request):
         serializer = UserSerializer(request.user)
@@ -202,7 +202,7 @@ class BuzonDetailView(RetrieveUpdateDestroyAPIView):
 
 # ✅ Respuestas
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny,IsAdminUser
 from .models import Respuesta
 from .serializers import RespuestaSerializer
 
@@ -211,17 +211,12 @@ class RespuestaListCreateView(ListCreateAPIView):
     GET: lista todas las respuestas
     POST: crea una nueva respuesta (espera Buzon_id o que perform_create asigne CustomUser)
     """
-    queryset = Respuesta.objects.all().order_by('-Fecha')
+    queryset = Respuesta.objects.all()
     serializer_class = RespuestaSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
 
     # opcional: asignar usuario autenticado automáticamente si no se envía CustomUser_id
-    def perform_create(self, serializer):
-        if self.request.user and self.request.user.is_authenticated:
-            # si el payload ya trae CustomUser_id, serializer lo manejará; si no, asignamos request.user
-            serializer.save(CustomUser=self.request.user)
-        else:
-            serializer.save()
+ 
 
 class RespuestaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Respuesta.objects.all()

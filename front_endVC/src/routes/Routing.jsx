@@ -19,7 +19,7 @@ import Requisitos from '../Components/RequisitosAdmin/Requsitos/Requisitos';
 import RedBancos from "../Components/AdminSidebar/RedBancos/RedBancos";
 import AdminBuzon from '../Components/AdminSidebar/AdminBuzon/AdminBuzon';
 import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
-
+import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmin"
 function Routing() {
 
     //const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado") || "null"); // Obtener el usuario logueado del localStorage
@@ -60,6 +60,7 @@ function Routing() {
               
           <Route path='red_bancos' element={<RedBancos/>} />  
           <Route path='TS' element={<TipoSangre/>} />  
+          <Route path='CampanaAdmin' element={<CampanasAdmin/>} />  
    
         </Route>
 

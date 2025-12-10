@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.models import Group as AuthGroup
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import get_user_model
+#from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 
 
@@ -358,16 +358,15 @@ class BuzonSerializer(serializers.ModelSerializer):
         fields = ['id', 'Nombre_persona', 'correo', 'pregunta', 'estado', 'fecha']
 
 class RespuestaSerializer(serializers.ModelSerializer):
-    Buzon_id = serializers.PrimaryKeyRelatedField(
+    """ Buzon_id = serializers.PrimaryKeyRelatedField(
         queryset=Buzon.objects.all(),
         source='Buzon',
         write_only=True
-    )
+    ) """
 
     class Meta:
         model = Respuesta
         fields = '__all__'
-        read_only_fields = ['id', 'Fecha', 'CustomUser', 'Buzon']
 
 
 

@@ -5,10 +5,10 @@ import { GetTiposSangre } from "../../services/Servicio_TS";
 
 const badgeClass = (frecuencia = "") => {
   const f = frecuencia.toLowerCase();
-  if (f.includes("muy")) return "badge1 badge-orange-strong";
-  if (f.includes("raro")) return "badge1 badge-orange";
-  if (f.includes("poco")) return "badge1 badge-yellow";
-  return "badge1 badge-green";
+  if (f.includes("muy")) return "badge badge-orange-strong";
+  if (f.includes("raro")) return "badge badge-orange";
+  if (f.includes("poco")) return "badge badge-yellow";
+  return "badge badge-green";
 };
 
 
