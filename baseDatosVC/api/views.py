@@ -24,6 +24,7 @@ from .serializers import *
 
 User = get_user_model()
 
+
 # Crear y listar usuarios (igual que tenías)
 class CustomUserListCreateView(generics.ListCreateAPIView):
     queryset = User.objects.all()
@@ -138,10 +139,17 @@ class CantonesListCreateView(ListCreateAPIView):
 
 
 # ✅ Campañas
+from rest_framework.parsers import MultiPartParser, FormParser
+
 class CampanaListCreateView(ListCreateAPIView):
     queryset = Campana.objects.all()
-    serializer_class = CampanaSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return CampanaCreateSerializer
+        return CampanaCreateSerializer
 
 
 class CampanaDetailView(RetrieveUpdateDestroyAPIView):

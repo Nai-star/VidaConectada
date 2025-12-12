@@ -319,7 +319,7 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
             "Fecha_fin",
             "Contacto",
             "CustomUser",
-            "Canton",
+            "Cantones",
             "Canton_nombre",
             "direccion_exacta",
             "imagen",
@@ -328,14 +328,15 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-
         imagenes = validated_data.pop("imagen")
-        #   requisitos = validated_data.pop("requisitos")
 
-        # Crear campaña
-        campana = Campana.objects.create(**validated_data)
+        request = self.context["request"]        # ← Aquí está el usuario autenticado
 
-        # Crear imágenes
+        campana = Campana.objects.create(
+            CustomUser=request.user,             # ← usuario automático
+            **validated_data
+        )
+
         for img in imagenes:
             Imagen_campana.objects.create(
                 Campana=campana,
@@ -343,6 +344,9 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
             )
 
         return campana
+
+
+      
 
 
 class MapaSerializer(serializers.ModelSerializer):
@@ -444,7 +448,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 # Campana serializer: devolvemos los related names EXACTOS que usa tu frontend:
 # - "Imagen_campana" (lista)
 # - "DetalleRequisito" (lista)
-class CampanaSerializer(serializers.ModelSerializer):
+""" class CampanaSerializer(serializers.ModelSerializer):
     Fecha_inicio = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y", "%Y-%m-%d"])
     Fecha_fin = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y", "%Y-%m-%d"])
 
@@ -488,7 +492,102 @@ class CampanaSerializer(serializers.ModelSerializer):
         for rid in requisitos_ids:
             DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=rid, CustomUser=campana.CustomUser)
 
+        return campana """
+from rest_framework import serializers
+from .models import Campana, Imagen_campana, DetalleRequisitos, Cantones
+
+
+class DetalleRequisitosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DetalleRequisitos
+        fields = ["id", "requisito"]
+
+
+class CampanaCreateSerializer(serializers.ModelSerializer):
+    # Formatos de fecha
+    Fecha_inicio = serializers.DateField(
+        format="%d-%m-%Y",
+        input_formats=["%d-%m-%Y", "%Y-%m-%d"]
+    )
+    Fecha_fin = serializers.DateField(
+        format="%d-%m-%Y",
+        input_formats=["%d-%m-%Y", "%Y-%m-%d"]
+    )
+
+    # CustomUser NO VIENE DESDE EL CLIENTE
+    CustomUser = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    # Canton (opcional)
+    Cantones = serializers.PrimaryKeyRelatedField(
+        queryset=Cantones.objects.all(),
+        required=False,
+        allow_null=True
+    )
+
+    # Nombre de cantón (solo lectura)
+    Canton_nombre = serializers.CharField(
+        source="Cantones.nombre_canton",
+        read_only=True
+    )
+
+    # Requisitos
+    detalles_requisitos = DetalleRequisitosSerializer(
+        source="detallerequisitos_set",
+        many=True,
+        read_only=True
+    )
+
+    # Múltiples imágenes
+    imagen = serializers.ListField(
+        child=serializers.ImageField(),
+        write_only=True,
+        required=False
+    )
+
+    class Meta:
+        model = Campana
+        fields = [
+            "id",
+            "Titulo",
+            "Descripcion",
+            "Fecha_inicio",
+            "Fecha_fin",
+            "Hora_inicio",
+            "Hora_fin",
+            "Activo",
+            "Contacto",
+            "direccion_exacta",
+            "CustomUser",
+            "Cantones",
+            "Canton_nombre",
+            "imagen",
+            "detalles_requisitos",
+        ]
+        read_only_fields = ["id", "CustomUser"]
+
+    def create(self, validated_data):
+        # Extraer imágenes del payload
+        imagenes = validated_data.pop("imagen", [])
+
+        # Quitar CustomUser si llegara accidentalmente
+        validated_data.pop("CustomUser", None)
+
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            raise serializers.ValidationError("Usuario no autenticado")
+
+        # Crear campaña asignando el usuario autenticado
+        campana = Campana.objects.create(
+            CustomUser=request.user,
+            **validated_data
+        )
+
+        # Guardar imágenes
+        for img in imagenes:
+            Imagen_campana.objects.create(Campana=campana, imagen=img)
+
         return campana
+
 
 
 

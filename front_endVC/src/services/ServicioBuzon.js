@@ -380,13 +380,13 @@ function parseJwt(token) {
 console.log('localStorage keys:', Object.keys(localStorage).filter(k => /token|auth|access|session/i.test(k)));
 
 // Ver valores más comunes
-console.log('token:', localStorage.getItem('token'));
-console.log('access:', localStorage.getItem('access'));
-console.log('auth:', localStorage.getItem('auth'));
-console.log('session:', localStorage.getItem('session'));
+console.log('token:', localStorage.getItem('refreshToken'));
+console.log('access:', localStorage.getItem('accessToken'));
+//console.log('auth:', localStorage.getItem('auth'));
+//console.log('session:', localStorage.getItem('session'));
 
 // (Si no hay token y quieres probar) — pega tu token real entre comillas:
-localStorage.setItem('access', 'eyJ...TU_TOKEN_DE_PRUEBA...');
+// localStorage.setItem('access', 'eyJ...TU_TOKEN_DE_PRUEBA...');
 // o
-localStorage.setItem('token', 'eyJ...TU_TOKEN_DE_PRUEBA...');
-console.log('Now access=', localStorage.getItem('access'));
+//localStorage.setItem('token', 'eyJ...TU_TOKEN_DE_PRUEBA...');
+//console.log('Now access=', localStorage.getItem('access'));

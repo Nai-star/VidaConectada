@@ -1,3 +1,4 @@
+// CampanasAdmin.jsx
 import React, { useEffect, useState } from "react";
 import { obtenerCampanas, crearCampana } from "../../../services/ServicioCampanas";
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock } from "react-icons/fa";
@@ -8,7 +9,6 @@ export default function GestionCampanas() {
   const [campanas, setCampanas] = useState([]);
   const [cargando, setCargando] = useState(true);
 
-  // 🔥 Estado para mostrar el modal
   const [mostrarModal, setMostrarModal] = useState(false);
 
   useEffect(() => {
@@ -53,21 +53,35 @@ export default function GestionCampanas() {
     return "Próxima";
   };
 
-  // 🔥 Ahora esta función sí guarda en la base de datos
+  console.log("Campañas:", campanas);
+
+
+  // ---------- FUNCIÓN CORREGIDA ----------
+  // Acepta exactamente el objeto que envía ModalNuevoCampana:
+  // { titulo, subtitulo, fecha, fechaFin, hora, horaFin, lugar, Cantones, imagen }
   const guardarCampanaNueva = async (nueva) => {
     try {
+      console.log("[CampanasAdmin] objeto recibido del modal:", nueva);
+
+      // Normalizar nombres y proteger contra undefined
       const payload = {
-        Titulo: nueva.titulo,
-        Descripcion: nueva.subtitulo,
-        Fecha_inicio: nueva.fecha,
-        Hora_inicio: nueva.hora,
-        direccion_exacta: nueva.lugar,
-        Imagen_url: nueva.imagen,
-        Activo: true
+        titulo: nueva.titulo ?? "",
+        subtitulo: nueva.subtitulo ?? "",
+        fecha: nueva.fecha ?? null,
+        fechaFin: nueva.fechaFin ?? nueva.fecha ?? null,
+        hora: nueva.hora ?? null,
+        horaFin: nueva.horaFin ?? nueva.hora ?? null,
+        lugar: nueva.lugar ?? "",
+        // Cantones debe ser un id (número) o null
+        Cantones: (nueva.Cantones === undefined || nueva.Cantones === null) ? null : Number(nueva.Cantones),
+        // imagen puede ser File o null — el servicio decidirá qué hacer con ella
+        imagen: nueva.imagen ?? null
       };
 
-      const creada = await crearCampana(payload);
+      console.log("[CampanasAdmin] payload a enviar a crearCampana():", payload);
 
+      const creada = await crearCampana(payload);
+      
       // Agregar al estado para mostrarla en pantalla
       setCampanas(prev => [
         ...prev,
@@ -88,21 +102,19 @@ export default function GestionCampanas() {
 
     } catch (e) {
       console.error("Error guardando campaña:", e);
-      alert("No se pudo guardar la campaña");
+      alert("No se pudo guardar la campaña: " + (e.message || e));
     }
   };
 
   return (
     <div className="campanas-container">
 
-      {/* HEADER */}
       <div className="header-container">
         <div className="title-section">
           <h1>Gestión de Campañas</h1>
           <p>Administra las campañas de donación de sangre</p>
         </div>
 
-        {/* 🔥 ABRIR MODAL */}
         <button
           className="btn-new-campaign"
           onClick={() => setMostrarModal(true)}
@@ -111,7 +123,6 @@ export default function GestionCampanas() {
         </button>
       </div>
 
-      {/* TABLA */}
       <div className="campaign-table-container">
         <table className="campaign-table">
           <thead>
@@ -205,7 +216,6 @@ export default function GestionCampanas() {
         </table>
       </div>
 
-      {/* 🔥 MODAL */}
       {mostrarModal && (
         <ModalNuevoCampana
           onClose={() => setMostrarModal(false)}

@@ -1,81 +1,101 @@
-/* Fondo oscuro */
-.modal-overlay {
+/* Fondo oscuro (overlay) — aplica a tu .modal.fondo */
+.modal.fondo {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.55);
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 99999;
+  background: rgba(0,0,0,0.55);
+  z-index: 2147483647; /* muy alto para evitar que lo cubra otra cosa */
+  padding: 16px; /* para que la caja respete los bordes en pantallas pequeñas */
+  box-sizing: border-box;
 }
 
-/* Caja del modal */
-.modal-container {
+/* Caja del modal (tu .modal-content) */
+.modal-content {
   width: 420px;
-  background: white;
+  max-width: 95%;
+  max-height: 90vh;
+  background: #fff;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.3);
-  animation: aparecer 0.25s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: aparecer 0.22s ease;
+  overflow: auto;
+  box-sizing: border-box;
 }
 
+/* animación */
 @keyframes aparecer {
-  from { opacity: 0; transform: scale(0.9); }
+  from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
 
-/* Encabezado */
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+/* Título dentro de la caja */
+.modal-content h2 {
+  margin: 0 0 12px 0;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
-.modal-header h2 {
-  margin: 0;
+/* Labels y campos — consistencia */
+.modal-content label {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  color: #222;
 }
 
-.close-btn {
-  border: none;
-  background: transparent;
-  font-size: 22px;
-  cursor: pointer;
-}
-
-/* Body */
-.modal-body {
-  margin-top: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.modal-body select {
-  padding: 8px;
+/* Inputs y textarea */
+.modal-content input[type="text"],
+.modal-content input[type="date"],
+.modal-content input[type="time"],
+.modal-content textarea,
+.modal-content select,
+.modal-content input[type="file"] {
+  width: 100%;
+  padding: 8px 10px;
   border-radius: 6px;
   border: 1px solid #ccc;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  background: #fff;
+  box-sizing: border-box;
 }
 
-/* Footer */
-.modal-footer {
-  margin-top: 20px;
+/* Ajuste del textarea para verse mejor */
+.modal-content textarea {
+  min-height: 80px;
+  resize: vertical;
+  padding-top: 8px;
+}
+
+/* Select deshabilitado */
+.modal-content select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Contenedor de botones (tu .botones) */
+.botones {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+  margin-top: 12px;
 }
 
-.btn-cancel {
-  background: #ccc;
+/* Botón cancelar (tu .cancelar) y botón guardar */
+.botones .cancelar {
+  background: #e0e0e0;
+  color: #111;
   padding: 8px 14px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
 
-.btn-save {
+.botones button {
   background: #1976d2;
   color: white;
   padding: 8px 14px;
@@ -83,3 +103,33 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* Diferencia visual: si quieres botón secundario a la izquierda */
+.botones button:first-child {
+  background: #1976d2; /* guardar */
+}
+
+.botones button.cancelar {
+  background: #e0e0e0;
+  color: #111;
+}
+
+/* Focus accesible */
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus,
+.botones button:focus {
+  outline: 2px solid rgba(25,118,210,0.25);
+  outline-offset: 2px;
+}
+
+/* Pequeñas utilidades */
+@media (max-width: 480px) {
+  .modal-content { padding: 16px; }
+  .modal-content h2 { font-size: 1.1rem; }
+  .botones { flex-direction: column-reverse; align-items: stretch; }
+  .botones button { width: 100%; }
+}
+
+/* Debug temporal (quita si no la necesitas) */
+.modal-content.debug { outline: 3px dashed rgba(0,128,255,0.25); }

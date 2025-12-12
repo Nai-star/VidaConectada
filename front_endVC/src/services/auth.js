@@ -2,44 +2,37 @@
 // Obtener token del storage
 // ==========================
 export const getAccessToken = () => {
-  return localStorage.getItem("token_access") || null;
+  return localStorage.getItem("accessToken") || null;
 };
 
-// =======================================
-// Fetch con autorización automática (JWT)
-// =======================================
 export const authorizedFetch = async (url, options = {}) => {
-  const token = getAccessToken();
+  const opts = { ...(options || {}) };
+  const method = (opts.method || "GET").toString().toUpperCase();
+  const headers = { ...(opts.headers || {}) };
+  const body = opts.body;
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-  };
-
-  // Si existe token, se añade al header
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
+  // solo setear Content-Type si no es FormData y si no viene ya en headers
+  if (body !== undefined && !(body instanceof FormData) && !("Content-Type" in headers)) {
+    headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(url, {
-    ...options,
-    headers,
-  });
+  const token = getAccessToken();
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  return response;
+  const fetchOptions = { ...opts, headers };
+
+  // eliminar body para GET/HEAD
+  if ((method === "GET" || method === "HEAD") && fetchOptions.body !== undefined) {
+    delete fetchOptions.body;
+  }
+
+  return fetch(url, fetchOptions);
 };
 
-// ==========================================
-// Guardar tokens
-// ==========================================
 export const saveTokens = (access, refresh) => {
   if (access) localStorage.setItem("token_access", access);
   if (refresh) localStorage.setItem("token_refresh", refresh);
 };
-
-// ==========================================
-// Cerrar sesión (limpiar tokens)
-// ==========================================
 export const logout = () => {
   localStorage.removeItem("token_access");
   localStorage.removeItem("token_refresh");

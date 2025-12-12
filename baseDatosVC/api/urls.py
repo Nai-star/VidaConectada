@@ -5,9 +5,11 @@ from rest_framework_simplejwt.views import ( TokenObtainPairView,TokenRefreshVie
 
 urlpatterns = [
         # Usuarios
+    
+
     path('usuarios/', CustomUserListCreateView.as_view(), name="crear_listar_usuarios"),
     path('usuarios/<int:pk>/', CustomUserDetailView.as_view(), name="detalle_usuario"),
-    path('user/', UsuarioActualView.as_view(), name="user-actual"),
+    #path('user/', UsuarioActualView.as_view(), name="user-actual"),
 
     # Login admin (endpoint específico)
     path('login/admin/', AdminLoginView.as_view(), name='login_admin'),
