@@ -251,18 +251,23 @@ class ImagenCampanaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Imagen_campana
         fields = ['id', 'imagen', 'imagen_url', 'imagen_public_id']
+def get_imagen_url(self, obj):
+    try:
+        url = obj.imagen.url
+    except Exception:
+        return None
 
-    def get_imagen_url(self, obj):
-        try:
-            return obj.imagen.url
-        except Exception:
-            return None
+    # Si ya es URL completa, devolver así
+    if url.startswith("http"):
+        return url
 
-    def get_imagen_public_id(self, obj):
-        try:
-            return str(obj.imagen)
-        except Exception:
-            return None
+    # Convertir a URL completa usando request
+    request = self.context.get("request")
+    if request:
+        return request.build_absolute_uri(url)
+
+    return url  # fallback
+
 
 
 class RequisitosSerializer(serializers.ModelSerializer):

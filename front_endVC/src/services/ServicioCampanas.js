@@ -32,20 +32,125 @@ export async function obtenerUsuarioActual() {
 // ================================
 // Obtener campañas
 // ================================
+// reemplaza la función obtenerCampanas en ServicioCampanas.js por esta
 export async function obtenerCampanas() {
   const res = await authorizedFetch(`${API_URL}/campanas/`);
   if (!res.ok) throw new Error(`Error al obtener campañas: ${res.status}`);
   const data = await res.json();
 
-  return (Array.isArray(data) ? data : []).map((item) => {
-    const imagenesRaw = item.Imagen_campana || item.imagenes || [];
+  const isImageCandidate = (v) => {
+    if (!v) return false;
+    if (typeof v !== "string") return false;
+    const s = v.toLowerCase().trim();
+    // cloudinary path or http url or image extension
+    if (s.includes("image/upload")) return true;
+    if (s.startsWith("http://") || s.startsWith("https://") || s.startsWith("//")) return true;
+    if (/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/.test(s)) return true;
+    return false;
+  };
 
-    const imagenes = (Array.isArray(imagenesRaw) ? imagenesRaw : []).map(img => {
-      if (img?.imagen_url) return img.imagen_url;
-      const publicId = img?.imagen_public_id || img?.imagen || img;
-      if (typeof publicId === 'string' && publicId.startsWith("http")) return publicId;
-      return buildCloudinaryUrl(publicId);
+  const extractFromObject = (obj) => {
+    // si es string -> candidato directo
+    if (typeof obj === "string") {
+      if (isImageCandidate(obj)) return obj;
+      return null;
+    }
+
+    // si es objeto que contiene imagen_url / imagen / url / public_id
+    if (obj && typeof obj === "object") {
+      const candidates = [
+        obj.imagen_url,
+        obj.url,
+        obj.secure_url,
+        obj.imagen,
+        obj.imagen_public_id,
+        obj.public_id,
+        obj.path,
+      ];
+      for (const c of candidates) {
+        if (isImageCandidate(c)) return c;
+      }
+      // si algunos campos contienen public id (ej: "campanas/xyz.jpg" o "campanas/xyz")
+      for (const k of Object.keys(obj)) {
+        const val = obj[k];
+        if (typeof val === "string" && (val.includes("/") || val.includes("campanas") || val.match(/\w+\.(jpg|jpeg|png|webp|gif)$/i))) {
+          if (isImageCandidate(val)) return val;
+          // si parece publicId (no incluye image/upload ni http) lo devolvemos para que buildCloudinaryUrl lo normalice
+          const maybePid = val.replace(/^\/+/, "");
+          if (maybePid && maybePid.length < 200 && !maybePid.includes(" ")) return maybePid;
+        }
+      }
+    }
+    return null;
+  };
+
+  return (Array.isArray(data) ? data : []).map((item) => {
+    // 1) intentar campos específicos conocidos
+    const imagenesRaw = item.Imagen_campana ?? item.imagenes ?? (item.Imagenes ?? null);
+
+    let imgs = [];
+    if (Array.isArray(imagenesRaw) && imagenesRaw.length > 0) {
+      imgs = imagenesRaw.map(i => extractFromObject(i)).filter(Boolean);
+    }
+
+    // 2) si no encontró, buscar campos comunes en el objeto
+    if (imgs.length === 0) {
+      const posibles = [
+        item.imagen, item.imagen_url, item.Foto_P, item.Foto, item.foto, item.image
+      ];
+      for (const p of posibles) {
+        if (Array.isArray(p)) {
+          imgs.push(...p.map(x => extractFromObject(x)).filter(Boolean));
+        } else {
+          const e = extractFromObject(p);
+          if (e) imgs.push(e);
+        }
+      }
+    }
+
+    // 3) si aún nada, hacer scan completo del objeto (keys y nested shallow)
+    if (imgs.length === 0) {
+      for (const k of Object.keys(item)) {
+        const v = item[k];
+        if (!v) continue;
+        if (typeof v === "string") {
+          if (isImageCandidate(v)) imgs.push(v);
+          else {
+            // si parece public id (ej: "campanas/xxx.jpg" o "campanas/xxx")
+            const maybePid = v.replace(/^\/+/, "");
+            if (maybePid.includes("/") && maybePid.length < 200) imgs.push(maybePid);
+          }
+        } else if (Array.isArray(v) && v.length > 0) {
+          for (const el of v) {
+            const found = extractFromObject(el);
+            if (found) imgs.push(found);
+          }
+        } else if (typeof v === "object") {
+          // shallow search inside object
+          const found = extractFromObject(v);
+          if (found) imgs.push(found);
+        }
+        if (imgs.length > 0) break;
+      }
+    }
+
+    // 4) normalizar cada candidato: si ya es URL completa, usarla; si es publicId, construir Cloudinary URL
+    const imagenes = imgs.map(candidate => {
+      if (!candidate) return null;
+      if (typeof candidate === "string" && /^(https?:)?\/\//i.test(candidate)) {
+        if (candidate.startsWith("//")) return `https:${candidate}`;
+        return candidate;
+      }
+      // candidate puede ser 'image/upload/...' o 'v123/...', o 'campanas/xxx.jpg'
+      return buildCloudinaryUrl(candidate);
     }).filter(Boolean);
+
+    // debug: si no encontró imágenes, loguear el objeto (para que puedas inspeccionar en consola)
+    if (!imagenes || imagenes.length === 0) {
+      console.warn(`[obtenerCampanas] No se encontraron imágenes para campaña id=${item.id}. Objeto devuelto:`, item);
+    } else {
+      console.log("Campaña", item.id, "imagenes:", imagenes);
+    }
 
     return {
       ...item,
@@ -53,6 +158,8 @@ export async function obtenerCampanas() {
     };
   });
 }
+
+
 
 // ================================
 // Helper: YYYY-MM-DD -> DD-MM-YYYY
@@ -203,34 +310,94 @@ export async function crearCampana(data) {
 // ================================
 // Actualizar campaña
 // ================================
-export async function actualizarCampana(id, data) {
-  const fechaInicio = data.Fecha_inicio ? toBackendDate(data.Fecha_inicio) : null;
-  const fechaFin = data.Fecha_fin ? toBackendDate(data.Fecha_fin) : null;
-
-  let canton = Array.isArray(data.Cantones) ? data.Cantones[0] : data.Cantones;
-  canton = typeof canton === "string" ? parseInt(canton, 10) : canton;
-
-  const body = { ...data, Fecha_inicio: fechaInicio, Fecha_fin: fechaFin, Cantones: canton };
-
-  const res = await authorizedFetch(`${API_URL}/campanas/${id}/`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(JSON.stringify(error));
-  }
-
-  return await res.json();
-}
 
 // ================================
 // Eliminar campaña
 // ================================
 export async function eliminarCampana(id) {
-  const res = await authorizedFetch(`${API_URL}/campanas/${id}/`, { method: "DELETE" });
-  if (!res.ok) throw new Error("No se pudo eliminar la campaña");
-  return true;
+  if (id == null) throw new Error("ID inválido para eliminar");
+
+  const base = API_URL.replace(/\/+$/, "");
+  const urls = [
+    `${base}/campanas/${id}/`,
+    `${base}/campanas/${id}`
+  ];
+
+  let lastDetail = null;
+
+  for (const url of urls) {
+    try {
+      const res = await authorizedFetch(url, { method: "DELETE" });
+
+      // Si la respuesta es 204 No Content o 200 OK -> éxito
+      if (res.status === 204 || res.status === 200) {
+        return true;
+      }
+
+      // Si no ok, leer cuerpo (si existe) para mensaje
+      const text = await res.text().catch(() => null);
+      let parsed = null;
+      try { parsed = text ? JSON.parse(text) : text; } catch (e) { parsed = text; }
+
+      lastDetail = { url, status: res.status, body: parsed };
+
+      // Si recibimos 404 podemos intentar la otra URL (siguiente iteración)
+      if (res.status === 404) continue;
+
+      // Para otros errores, lanzar con info
+      throw new Error(parsed ? (typeof parsed === "string" ? parsed : JSON.stringify(parsed)) : `HTTP ${res.status}`);
+    } catch (err) {
+      // captura errores de fetch / network o el throw anterior
+      lastDetail = lastDetail || { url, error: String(err) };
+      // si fue un fallo de red, no insistir en otra URL; romper
+      if (String(err).toLowerCase().includes("network") || String(err).toLowerCase().includes("failed")) {
+        break;
+      }
+      // si fue un error con cuerpo lo propago
+      throw err;
+    }
+  }
+
+  console.error("eliminarCampana -> fallo. details:", lastDetail);
+  // construir mensaje legible
+  const msg = lastDetail?.body ?? lastDetail?.error ?? `No se pudo eliminar (status: ${lastDetail?.status ?? "?"})`;
+  throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
+}
+;
+
+// en ServicioCampanas.js - parche para actualizarCampana:
+// ServicioCampanas.js
+export async function actualizarCampana(id, data) {
+  if (id == null) throw new Error("ID de campaña inválido");
+
+  const base = API_URL.replace(/\/+$/, "");
+  const urlsToTry = [
+    `${base}/campanas/${id}/`,
+    `${base}/campanas/${id}`
+  ];
+
+  const isForm = data instanceof FormData;
+  const body = isForm ? data : JSON.stringify(data);
+  const headers = isForm ? {} : { "Content-Type": "application/json" };
+
+  let lastError = null;
+  for (const url of urlsToTry) {
+    try {
+      const res = await authorizedFetch(url, { method: "PATCH", body, headers });
+      if (res.ok) {
+        const text = await res.text();
+        return text ? JSON.parse(text) : null;
+      }
+      const text = await res.text().catch(() => null);
+      lastError = { url, status: res.status, body: text };
+      // si responde distinto de 404, devolvemos info (no intentamos PUT)
+      if (res.status !== 404) break;
+    } catch (err) {
+      lastError = { url, error: String(err) };
+    }
+  }
+
+  console.error("actualizarCampana -> fallo PATCH. details:", lastError);
+  const msg = lastError?.body ?? lastError?.error ?? `HTTP ${lastError?.status ?? "?"}`;
+  throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
 }

@@ -1,0 +1,77 @@
+/* ModalEliminarCampana.css */
+
+.modal-eliminar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-eliminar-container {
+  width: 96%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  animation: meFade .18s ease-out;
+}
+
+@keyframes meFade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-eliminar-title {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+.modal-eliminar-text {
+  color: #333;
+  margin-bottom: 12px;
+  line-height: 1.35;
+  font-size: 14px;
+}
+
+.modal-eliminar-error {
+  color: #a00;
+  background: #ffecec;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.modal-eliminar-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn-cancel {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #f3f3f3;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.btn-cancel:disabled { opacity: 0.6; cursor: default; }
+
+.btn-delete {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e23b3b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-delete:disabled { opacity: 0.75; cursor: default; }
