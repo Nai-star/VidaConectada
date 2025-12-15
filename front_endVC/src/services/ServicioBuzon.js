@@ -1,5 +1,5 @@
 // src/services/ServicioBuzon.js
-const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 /* ==========================
    Obtener token del storage (normalizado)
@@ -86,91 +86,6 @@ async function handleResponse(response) {
 
   return text;
 }
-
-/* ==========================
-   Crear respuesta (mejorado para debug)
-   ========================== */
-/* export async function crearRespuesta(payload) {
-  const API_URL =
-    (typeof process !== "undefined" && process.env && process.env.REACT_APP_API_URL) ||
-    (typeof window !== "undefined" && window.__API_URL__) ||
-    "http://127.0.0.1:8000/api";
-
-  // Intenta obtener token de localStorage en varias claves posibles:
-  const possibleKeys = ["token", "access", "authToken", "jwt"];
-  let token = null;
-  if (typeof localStorage !== "undefined") {
-    for (const k of possibleKeys) {
-      const t = localStorage.getItem(k);
-      if (t) { token = t; break; }
-    }
-    // Algunas apps guardan objeto JSON (e.g. {access: "...", refresh: "..."})
-    if (!token) {
-      try {
-        const stored = localStorage.getItem("auth") || localStorage.getItem("session");
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          token = parsed?.access || parsed?.token || parsed?.auth || null;
-        }
-      } catch (e) { }
-    }
-  }
-
- 
-  if (!token) {
-    const err = new Error("No auth token found. Usuario no autenticado.");
-    err.code = "NO_TOKEN";
-    console.error("[ServicioBuzon] crearRespuesta abortado - no token in localStorage");
-    throw err;
-  }
-
-  // Normaliza si token tiene prefijo "Bearer " ya incluido
-  const normalizedToken = token.replace(/^Bearer\s+/i, "").replace(/^Token\s+/i, "");
-
-  const headers = {
-    "Content-Type": "application/json",
-    // Cambia 'Bearer' por 'Token' si tu backend usa TokenAuthentication
-    Authorization: `Bearer ${normalizedToken}`
-  };
-
-  // Normalizaciones de campos que usamos antes
-  const body = { ...payload };
-  if (body.Buzon_id && !body.Buzon) { body.Buzon = body.Buzon_id; delete body.Buzon_id; }
-  if (body.respuesta && !body.Respuesta_P) { body.Respuesta_P = body.respuesta; delete body.respuesta; }
-  if (body.estado !== undefined) body.estado = !!body.estado;
-
-  console.log("[ServicioBuzon] POST", `${API_URL}/respuestas/ payload:`, body);
-
-  let res;
-  try {
-    res = await fetch(`${API_URL}/respuestas/`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-    });
-  } catch (networkErr) {
-    console.error("[ServicioBuzon] Network error:", networkErr);
-    const err = new Error("Network error creating respuesta");
-    err.original = networkErr;
-    throw err;
-  }
-
-  const text = await res.text().catch(() => "");
-  let json = null;
-  try { json = text ? JSON.parse(text) : null; } catch (e) { json = null; }
-
-  if (!res.ok) {
-    console.error("[ServicioBuzon] crearRespuesta - status:", res.status, "body:", json ?? text, "headers:", headers);
-    const err = new Error("Crear respuesta falló");
-    err.status = res.status;
-    err.body = json ?? text;
-    throw err;
-  }
-
-  return json;
-} */
- 
-
 
 
 /* ==========================
@@ -382,11 +297,3 @@ console.log('localStorage keys:', Object.keys(localStorage).filter(k => /token|a
 // Ver valores más comunes
 console.log('token:', localStorage.getItem('refreshToken'));
 console.log('access:', localStorage.getItem('accessToken'));
-//console.log('auth:', localStorage.getItem('auth'));
-//console.log('session:', localStorage.getItem('session'));
-
-// (Si no hay token y quieres probar) — pega tu token real entre comillas:
-// localStorage.setItem('access', 'eyJ...TU_TOKEN_DE_PRUEBA...');
-// o
-//localStorage.setItem('token', 'eyJ...TU_TOKEN_DE_PRUEBA...');
-//console.log('Now access=', localStorage.getItem('access'));

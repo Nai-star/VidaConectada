@@ -247,26 +247,22 @@ class ImagenCampanaSerializer(serializers.ModelSerializer):
     imagen_url = serializers.SerializerMethodField()
     imagen_public_id = serializers.SerializerMethodField()
 
-
     class Meta:
         model = Imagen_campana
-        fields = ['id', 'imagen', 'imagen_url', 'imagen_public_id']
-def get_imagen_url(self, obj):
-    try:
-        url = obj.imagen.url
-    except Exception:
-        return None
+        fields = ["id", "imagen_url", "imagen_public_id"]
 
-    # Si ya es URL completa, devolver así
-    if url.startswith("http"):
-        return url
+    def get_imagen_url(self, obj):
+        try:
+            return obj.imagen.url  # Cloudinary devuelve URL completa
+        except Exception:
+            return None
 
-    # Convertir a URL completa usando request
-    request = self.context.get("request")
-    if request:
-        return request.build_absolute_uri(url)
+    def get_imagen_public_id(self, obj):
+        try:
+            return obj.imagen.public_id
+        except Exception:
+            return None
 
-    return url  # fallback
 
 
 
@@ -509,7 +505,6 @@ class DetalleRequisitosSerializer(serializers.ModelSerializer):
 
 
 class CampanaCreateSerializer(serializers.ModelSerializer):
-    # Formatos de fecha
     Fecha_inicio = serializers.DateField(
         format="%d-%m-%Y",
         input_formats=["%d-%m-%Y", "%Y-%m-%d"]
@@ -519,34 +514,37 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
         input_formats=["%d-%m-%Y", "%Y-%m-%d"]
     )
 
-    # CustomUser NO VIENE DESDE EL CLIENTE
     CustomUser = serializers.PrimaryKeyRelatedField(read_only=True)
 
-    # Canton (opcional)
     Cantones = serializers.PrimaryKeyRelatedField(
         queryset=Cantones.objects.all(),
         required=False,
         allow_null=True
     )
 
-    # Nombre de cantón (solo lectura)
     Canton_nombre = serializers.CharField(
         source="Cantones.nombre_canton",
         read_only=True
     )
 
-    # Requisitos
     detalles_requisitos = DetalleRequisitosSerializer(
         source="detallerequisitos_set",
         many=True,
         read_only=True
     )
 
-    # Múltiples imágenes
+    # 🔴 SOLO PARA ESCRIBIR
     imagen = serializers.ListField(
         child=serializers.ImageField(),
         write_only=True,
         required=False
+    )
+
+    # 🟢 SOLO PARA LEER
+    Imagenes = ImagenCampanaSerializer(
+        source="Imagen_campana",
+        many=True,
+        read_only=True
     )
 
     class Meta:
@@ -566,33 +564,31 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
             "Cantones",
             "Canton_nombre",
             "imagen",
+            "Imagenes",   # 🔥 CLAVE
             "detalles_requisitos",
         ]
         read_only_fields = ["id", "CustomUser"]
 
     def create(self, validated_data):
-        # Extraer imágenes del payload
         imagenes = validated_data.pop("imagen", [])
-
-        # Quitar CustomUser si llegara accidentalmente
         validated_data.pop("CustomUser", None)
 
         request = self.context.get("request")
         if not request or not request.user.is_authenticated:
             raise serializers.ValidationError("Usuario no autenticado")
 
-        # Crear campaña asignando el usuario autenticado
         campana = Campana.objects.create(
             CustomUser=request.user,
             **validated_data
         )
 
-        # Guardar imágenes
         for img in imagenes:
-            Imagen_campana.objects.create(Campana=campana, imagen=img)
+            Imagen_campana.objects.create(
+                Campana=campana,
+                imagen=img
+            )
 
         return campana
-
 
 
 

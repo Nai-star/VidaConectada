@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from '../Pages/Home/Home'
 
 
-import Private_routing from "./Private_routing";
+import Private_routing from "./PrivateRouting";
 import GaleriaVermas from '../Components/Galeria/GaleriaVermas';
 import Login from '../pages/Login/Login';
 import Register from '../Components/Register/Register';
@@ -20,6 +20,10 @@ import RedBancos from "../Components/AdminSidebar/RedBancos/RedBancos";
 import AdminBuzon from '../Components/AdminSidebar/AdminBuzon/AdminBuzon';
 import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
 import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmin"
+
+
+//import PrivateRouting from './PrivateRouting';
+
 function Routing() {
 
     //const usuarioLogueado = JSON.parse(localStorage.getItem("usuarioLogueado") || "null"); // Obtener el usuario logueado del localStorage
@@ -34,7 +38,8 @@ function Routing() {
         <Route path='/galeriavermas' element={<GaleriaVermas/>}/>
 
         <Route path='/login' element={<Login/>}/>
-        <Route path='/register' element={<Register/>}/>
+        
+        
         {/* <Route path='/admin' element={<Admin/>}/> */}
 
 
@@ -43,9 +48,9 @@ function Routing() {
 
         {/* Rutas anidadas del panel de administración */}
         <Route path="/admin" element={
-           
-              <Admin />
-            
+             
+                <Admin />
+              
           }
         >
           {/* <Route path='/admin' element={<Admin/>}> */}
@@ -61,7 +66,7 @@ function Routing() {
           <Route path='red_bancos' element={<RedBancos/>} />  
           <Route path='TS' element={<TipoSangre/>} />  
           <Route path='CampanaAdmin' element={<CampanasAdmin/>} />  
-   
+          <Route path='register' element={<Register/>}/>
         </Route>
 
          

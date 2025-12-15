@@ -1,0 +1,84 @@
+.dashboard {
+  padding: 24px;
+}
+
+.subtitle {
+  color: #6b7280;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.card .value {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.badge1 {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+.badge1.activo {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge1.urgente {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.badge1.pendientes {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.chart-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.recientes {
+  margin-top: 32px;
+  background: #fff;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.reciente-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.estado.activo {
+  color: #16a34a;
+}
+
+.estado.programada {
+  color: #2563eb;
+}

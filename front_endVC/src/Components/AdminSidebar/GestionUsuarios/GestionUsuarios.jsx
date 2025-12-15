@@ -553,11 +553,7 @@ async function borrar(id) {
             <div className="stat-number">{totalSuscritos}</div>
             <div className="stat-meta">usuarios registrados</div>
           </div>
-          <div className="stat-card">
-            <strong>Donantes Activos</strong>
-            <div className="stat-number">{donantesActivos}</div>
-            <div className="stat-meta">con participaciones</div>
-          </div>
+          
           <div className="stat-card">
             <strong>Inscritos Campañas</strong>
             <div className="stat-number">{donantesActivos}</div>
@@ -601,13 +597,42 @@ async function borrar(id) {
                       <td>
                         <div className="contact-info">
                           <div className="contact-email-row">
-                            <svg className="contact-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                            <svg
+                              className="contact-icon"
+                              viewBox="0 0 24 24"
+                              width="16"
+                              height="16"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                              <polyline points="22,6 12,13 2,6" />
+                            </svg>
                             <span>{s.correo}</span>
                           </div>
-                          <div className="meta contact-cedula-row"> {/* Clase cambiada a 'contact-cedula-row' para mayor claridad */}
-                          <svg className="contact-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>                            <span>{s.telefono || s.numero_cedula}</span>
-                          </div>
+
+                          <div className="contact-cedula-row">
+                            <svg
+                              className="contact-icon"
+                              viewBox="0 0 24 24"
+                              width="16"
+                              height="16"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                              <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            <span>{s.telefono || s.numero_cedula}</span>
+                          </div>
                         </div>
+
                       </td>
                       <td>
                         <div className={`badge blood-type-badge ${getBloodTypeBadgeClass(sangreLabel)}`}>

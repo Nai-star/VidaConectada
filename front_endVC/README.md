@@ -14,6 +14,8 @@ c
 
 - npm install -g json-server 
 - npm run mock(levanta el json)
+- npm install recharts
+
 
 
 ## Back-end 

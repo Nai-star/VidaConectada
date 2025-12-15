@@ -40,7 +40,7 @@
 /* Search */
 .search-row{ display:flex; justify-content:center; margin-bottom:22px; }
 .search-input-wrap{ width:100%; max-width:980px; position:relative; }
-.search-input-wrap input{
+.search-input-wrap input{ box-sizing: border-box;
   width:100%; padding:14px 18px; padding-left:48px; border-radius:12px;
   border:1px solid rgba(34,48,58,0.06); background:#FBFDFF; font-size:14px; color:var(--text);
 }
@@ -76,12 +76,22 @@
 .contact-info{ display:flex; flex-direction:column; gap:4px; }
 
 /* Badges */
+.donor-type-badge{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .badge{ display:inline-flex; align-items:center; justify-content:center; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; }
 .blood-type-badge{ width: 35px; display: flex; background:#fff4f4; color:#c73b3b; border:1px solid rgba(199,59,59,0.06); padding:6px 10px; border-radius:999px; font-weight:700; font-size:13px; }
-.donor-type-badge{display: flex;  padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; }
-.donor-type-badge.regular{display: flex;  background:#ecffef; color:#1d8b3a; border:1px solid rgba(29,139,58,0.06); }
-.donor-type-badge.primera-vez{ display: flex; background:#e6f7ff; color:#0b6fbf; border:1px solid rgba(11,111,191,0.06); }
-.donor-type-badge.ocasional{display: flex;  background:#fff8ec; color:#b36b00; border:1px solid rgba(179,107,0,0.06); }
+.donor-type-badge.regular{  background:#ecffef; color:#1d8b3a; border:1px solid rgba(29,139,58,0.06); }
+.donor-type-badge.primera-vez{  background:#e6f7ff; color:#0b6fbf; border:1px solid rgba(11,111,191,0.06); }
+.donor-type-badge.ocasional{ background:#fff8ec; color:#b36b00; border:1px solid rgba(179,107,0,0.06); }
 
 /* Campaign count */
 .campaign-count-badge{ display:inline-flex; min-width:36px; height:36px; align-items:center; justify-content:center; border-radius:999px; background:#f6f8fa; font-weight:700; color:var(--text); }
@@ -177,20 +187,23 @@
 }
 
 .contact-email-row,
-.contact-phone-row {
-    display: flex;
-    align-items: center;
-    gap: 6px; /* Espacio entre el icono y el texto */
-    padding: 2px 0;
+.contact-cedula-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0;
 }
 
-.contact-email-row .contact-icon {
-    color: #4C5A6A; /* Color oscuro para el ícono de email */
+.contact-icon {
+  color: #4C5A6A;
+  flex-shrink: 0;
 }
 
-.contact-phone-row .contact-icon {
-    color: #555; /* Color para el ícono de teléfono */
+.contact-info span {
+  font-size: 0.9em;
+  color: #22303a;
 }
+
 
 .contact-info .meta {
     font-size: 0.9em; /* Para la cédula/teléfono */

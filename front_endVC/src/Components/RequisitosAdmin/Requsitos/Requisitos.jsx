@@ -94,8 +94,8 @@ export default function RequisitosPage() {
         </div>
 
         <table className="tabla-requisitos">
-          <thead>
-            <tr>
+          <thead >
+            <tr className="fila-requisitos">
               <th>Requisito</th>
               <th>Estado</th>
               <th>Acciones</th>

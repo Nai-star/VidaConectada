@@ -1,14 +1,29 @@
 // ServicioCampanas.js
-import { authorizedFetch, getAccessToken } from "./auth";
+import { authorizedFetch } from "./auth";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
-const CLOUDINARY_BASE = (import.meta.env.VITE_CLOUDINARY_BASE || "https://res.cloudinary.com/dfhdzszjp/").replace(/\/+$/, "");
+const CLOUDINARY_BASE =
+  (import.meta.env.VITE_CLOUDINARY_BASE ||
+    "https://res.cloudinary.com/dfhdzszjp")
+    .replace(/\/+$/, "");
 
-function buildCloudinaryUrl(publicId) {
-  if (!publicId) return null;
-  // usa la forma estándar; ajusta si tu carpeta/transformaciones son distintas
+function buildCloudinaryUrl(value) {
+  if (!value) return null;
+
+  // Si ya es URL completa, usarla tal cual
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  // Limpiar posibles prefijos
+  let publicId = value
+    .replace(/^\/+/, "")
+    .replace(/^image\/upload\//, "")
+    .replace(/^v\d+\//, "");
+
   return `${CLOUDINARY_BASE}/image/upload/${publicId}`;
 }
+
 // ================================
 // Obtener usuario actual
 // ================================

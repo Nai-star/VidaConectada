@@ -1,14 +1,122 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import {
+  obtenerMetricasDashboard,
+  obtenerCampanasPorMes,
+  obtenerCampanasRecientes,
+  obtenerDonantesActivosPorMes,
+} from "../../../services/ServicioDashboard";
 
-function Dashboard() {
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+import "./Dashboard.css";
+
+export default function Dashboard() {
+  const [metricas, setMetricas] = useState(null);
+  const [campanasMes, setCampanasMes] = useState([]);
+  const [donantesActivos, setDonantesActivos] = useState([]);
+  const [recientes, setRecientes] = useState([]);
+
+  useEffect(() => {
+    async function cargar() {
+      try {
+        setMetricas(await obtenerMetricasDashboard());
+        setCampanasMes(await obtenerCampanasPorMes());
+        setDonantesActivos(await obtenerDonantesActivosPorMes());
+        setRecientes(await obtenerCampanasRecientes());
+      } catch (e) {
+        console.error("Error cargando dashboard:", e);
+      }
+    }
+    cargar();
+  }, []);
+
+  /* 🔍 DEBUG */
+  useEffect(() => {
+    console.log("Campañas por mes:", campanasMes);
+    console.log("Donantes activos:", donantesActivos);
+  }, [campanasMes, donantesActivos]);
+
+  if (!metricas) return <p>Cargando dashboard…</p>;
 
   return (
-    <div>
-        <h2>Dashboard</h2>
+    <div className="dashboard">
+      <h1>Dashboard</h1>
+      <p className="subtitle">Resumen general de VidaConectada</p>
 
+      {/* CARDS */}
+      <div className="cards">
+        <Card title="Campañas activas" value={metricas.campañasActivas} badge1="Activo" />
+        <Card title="Donantes registrados" value={metricas.donantesRegistrados} />
+        <Card title="Stock crítico" value={metricas.stockCritico} badge1="Urgente" />
+        <Card title="Preguntas pendientes" value={metricas.preguntasPendientes} badge1="Pendientes" />
+      </div>
 
+      {/* GRÁFICAS */}
+      <div className="charts">
+        <div className="chart-box">
+          <h3>Campañas por mes</h3>
+          <p>Últimos 6 meses</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <BarChart data={campanasMes}>
+              <XAxis dataKey="label" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar dataKey="total" barSize={32} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="chart-box">
+          <h3>Donantes activos</h3>
+          <p>Tendencia de participación</p>
+          <ResponsiveContainer width="100%" height={260}>
+            <LineChart data={donantesActivos}>
+              <XAxis dataKey="label" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Line type="monotone" dataKey="total" strokeWidth={2} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* CAMPAÑAS RECIENTES */}
+      <div className="recientes">
+        <h3>Campañas recientes</h3>
+
+        {recientes.length === 0 && <p className="empty">No hay campañas recientes</p>}
+
+        {recientes.map(c => (
+          <div key={c.id} className="reciente-item">
+            <div>
+              <strong>{c.Titulo}</strong>
+              <small>{c.Fecha_inicio}</small>
+            </div>
+            <span className={`estado ${c.Activo ? "activo" : "programada"}`}>
+              {c.Activo ? "Activa" : "Programada"}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
 
-export default Dashboard
+function Card({ title, value, badge1 }) {
+  return (
+    <div className="card">
+      <span className="value">{value}</span>
+      <p>{title}</p>
+      {badge1 && <span className={`badge1 ${badge1.toLowerCase()}`}>{badge1}</span>}
+    </div>
+  );
+}

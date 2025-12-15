@@ -105,10 +105,11 @@ body {
 .campaign-image {
     width: 40px;
     height: 40px;
-    border-radius: 4px; /* Bordes ligeramente redondeados */
-    object-fit: cover; /* Asegura que la imagen cubra el espacio sin distorsión */
-    vertical-align: middle;
+    display: block;        /* 🔥 CLAVE */
+    object-fit: cover;
+    border-radius: 4px;
 }
+
 
 /* Estilos de las celdas de 'Campaña' (Título y Subtítulo) */
 .campaign-details strong {
