@@ -103,14 +103,23 @@ export async function checkEmailExists(email, useCredentials = false) {
   try {
     const res = await fetch(url, opts);
     if (!res.ok) return false;
+
     const data = await res.json();
-    return Array.isArray(data) ? data.length > 0 : Boolean(data && data.id);
+
+    // 👇 FIX REAL: verificar coincidencia exacta
+    if (Array.isArray(data)) {
+      return data.some(
+        (u) => u.email && u.email.toLowerCase() === email.toLowerCase()
+      );
+    }
+
+    return false;
   } catch (e) {
-    // fallo de red/CORS -> no bloquear
     console.warn("checkEmailExists error:", e);
     return false;
   }
 }
+
 
 /**
  * Exporta la ruta local de la imagen mockup (si la usas en el frontend).

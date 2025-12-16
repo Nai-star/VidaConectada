@@ -416,3 +416,45 @@ export async function actualizarCampana(id, data) {
   const msg = lastError?.body ?? lastError?.error ?? `HTTP ${lastError?.status ?? "?"}`;
   throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
 }
+export async function actualizarEstadoCampana(id, activo) {
+  if (id == null) throw new Error("ID de campaña inválido");
+
+  const base = API_URL.replace(/\/+$/, "");
+  const urls = [
+    `${base}/campanas/${id}/`,
+    `${base}/campanas/${id}`
+  ];
+
+  const body = JSON.stringify({ Activo: activo });
+
+  let lastError = null;
+
+  for (const url of urls) {
+    try {
+      const res = await authorizedFetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body
+      });
+
+      if (res.ok) {
+        const text = await res.text();
+        return text ? JSON.parse(text) : null;
+      }
+
+      const text = await res.text().catch(() => null);
+      lastError = { url, status: res.status, body: text };
+
+      if (res.status !== 404) break;
+    } catch (err) {
+      lastError = { url, error: String(err) };
+    }
+  }
+
+  console.error("actualizarEstadoCampana -> error:", lastError);
+  throw new Error(
+    typeof lastError?.body === "string"
+      ? lastError.body
+      : `No se pudo actualizar el estado`
+  );
+}

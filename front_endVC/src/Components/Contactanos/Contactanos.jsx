@@ -37,7 +37,7 @@ function Contactanos() {
     return (
         <div className="contacto">
             {/* Títulos Principales */}
-            <p>Contactenos</p>
+            <p id="contacto">Contactenos</p>
             <h1>por nuestros diferentes medios</h1>
             <hr />
 

@@ -590,7 +590,8 @@ async function borrar(id) {
                           <div className="user-icon">{(s.nombre || "U").split(" ").map(n=>n[0]).slice(0,2).join("")}</div>
                           <div>
                             <strong>{s.nombre}</strong>
-                            <div className="meta">Registro: {s.fecha ? (s.fecha.split?.("T")[0] ?? s.fecha) : "-"}</div>
+                            {s.numero_cedula && (<div className="meta1 cedula"> Cédula: {s.numero_cedula} </div>)}
+                            <div className="meta1">Registro: {s.fecha ? (s.fecha.split?.("T")[0] ?? s.fecha) : "-"}</div>
                           </div>
                         </div>
                       </td>
@@ -629,7 +630,7 @@ async function borrar(id) {
                               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                               <circle cx="12" cy="7" r="4" />
                             </svg>
-                            <span>{s.telefono || s.numero_cedula}</span>
+                            <span>{s.telefono ? s.telefono : "Sin teléfono"}</span>
                           </div>
                         </div>
 

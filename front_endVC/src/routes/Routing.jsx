@@ -22,7 +22,7 @@ import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
 import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmin"
 
 
-//import PrivateRouting from './PrivateRouting';
+import PrivateRouting from './PrivateRouting';
 
 function Routing() {
 
@@ -47,14 +47,12 @@ function Routing() {
       
 
         {/* Rutas anidadas del panel de administración */}
+        <Route element={<PrivateRouting />}>
         <Route path="/admin" element={
              
                 <Admin />
               
-          }
-        >
-          {/* <Route path='/admin' element={<Admin/>}> */}
-          {/* 👇 Todo esto aparecerá dentro del <Outlet /> de Admin */}
+          }>
 
           <Route index element={<Dashboard/>}/>
           <Route path='configuracion' element={<Configuracion/>}/>
@@ -62,11 +60,11 @@ function Routing() {
           <Route path='carusel_admin' element={<CaruselAdmin/>} />       
           <Route path='requisitos_admin' element={<Requisitos/>} /> 
           <Route path='admin_buzon' element={<AdminBuzon/>} />  
-              
           <Route path='red_bancos' element={<RedBancos/>} />  
           <Route path='TS' element={<TipoSangre/>} />  
           <Route path='CampanaAdmin' element={<CampanasAdmin/>} />  
           <Route path='register' element={<Register/>}/>
+        </Route>
         </Route>
 
          

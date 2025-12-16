@@ -74,6 +74,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return user
 
 User = get_user_model()
+
 class AdminLoginSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True)
@@ -90,40 +91,40 @@ class AdminLoginSerializer(serializers.Serializer):
         if not email or not password:
             raise serializers.ValidationError("Se requieren email y password.")
 
-        # Buscar usuario por email (case-insensitive)
+        # 1️⃣ Buscar usuario por email
         try:
             user = User.objects.get(email__iexact=email)
         except User.DoesNotExist:
             raise serializers.ValidationError("Credenciales inválidas.")
 
-        # Verificar contraseña
+        # 2️⃣ Verificar contraseña
         if not user.check_password(password):
             raise serializers.ValidationError("Credenciales inválidas.")
 
-        # Verificar que esté activo
+        # 3️⃣ Verificar activo
         if not user.is_active:
             raise serializers.ValidationError("Cuenta desactivada.")
 
-        # Verificar rol admin: permitimos is_superuser o is_staff o grupo 'admin' o id=1
-        is_admin = user.is_superuser or user.is_staff \
-                   or user.groups.filter(id=1).exists() \
-                   or user.groups.filter(name__iexact="admin").exists()
+        # 4️⃣ VALIDACIÓN REAL DE ADMIN (TU TABLA)
+        is_admin = UsuarioRol.objects.filter(
+            customuser=user,
+            group_id=1
+        ).exists()
 
         if not is_admin:
-            raise serializers.ValidationError("No autorizado: solo administradores.")
+            raise serializers.ValidationError(
+                "No autorizado: solo administradores."
+            )
 
-        # Generar tokens JWT
+        # 5️⃣ Generar tokens
         refresh = RefreshToken.for_user(user)
-        access = refresh.access_token
 
         return {
             "refresh": str(refresh),
-            "access": str(access),
+            "access": str(refresh.access_token),
             "user_id": user.id,
-            "user_email": user.email or ""
+            "user_email": user.email or "",
         }
-
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Extiende TokenObtainPairSerializer para permitir login por email o username.
@@ -446,54 +447,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 				return data
             
-# Campana serializer: devolvemos los related names EXACTOS que usa tu frontend:
-# - "Imagen_campana" (lista)
-# - "DetalleRequisito" (lista)
-""" class CampanaSerializer(serializers.ModelSerializer):
-    Fecha_inicio = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y", "%Y-%m-%d"])
-    Fecha_fin = serializers.DateField(format="%d-%m-%Y", input_formats=["%d-%m-%Y", "%Y-%m-%d"])
 
-    Imagen_campana = ImagenCampanaSerializer(many=True, read_only=True)
-    DetalleRequisito = DetalleRequisitosSerializer(many=True, read_only=True)
-
-    Cantones = serializers.PrimaryKeyRelatedField(queryset=Cantones.objects.all(), required=False, allow_null=True)
-    imagen = serializers.ListField(child=serializers.ImageField(), write_only=True, required=False)
-    requisitos = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
-
-    class Meta:
-        model = Campana
-        fields = [
-            'id', 'Titulo', 'Descripcion', 'Fecha_inicio', 'Fecha_fin',
-            'Hora_inicio', 'Hora_fin', 'Activo', 'Contacto', 'direccion_exacta',
-            'CustomUser', 'Cantones', 'Imagen_campana', 'DetalleRequisito',
-            'imagen', 'requisitos'
-        ]
-        read_only_fields = ['id', 'Imagen_campana', 'DetalleRequisito']
-
-    def create(self, validated_data):
-        imagenes = validated_data.pop('imagen', [])
-        requisitos_ids = validated_data.pop('requisitos', [])
-        cantones = validated_data.pop('Cantones', None)
-
-        # Asignar usuario desde request si existe
-        request = self.context.get('request')
-        if request and hasattr(request, 'user') and request.user.is_authenticated:
-            validated_data['CustomUser'] = request.user
-
-        if cantones:
-            validated_data['Cantones'] = cantones
-
-        campana = Campana.objects.create(**validated_data)
-
-        # Crear imágenes
-        for img in imagenes:
-            Imagen_campana.objects.create(Campana=campana, imagen=img)
-
-        # Crear detalle de requisitos
-        for rid in requisitos_ids:
-            DetalleRequisitos.objects.create(Campana=campana, Requisitos_id=rid, CustomUser=campana.CustomUser)
-
-        return campana """
 from rest_framework import serializers
 from .models import Campana, Imagen_campana, DetalleRequisitos, Cantones
 

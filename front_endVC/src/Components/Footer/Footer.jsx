@@ -39,7 +39,7 @@ function Footer() {
           <h4>Recursos</h4>
           <ul>
             <li><HashLink to="/home#faq">Preguntas Frecuentes</HashLink></li>
-            <li><HashLink to="/home#buzon">Contacto</HashLink></li>
+            <li><HashLink to="/home#contacto">Contacto</HashLink></li>
             <li><HashLink to="/home# ">Guía Completa del Donante</HashLink></li>
           </ul>
         </div>

@@ -50,7 +50,7 @@ function Navbar() {
           <li><HashLink smooth to="/home#campanas" onClick={() => setMenuAbierto(false)}>Campañas</HashLink></li>
           <li><HashLink smooth to="/home#info" onClick={() => setMenuAbierto(false)}>Información</HashLink></li>
           <li><HashLink smooth to="/home#faq" onClick={() => setMenuAbierto(false)}>FAQ</HashLink></li>
-          <li><HashLink smooth to="/home#buzon" onClick={() => setMenuAbierto(false)}>Contacto</HashLink></li>
+          <li><HashLink smooth to="/home#contacto" onClick={() => setMenuAbierto(false)}>Contacto</HashLink></li>
        
           {/* botones */}
         <li className="navbar-btn-item">

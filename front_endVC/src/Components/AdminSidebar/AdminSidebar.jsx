@@ -1,5 +1,6 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { logout } from "../../services/ServicioLogin";
+import { NavLink, useNavigate} from "react-router-dom";
 import "./AdminSidebar.css";
 
 const ITEMS = [
@@ -15,6 +16,11 @@ const ITEMS = [
 ];
 
 function AdminSidebar() {
+  const navigate = useNavigate();
+  const handleLogout = () => {    
+    logout();
+    navigate("/login");
+  };
   return (
     <aside className="admin-sidebar">
       <div className="brand">
@@ -46,7 +52,7 @@ function AdminSidebar() {
       </ul>
 
       <div className="bottom">
-        <button className="logout-btn" onClick={() => console.log("logout")}>
+        <button className="logout-btn" onClick={handleLogout}>
           ⤴ <span>Cerrar sesión</span>
         </button>
       </div>

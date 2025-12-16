@@ -49,7 +49,7 @@ class CustomUserListCreateView(generics.ListCreateAPIView):
 class CustomUserDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
-    permission_classes = [AllowAny]  # ajustar según necesites
+    permission_classes = [AllowAny]  
 
 
 class UsuarioActualView(APIView):

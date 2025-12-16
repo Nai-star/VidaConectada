@@ -24,9 +24,24 @@ class Group(models.Model):
         return f"{self.Nombre_rol}"
     
 
-class Usuario_rol(models.Model):
-   CustomUser = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name="Usurio_rol")
-   Group = models.ForeignKey(Group,on_delete=models.CASCADE, related_name="Usurio_rol")
+
+class UsuarioRol(models.Model):
+    customuser = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        db_column="customuser_id",
+        related_name="roles"
+    )
+    group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        db_column="group_id",
+        related_name="usuarios"
+    )
+
+    class Meta:
+        db_table = "api_customuser_groups"
+        managed = False # Evita que Django intente crear esta tabla automáticamente
 
 
 class Publicaciones(models.Model):

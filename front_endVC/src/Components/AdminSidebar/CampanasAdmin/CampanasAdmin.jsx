@@ -1,6 +1,9 @@
-// CampanasAdmin.jsx
 import React, { useEffect, useState } from "react";
-import { obtenerCampanas, crearCampana } from "../../../services/ServicioCampanas";
+import {
+  obtenerCampanas,
+  crearCampana,
+  actualizarEstadoCampana
+} from "../../../services/ServicioCampanas";
 import { obtenerParticipaciones } from "../../../services/ServicioSuscripcion";
 import { obtenerProvincias, obtenerCantones } from "../../../services/ServicioProvincias";
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock } from "react-icons/fa";
@@ -30,9 +33,6 @@ export default function GestionCampanas() {
   const [provLookup, setProvLookup] = useState({});
   const [cantonLookup, setCantonLookup] = useState({});
 
-  /* ============================
-     SUSCRITOS
-  ============================ */
   function contarSuscritosPorCampana(participaciones = []) {
     const map = {};
     participaciones.forEach(p => {
@@ -58,9 +58,6 @@ export default function GestionCampanas() {
     return c ?? "—";
   }
 
-  /* ============================
-     CARGAR PROVINCIAS / CANTONES
-  ============================ */
   useEffect(() => {
     async function cargarUbicaciones() {
       try {
@@ -92,9 +89,6 @@ export default function GestionCampanas() {
     cargarUbicaciones();
   }, []);
 
-  /* ============================
-     CARGAR CAMPAÑAS + SUSCRITOS
-  ============================ */
   async function cargar() {
     setCargando(true);
     try {
@@ -129,9 +123,9 @@ export default function GestionCampanas() {
               return img;
                 return img.imagen_url ?? img.url ?? img.secure_url ?? img.imagen ?? null; 
               }).filter(Boolean),
+        
           ubicacion: c.direccion_exacta,
           inscritos: suscritosPorCampana[c.id] || 0,
-          estado: c.Activo ? "Activa" : "Inactiva",
           canton_id: cantonId,
           canton_nombre: cantonInfo.name ?? null,
           provincia_nombre: provLookup[String(cantonInfo.provId)] ?? null
@@ -152,14 +146,29 @@ export default function GestionCampanas() {
 
   if (cargando) return <p>Cargando campañas...</p>;
 
-  const getEstado = (c) => {
+  const getEstadoSelectValue = (c, raw) => {
+    if (raw?.Activo === false) return "vencida";
+
     const hoy = new Date();
     const inicio = new Date(c.fecha_inicio);
     const fin = new Date(c.fecha_fin || c.fecha_inicio);
-    if (hoy > fin) return "Expirada";
-    if (hoy >= inicio && hoy <= fin) return "Activa";
-    return "Próxima";
+
+    if (hoy < inicio) return "proxima";
+    if (hoy > fin) return "vencida";
+
+    return "activa";
   };
+
+  async function cambiarEstadoCampana(c, raw, nuevoEstado) {
+    const activo = nuevoEstado !== "vencida";
+    try {
+      await actualizarEstadoCampana(c.id, activo);
+      await cargar();
+    } catch (e) {
+      console.error("Error actualizando estado", e);
+      alert("No se pudo actualizar el estado");
+    }
+  }
 
   function toggleExpand(id) {
     setExpandedIds(prev => {
@@ -183,16 +192,8 @@ export default function GestionCampanas() {
 
   function onDeletedCampana(id) {
     setCampanas(prev => prev.filter(c => c.id !== id));
-    setRawMap(prev => {
-      const copy = { ...prev };
-      delete copy[id];
-      return copy;
-    });
   }
 
-  /* ============================
-     RENDER
-  ============================ */
   return (
     <div className="campanas-container">
       <div className="header-container">
@@ -221,106 +222,67 @@ export default function GestionCampanas() {
               <th>Ubicación</th>
               <th>Inscritos</th>
               <th>Estado</th>
+              <th>Requisitos</th>
               <th>Acciones</th>
             </tr>
           </thead>
 
           <tbody>
-            {campanas.length === 0 && (
-              <tr>
-                <td colSpan={9}>No hay campañas</td>
-              </tr>
-            )}
-
             {campanas.map(c => {
               const raw = rawMap[c.id] ?? {};
               return (
-                <React.Fragment key={c.id}>
-                  <tr>
-                    <td>
-                      {c.imagenes.length > 0 ? (
-                        <img
-                          src={c.imagenes[0]}
-                          alt={c.nombre_campana}
-                          className="campaign-image"
-                        />
-                      ) : (
-                        <span>Sin imagen</span>
-                      )}
-                    </td>
+                <tr key={c.id}>
+                  <td>
+                    {c.imagenes.length > 0 ? (
+                      <img
+                        src={c.imagenes[0]}
+                        alt={c.nombre_campana}
+                        className="campaign-image"
+                      />
+                    ) : (
+                      <span>Sin imagen</span>
+                    )}
+                  </td>
 
-                    <td>
-                      <div className="campaign-details">
-                        <strong>{c.nombre_campana}</strong>
-                        <span>{c.descripcion}</span>
-                      </div>
-                    </td>
+                  <td>
+                    <strong>{c.nombre_campana}</strong>
+                    <div>{c.descripcion}</div>
+                  </td>
 
-                    <td>
-                      <div className="date-time">
-                        <FaCalendarAlt />
-                        <span>{c.fecha_inicio} → {c.fecha_fin}</span>
-                      </div>
-                      <div className="date-time">
-                        <FaClock />
-                        <span>{c.hora_inicio} → {c.hora_fin}</span>
-                      </div>
-                    </td>
+                  <td>
+                    <FaCalendarAlt /> {c.fecha_inicio} → {c.fecha_fin}
+                    <br />
+                    <FaClock /> {c.hora_inicio} → {c.hora_fin}
+                  </td>
 
-                    <td>{c.provincia_nombre ?? "—"}</td>
-                    <td>{c.canton_nombre ?? getCantonNombreFromRaw(raw)}</td>
+                  <td>{c.provincia_nombre ?? "—"}</td>
+                  <td>{c.canton_nombre ?? getCantonNombreFromRaw(raw)}</td>
 
-                    <td className="location-text">
-                      <FaMapMarkerAlt />
-                      <span>{c.ubicacion}</span>
-                    </td>
+                  <td>
+                    <FaMapMarkerAlt /> {c.ubicacion}
+                  </td>
 
-                    <td>{c.inscritos}</td>
+                  <td>{c.inscritos}</td>
 
-                    <td>
-                      <span className={`status-tag ${
-                        getEstado(c) === "Expirada"
-                          ? "status-expired"
-                          : "status-finished"
-                      }`}>
-                        {getEstado(c)}
-                      </span>
-                    </td>
+                  <td>
+                    <select
+                      className="estado-select"
+                      value={getEstadoSelectValue(c, raw)}
+                      onChange={e =>
+                        cambiarEstadoCampana(c, raw, e.target.value)
+                      }
+                    >
+                      <option value="activa">Activa</option>
+                      <option value="proxima">Próxima</option>
+                      <option value="vencida">Vencida</option>
+                    </select>
+                  </td>
 
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="action-button"
-                          onClick={() => abrirModalEditar(c.id)}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="action-button"
-                          onClick={() => abrirModalEliminar(c)}
-                        >
-                          🗑️
-                        </button>
-                        <button
-                          className="action-button"
-                          onClick={() => toggleExpand(c.id)}
-                        >
-                          {expandedIds.has(c.id) ? "Ocultar" : "Ver"}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-
-                  {expandedIds.has(c.id) && (
-                    <tr>
-                      <td colSpan={9}>
-                        <pre>
-                          {JSON.stringify(raw, null, 2)}
-                        </pre>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
+                  <td>
+                    <button onClick={() => abrirModalEditar(c.id)}>✏️</button>
+                    <button onClick={() => abrirModalEliminar(c)}>🗑️</button>
+                  </td>
+                </tr>
               );
             })}
           </tbody>

@@ -30,6 +30,9 @@ export const loginAdmin = async (email, password) => {
     if (user_email) localStorage.setItem("userEmail", user_email);
     if (user_id) localStorage.setItem("userId", String(user_id));
 
+    // 🔑 CLAVE
+    localStorage.setItem("isAdmin", "true");
+
     return {
       userId: user_id,
       email: user_email,
@@ -78,4 +81,6 @@ export const logout = () => {
   localStorage.removeItem("refreshToken");
   localStorage.removeItem("userEmail");
   localStorage.removeItem("userId");
+  localStorage.removeItem("isAdmin");
 };
+
