@@ -94,12 +94,15 @@ async function handleResponse(response) {
 export async function crearConsultaBuzon(payload) {
   const res = await fetch(`${API_URL}/buzon/`, {
     method: "POST",
-    headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(payload),
   });
 
   return handleResponse(res);
 }
+
 
 /* ==========================
    Listar buzón (requiere token)
@@ -265,30 +268,6 @@ export async function obtenerRespuestaPorId(id) {
   if (res.status === 404) return null;
   return handleResponse(res);
 }
-
-
-
-/* ==========================
-   Obtener usuario logueado (robusto)
-   - intenta varios endpoints "comunes"
-   - si la respuesta es una lista, intenta extraer el id desde el JWT y buscarlo
-   - si no hay token o no puede resolver, retorna null
-   ========================== */
-function parseJwt(token) {
-  try {
-    const part = token.split(".")[1];
-    if (!part) return null;
-    // atob con manejos de URL-safe
-    const json = atob(part.replace(/-/g, "+").replace(/_/g, "/"));
-    // decodeURIComponent/escape para soportar unicode
-    return JSON.parse(decodeURIComponent(escape(json)));
-  } catch (e) {
-    console.warn("[parseJwt] no se pudo parsear token:", e);
-    return null;
-  }
-}
-
-
 
 
 // Ver qué claves de auth hay

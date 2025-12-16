@@ -545,6 +545,40 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
         return campana
 
 
+class CampanaPublicaSerializer(serializers.ModelSerializer):
+    Canton_nombre = serializers.CharField(
+        source="Cantones.nombre_canton",
+        read_only=True
+    )
+
+    detalles_requisitos = DetalleRequisitosSerializer(
+        source="detallerequisitos_set",
+        many=True,
+        read_only=True
+    )
+
+    Imagenes = ImagenCampanaSerializer(
+        source="Imagen_campana",
+        many=True,
+        read_only=True
+    )
+
+    class Meta:
+        model = Campana
+        fields = [
+            "id",
+            "Titulo",
+            "Descripcion",
+            "Fecha_inicio",
+            "Fecha_fin",
+            "Hora_inicio",
+            "Hora_fin",
+            "Contacto",
+            "direccion_exacta",
+            "Canton_nombre",
+            "Imagenes",
+            "detalles_requisitos",
+        ]
 
 
 from rest_framework import serializers
@@ -767,3 +801,22 @@ def create(self, validated_data):
             print("Error creando Participacion tras crear Suscrito:", str(e))
             print(traceback.format_exc())
             raise ValidationError({"detail": "Error creando la participación: " + str(e)})
+
+
+
+
+
+class FaqPublicSerializer(serializers.ModelSerializer):
+    pregunta = serializers.CharField(source="Buzon.pregunta", read_only=True)
+
+    class Meta:
+        model = Respuesta
+        fields = [
+            "id",
+            "pregunta",
+            "Respuesta_P",
+            "Fecha",
+            "estado",
+            
+
+        ]

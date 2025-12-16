@@ -62,14 +62,11 @@ function PreguntasFrecuentes() {
     return sortedFaqs.slice(0, 5);
   }, [sortedFaqs, showAll]);
 
-  // Función para abrir modal solo si usuario logueado
+ 
+  
   const abrirModal = () => {
-    if (!usuario) {
-      alert("Debes iniciar sesión para enviar preguntas");
-      return;
-    }
-    setModalOpen(true);
-  };
+  setModalOpen(true);
+};
 
   console.log(visibleFaqs);
   
@@ -102,7 +99,7 @@ function PreguntasFrecuentes() {
                     aria-expanded={isOpen}
                     aria-controls={`faq-panel-${q.id}`}
                   >
-                    <span>{q.Buzon?.pregunta ?? "Pregunta sin título"}</span>
+                    <span>{q.pregunta ?? "Pregunta sin título"}</span>
                     <FiChevronDown className="chev" />
                   </button>
 

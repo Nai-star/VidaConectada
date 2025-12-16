@@ -49,7 +49,7 @@ export async function obtenerUsuarioActual() {
 // ================================
 // reemplaza la función obtenerCampanas en ServicioCampanas.js por esta
 export async function obtenerCampanas() {
-  const res = await authorizedFetch(`${API_URL}/campanas/`);
+  const res = await authorizedFetch(`${API_URL}/admin/campanas/`);
   if (!res.ok) throw new Error(`Error al obtener campañas: ${res.status}`);
   const data = await res.json();
 
@@ -277,7 +277,7 @@ export async function crearCampana(data) {
 
     console.log("[ServicioCampanas] Enviando FormData (multipart) con imagen");
 
-    const res = await authorizedFetch(`${API_URL}/campanas/`, {
+    const res = await authorizedFetch(`${API_URL}/admin/campanas/`, {
       method: "POST",
       body: form // NO poner Content-Type, browser lo hace
     });
@@ -307,7 +307,7 @@ export async function crearCampana(data) {
 
   console.log("Body a enviar:", body);
 
-  const res = await authorizedFetch(`${API_URL}/campanas/`, {
+  const res = await authorizedFetch(`${API_URL}/admin/campanas/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
@@ -457,4 +457,126 @@ export async function actualizarEstadoCampana(id, activo) {
       ? lastError.body
       : `No se pudo actualizar el estado`
   );
+}
+
+// ================================
+// Obtener campañas públicas (sin auth)
+// ================================
+
+export async function obtenerCampanasPublicas() {
+  const res = await fetch(`${API_URL}/campanas/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Error al obtener campañas públicas: ${res.status}`);
+  }
+
+  const data = await res.json();
+
+  const isImageCandidate = (v) => {
+    if (!v) return false;
+    if (typeof v !== "string") return false;
+    const s = v.toLowerCase().trim();
+    if (s.includes("image/upload")) return true;
+    if (s.startsWith("http://") || s.startsWith("https://") || s.startsWith("//")) return true;
+    if (/\.(jpg|jpeg|png|webp|gif|svg)(\?.*)?$/.test(s)) return true;
+    return false;
+  };
+
+  const extractFromObject = (obj) => {
+    if (typeof obj === "string") {
+      if (isImageCandidate(obj)) return obj;
+      return null;
+    }
+
+    if (obj && typeof obj === "object") {
+      const candidates = [
+        obj.imagen_url,
+        obj.url,
+        obj.secure_url,
+        obj.imagen,
+        obj.imagen_public_id,
+        obj.public_id,
+        obj.path,
+      ];
+      for (const c of candidates) {
+        if (isImageCandidate(c)) return c;
+      }
+
+      for (const k of Object.keys(obj)) {
+        const val = obj[k];
+        if (typeof val === "string" && (val.includes("/") || val.match(/\.(jpg|jpeg|png|webp|gif)$/i))) {
+          if (isImageCandidate(val)) return val;
+          const maybePid = val.replace(/^\/+/, "");
+          if (maybePid && maybePid.length < 200 && !maybePid.includes(" ")) return maybePid;
+        }
+      }
+    }
+    return null;
+  };
+
+  return (Array.isArray(data) ? data : []).map((item) => {
+    const imagenesRaw = item.Imagen_campana ?? item.imagenes ?? item.Imagenes ?? null;
+
+    let imgs = [];
+    if (Array.isArray(imagenesRaw)) {
+      imgs = imagenesRaw.map(i => extractFromObject(i)).filter(Boolean);
+    }
+
+    if (imgs.length === 0) {
+      const posibles = [
+        item.imagen, item.imagen_url, item.Foto_P, item.Foto, item.foto, item.image
+      ];
+      for (const p of posibles) {
+        if (Array.isArray(p)) {
+          imgs.push(...p.map(x => extractFromObject(x)).filter(Boolean));
+        } else {
+          const e = extractFromObject(p);
+          if (e) imgs.push(e);
+        }
+      }
+    }
+
+    if (imgs.length === 0) {
+      for (const k of Object.keys(item)) {
+        const v = item[k];
+        if (!v) continue;
+
+        if (typeof v === "string") {
+          if (isImageCandidate(v)) imgs.push(v);
+          else {
+            const maybePid = v.replace(/^\/+/, "");
+            if (maybePid.includes("/") && maybePid.length < 200) imgs.push(maybePid);
+          }
+        } else if (Array.isArray(v)) {
+          v.forEach(el => {
+            const found = extractFromObject(el);
+            if (found) imgs.push(found);
+          });
+        } else if (typeof v === "object") {
+          const found = extractFromObject(v);
+          if (found) imgs.push(found);
+        }
+        if (imgs.length > 0) break;
+      }
+    }
+
+    const imagenes = imgs
+      .map(candidate => {
+        if (/^(https?:)?\/\//i.test(candidate)) {
+          return candidate.startsWith("//") ? `https:${candidate}` : candidate;
+        }
+        return buildCloudinaryUrl(candidate);
+      })
+      .filter(Boolean);
+
+    return {
+      ...item,
+      imagenes,
+    };
+  });
 }

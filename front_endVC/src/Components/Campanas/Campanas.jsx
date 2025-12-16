@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { obtenerCampanas } from "../../services/ServicioCampanas";
+import { obtenerCampanasPublicas } from "../../services/ServicioCampanas";
 import { FiCalendar, FiClock, FiMapPin, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import ParticiparModal from "../ParticiparModal/ParticiparModal"; // Asegúrate de la ruta
+import ParticiparModal from "../ParticiparModal/ParticiparModal"; 
 import "./campanas.css";
 
 // ------------------------------
@@ -60,7 +60,7 @@ function Campanas() {
   useEffect(() => {
     async function cargar() {
       try {
-        const data = await obtenerCampanas();
+        const data = await obtenerCampanasPublicas();
         setCampanas(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error al cargar campañas:", err);

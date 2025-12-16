@@ -12,6 +12,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.generics import ListAPIView
 
 
 
@@ -141,15 +142,15 @@ class CantonesListCreateView(ListCreateAPIView):
 # ✅ Campañas
 from rest_framework.parsers import MultiPartParser, FormParser
 
-class CampanaListCreateView(ListCreateAPIView):
+class CampanasAdminView(ListCreateAPIView):
     queryset = Campana.objects.all()
+    serializer_class = CampanaCreateSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser)
 
-    def get_serializer_class(self):
-        if self.request.method == "POST":
-            return CampanaCreateSerializer
-        return CampanaCreateSerializer
+class CampanasPublicasView(ListAPIView):
+    queryset = Campana.objects.filter(Activo=True)
+    serializer_class = CampanaPublicaSerializer
+    permission_classes = [AllowAny]
 
 
 class CampanaDetailView(RetrieveUpdateDestroyAPIView):
@@ -460,3 +461,20 @@ def buscar_suscrito_por_cedula(request):
 
     serializer = SuscritosSerializer(suscrito)
     return Response(serializer.data)
+
+
+
+from rest_framework.generics import ListAPIView
+class FaqPublicView(ListAPIView):
+    permission_classes = [AllowAny]
+    serializer_class = FaqPublicSerializer
+
+    def get_queryset(self):
+        return (
+            Respuesta.objects
+            .filter(estado=True)
+            .select_related("Buzon")
+            .order_by("Fecha")
+           
+
+        )

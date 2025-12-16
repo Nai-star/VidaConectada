@@ -4,17 +4,16 @@ from rest_framework_simplejwt.views import ( TokenObtainPairView,TokenRefreshVie
 
 
 urlpatterns = [
-        # Usuarios
-    
-
+    # Usuarios
     path('usuarios/', CustomUserListCreateView.as_view(), name="crear_listar_usuarios"),
     path('usuarios/<int:pk>/', CustomUserDetailView.as_view(), name="detalle_usuario"),
-    #path('user/', UsuarioActualView.as_view(), name="user-actual"),
+    
 
     # Login admin (endpoint específico)
     path('login/admin/', AdminLoginView.as_view(), name='login_admin'),
 
     # Login estándar (opcional) - permite email o username
+    # el endpoint 'login/' ya está definido más abajo para tokens JWT 
     path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'), 
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     
@@ -41,7 +40,8 @@ urlpatterns = [
 
 
     # Campañas
-    path('campanas/', CampanaListCreateView.as_view(), name="crear y listar campañas"),
+    path("campanas/", CampanasPublicasView.as_view()),          # 🌍 público
+    path("admin/campanas/", CampanasAdminView.as_view()),       # 🔒 admin
     path('campanas/<int:pk>', CampanaDetailView.as_view(), name="actualizar y eliminar campañas"),
 
     # Imágenes de campaña
@@ -55,6 +55,9 @@ urlpatterns = [
     # Buzón
     path('buzon/', BuzonListCreateView.as_view(), name="crear y listar mensajes de buzón"),
     path('buzon/<int:pk>', BuzonDetailView.as_view(), name="actualizar y eliminar mensaje de buzón"),
+
+    # FAQ
+    path("faq/", FaqPublicView.as_view(), name="faq-public"),
 
     # Respuestas
     path('respuestas/', RespuestaListCreateView.as_view(), name="respuestas-list-create"),
@@ -93,6 +96,6 @@ urlpatterns = [
    
     path('participacion/', ParticipacionListCreateView.as_view(), name="crear y listar participaciones"),
     path('participacion/<int:pk>', ParticipacionDetailView.as_view(), name="actualizar y eliminar participacion"),
-    path("suscritos/buscar/", buscar_suscrito_por_cedula),
+    path("suscritos/buscar/", buscar_suscrito_por_cedula)
 
 ]
