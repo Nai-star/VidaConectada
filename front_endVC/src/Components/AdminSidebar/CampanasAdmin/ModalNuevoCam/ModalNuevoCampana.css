@@ -133,3 +133,11 @@
 
 /* Debug temporal (quita si no la necesitas) */
 .modal-content.debug { outline: 3px dashed rgba(0,128,255,0.25); }
+
+
+.hint {
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+}

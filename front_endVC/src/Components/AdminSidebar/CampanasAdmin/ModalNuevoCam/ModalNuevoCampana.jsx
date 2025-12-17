@@ -11,6 +11,8 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
   const [hora, setHora] = useState("");
   const [horaFin, setHoraFin] = useState("");
   const [lugar, setLugar] = useState("");
+  const [contacto, setContacto] = useState("");
+
 
   const [provincia, setProvincia] = useState("");
   const [provincias, setProvincias] = useState([]);
@@ -69,7 +71,7 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
   const guardar = async () => {
     setError("");
 
-    if (!titulo.trim() || !subtitulo.trim() || !fecha || !hora || !lugar.trim() || !canton || requisitosSeleccionados.length === 0) {
+    if (!titulo.trim() || !subtitulo.trim() || !fecha || !hora || !lugar.trim() || !canton || !contacto.trim() || requisitosSeleccionados.length === 0) {
       setError("Por favor complete todos los campos y seleccione al menos un requisito.");
       return;
     }
@@ -86,7 +88,7 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
       formData.append("direccion_exacta", lugar.trim());
       formData.append("Cantones", canton);
       formData.append("Activo", true);
-      /* formData.append("Contacto", contacto.trim()); */
+      formData.append("Contacto", contacto.trim());
 
       // requisitos (MUY IMPORTANTE)
       requisitosSeleccionados.forEach(id => {
@@ -97,8 +99,6 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
         formData.append("imagen", imagen);
       }
       
-
-      requisitosSeleccionados.forEach((id) => formData.append("requisitos", id));
 
       // Llamada al backend
       const nuevaCampana = await onSave(formData); // onSave debe devolver la campaña creada
@@ -170,7 +170,11 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
 
         <label>Descripción</label>
         <textarea value={subtitulo} onChange={(e) => setSubtitulo(e.target.value)} />
-
+        
+        <label>Contacto</label>
+        <input type="text" placeholder="Ej: 8888-8888 / correo@ejemplo.com" value={contacto} onChange={(e) => setContacto(e.target.value)}/>
+        <small className="hint"> Teléfono, WhatsApp o correo electrónico de contacto</small>
+        
         <label>Fecha inicio</label>
         <input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
 

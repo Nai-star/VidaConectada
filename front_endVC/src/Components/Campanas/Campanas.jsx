@@ -104,7 +104,10 @@ function Campanas() {
           campanas.map((c, idx) => {
             const cid = c.id ?? c.pk ?? c._id ?? idx;
             const imagenes = Array.isArray(c.imagenes) ? c.imagenes : [];
-            const requisitos = Array.isArray(c.requisitos) ? c.requisitos : [];
+            const requisitos = Array.isArray(c.detalles_requisitos)
+            ? c.detalles_requisitos
+            : [];
+
 
             return (
               <div key={cid} className="campana-card">
@@ -131,7 +134,13 @@ function Campanas() {
 
                     <h4>Requisitos</h4>
                     {requisitos.length > 0 ? (
-                      <ul>{requisitos.map((req, i) => <li key={req.id ?? i}>{req.texto}</li>)}</ul>
+                      <ul>
+                        {requisitos.map((req, i) => (
+                          <li key={req.id ?? i}>
+                            {req.Requisitos?.requisitos ?? "Requisito no definido"}
+                          </li>
+                        ))}
+                      </ul>
                     ) : (
                       <p className="no-img">No hay requisitos registrados.</p>
                     )}

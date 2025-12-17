@@ -103,6 +103,7 @@ export default function GestionCampanas() {
           id: c.id,
           nombre_campana: c.Titulo,
           descripcion: c.Descripcion,
+          contacto: c.Contacto ?? "", 
           fecha_inicio: c.Fecha_inicio,
           fecha_fin: c.Fecha_fin,
           hora_inicio: c.Hora_inicio,
@@ -203,6 +204,7 @@ export default function GestionCampanas() {
               <th>Provincia</th>
               <th>Cantón</th>
               <th>Ubicación</th>
+              <th>Contacto</th>
               <th>Inscritos</th>
               <th>Estado</th>
               <th>Requisitos</th>
@@ -245,6 +247,21 @@ export default function GestionCampanas() {
                     <FaMapMarkerAlt /> {c.ubicacion}
                   </td>
 
+                  <td className="contacto-cell">
+                    {c.contacto ? (
+                      c.contacto.includes("@") ? (
+                        <a href={`mailto:${c.contacto}`}>{c.contacto}</a>
+                      ) : (
+                        <a href={`tel:${c.contacto.replace(/\s+/g, "")}`}>
+                          {c.contacto}
+                        </a>
+                      )
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+
+
                   <td>{c.inscritos}</td>
 
                   <td>
@@ -261,7 +278,6 @@ export default function GestionCampanas() {
                     </select>
                   </td>
 
-                  {/* 🔹 CORREGIDO: mostrar requisitos correctamente */}
                   <td className="requisitos-cell">
                     {c.detalles_requisitos.length ? (
                       c.detalles_requisitos

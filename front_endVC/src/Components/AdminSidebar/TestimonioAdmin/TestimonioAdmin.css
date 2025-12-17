@@ -1,0 +1,117 @@
+/* Contenedor general */
+.admin-panel {
+    background-color: #f8f9fa;
+    padding: 40px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 1. EL "COSITO" DE ARRIBA (Pestañas/Tabs) */
+.tabs-container {
+    background-color: #e9ecef;
+    display: inline-flex;
+    padding: 4px;
+    border-radius: 50px; /* Bordes muy redondeados tipo píldora */
+    margin-bottom: 30px;
+}
+
+.tab-item {
+    padding: 8px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.3s;
+    border: none;
+    background: transparent;
+    color: #495057;
+}
+
+/* Estado activo del botón de arriba */
+.tab-item.active {
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    color: #000;
+}
+
+/* 2. LA TARJETA BLANCA (Card) */
+.card-testimonios {
+    background: #ffffff;
+    border-radius: 15px;
+    border: 1px solid #e0e0e0;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Cabecera dentro de la tarjeta */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Título con el icono de play rojo */
+.title-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #333;
+    font-weight: 600;
+}
+
+.title-section i {
+    color: #d0021b; /* Rojo sangre de la imagen */
+}
+
+/* 3. EL BOTÓN ROJO (+ Nuevo Video) */
+.btn-red {
+    background-color: #d0021b;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 4. TABLA INTERNA */
+.tabla-testimonios {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-testimonios th {
+    text-align: left;
+    color: #888;
+    font-size: 12px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.tabla-testimonios td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f9f9f9;
+    font-size: 14px;
+}
+
+/* Imagen circular del donante */
+.user-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* ID estilo burbuja */
+.id-badge {
+    background: #f1f3f5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: #666;
+}

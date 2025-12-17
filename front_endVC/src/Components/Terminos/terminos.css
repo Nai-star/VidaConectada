@@ -1,0 +1,106 @@
+/* ===== RESET SUAVE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== PÁGINA LEGAL ===== */
+.legal-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f4f7f6 0%, #eef2f1 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.legal-container {
+  max-width: 880px;
+  margin: 0 auto 70px auto;
+  padding: 48px;
+  background-color: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  line-height: 1.85;
+}
+
+/* ===== TÍTULO PRINCIPAL ===== */
+.legal-container h1 {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #1f2d3d;
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ===== SUBTÍTULOS ===== */
+.legal-container h2 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #2f4050;
+  margin-top: 36px;
+  margin-bottom: 14px;
+  padding-left: 14px;
+  border-left: 4px solid #4CAF50;
+}
+
+/* ===== TEXTO ===== */
+.legal-container p {
+  font-size: 1.05rem;
+  color: #4a4a4a;
+  margin-bottom: 18px;
+  text-align: justify;
+}
+
+/* ===== LISTAS LEGALES ===== */
+.legal-container ul {
+  margin: 10px 0 20px 30px;
+}
+
+.legal-container li {
+  margin-bottom: 10px;
+  color: #4a4a4a;
+  font-size: 1rem;
+}
+
+/* ===== ENLACES ===== */
+.legal-container a {
+  color: #2e7d32;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.legal-container a:hover {
+  text-decoration: underline;
+}
+
+/* ===== SEPARACIÓN VISUAL ===== */
+.legal-container h2::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  background-color: #e0e0e0;
+  margin-top: 8px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .legal-container {
+    padding: 32px 22px;
+    margin: 0 16px 50px 16px;
+  }
+
+  .legal-container h1 {
+    font-size: 1.75rem;
+  }
+
+  .legal-container h2 {
+    font-size: 1.2rem;
+  }
+
+  .legal-container p {
+    font-size: 1rem;
+  }
+}

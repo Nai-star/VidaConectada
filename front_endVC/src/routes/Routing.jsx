@@ -21,7 +21,8 @@ import AdminBuzon from '../Components/AdminSidebar/AdminBuzon/AdminBuzon';
 import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
 import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmin"
 import GuiaDonante from '../Components/GuiaDonanate/GuiaDonante';
-
+import TestimoniosAdmin from '../Components/AdminSidebar/TestimonioAdmin/TestimonioAdmin';
+import TerminosUso from "../Components/Terminos/TerminosUso"
 
 import PrivateRouting from './PrivateRouting';
 
@@ -42,7 +43,8 @@ function Routing() {
 
         <Route path='/login' element={<Login/>}/>
         <Route path='/guia-donante' element={<GuiaDonante/>}/>
-        
+            <Route path='/terminos' element={<TerminosUso/>}/>
+         <Route path='/testimonio' element={<TestimoniosAdmin/>}/>
         
         {/* <Route path='/admin' element={<Admin/>}/> */}
 

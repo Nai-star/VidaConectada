@@ -484,7 +484,7 @@ class CampanaPublicaSerializer(serializers.ModelSerializer):
     )
 
     detalles_requisitos = DetalleRequisitosSerializer(
-        source="detallerequisitos_set",
+        source="DetalleRequisito",  # 🔥 related_name correcto
         many=True,
         read_only=True
     )
@@ -511,6 +511,7 @@ class CampanaPublicaSerializer(serializers.ModelSerializer):
             "Imagenes",
             "detalles_requisitos",
         ]
+
 
 
 from rest_framework import serializers
@@ -603,8 +604,15 @@ class TestimonioVideoSerializer(serializers.ModelSerializer):
         return testimonio
 
     def get_Testimonio_video(self, obj):
-        videos = obj.Testimonio_video.all()
-        return [{"Descripcion": v.Descripcion, "Video": v.Video.url if v.Video else None} for v in videos]
+         videos = obj.Testimonio_video.all()
+         return [
+        {
+            "id": v.id,  # 🔥 ESTE CAMPO ES LA CLAVE
+            "Descripcion": v.Descripcion,
+            "Video": v.Video.url if v.Video else None
+        }
+        for v in videos
+    ]
 
     
 

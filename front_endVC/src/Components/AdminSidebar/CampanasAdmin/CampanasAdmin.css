@@ -6,6 +6,17 @@ body {
     padding: 0;
 }
 
+.contacto-cell a {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contacto-cell a:hover {
+  text-decoration: underline;
+}
+
+
 /* --- Encabezado Principal --- */
 .header-container {
     display: flex;
