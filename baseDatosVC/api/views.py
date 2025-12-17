@@ -143,9 +143,19 @@ class CantonesListCreateView(ListCreateAPIView):
 from rest_framework.parsers import MultiPartParser, FormParser
 
 class CampanasAdminView(ListCreateAPIView):
-    queryset = Campana.objects.all()
+    queryset = Campana.objects.all().order_by("-id")
     serializer_class = CampanaCreateSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+
+    def get_serializer_context(self):
+        """
+        Permite acceder a request dentro del serializer
+        """
+        context = super().get_serializer_context()
+        context["request"] = self.request
+        return context
 
 class CampanasPublicasView(ListAPIView):
     queryset = Campana.objects.filter(Activo=True)
@@ -274,11 +284,11 @@ class CaruselRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
     permission_classes = [AllowAny]
 
 #galeria
-
 class GaleriaListCreateView(ListCreateAPIView):
     queryset =  Galeria.objects.all()
     serializer_class =  GaleriaSerializer
     permission_classes = [AllowAny]
+
 
 
 class  GaleriaRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):

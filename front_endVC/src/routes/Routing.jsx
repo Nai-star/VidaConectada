@@ -15,14 +15,16 @@ import Dashboard from '../Components/AdminSidebar/Dashboard/Dashboard';
 import GestionUsuarios from '../Components/AdminSidebar/GestionUsuarios/GestionUsuarios';
 import CaruselAdmin from '../Components/CaruselAdmin/CaruselAdmin';
 import Requisitos from '../Components/RequisitosAdmin/Requsitos/Requisitos';
-/* import AdminSidebar from '../Components/AdminSidebar/AdminSidebar'; */
+import AdminGaleria from '../Components/AdminSidebar/AdminGaleria/AdminGaleria';
 import RedBancos from "../Components/AdminSidebar/RedBancos/RedBancos";
 import AdminBuzon from '../Components/AdminSidebar/AdminBuzon/AdminBuzon';
 import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
 import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmin"
+import GuiaDonante from '../Components/GuiaDonanate/GuiaDonante';
 
 
 import PrivateRouting from './PrivateRouting';
+
 
 function Routing() {
 
@@ -36,8 +38,10 @@ function Routing() {
         <Route path='/' element={<Home/>}/>
         <Route path='/home' element={<Home/>}/>
         <Route path='/galeriavermas' element={<GaleriaVermas/>}/>
+        
 
         <Route path='/login' element={<Login/>}/>
+        <Route path='/guia-donante' element={<GuiaDonante/>}/>
         
         
         {/* <Route path='/admin' element={<Admin/>}/> */}
@@ -64,6 +68,7 @@ function Routing() {
           <Route path='TS' element={<TipoSangre/>} />  
           <Route path='CampanaAdmin' element={<CampanasAdmin/>} />  
           <Route path='register' element={<Register/>}/>
+          <Route path='galeria_admin' element={<AdminGaleria/>}/>
         </Route>
         </Route>
 

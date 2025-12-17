@@ -54,7 +54,7 @@ function Barrainfo() {
 
         <div className="mini-divider" />
 
-        <a href="/encuesta" className="mini-item">
+        <a href="https://forms.office.com/r/SYYbTB4s41?origin=lprLink" className="mini-item">
           <FiUser className="mini-ic" />
           <span>Encuesta satisfacción al usuario</span>
         </a>

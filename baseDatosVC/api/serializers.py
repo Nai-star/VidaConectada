@@ -11,6 +11,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 #from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from .utils import upload_to_cloudinary
 
 
 #Usuarios
@@ -274,14 +275,21 @@ class RequisitosSerializer(serializers.ModelSerializer):
 
 
 class DetalleRequisitosSerializer(serializers.ModelSerializer):
-    Requisitos = RequisitosSerializer(read_only=True)  # deja "Requisitos" tal cual
-    CustomUser_info = serializers.StringRelatedField(source='CustomUser', read_only=True)
+    Requisitos = RequisitosSerializer(read_only=True)
+    CustomUser_info = serializers.StringRelatedField(
+        source='CustomUser',
+        read_only=True
+    )
 
     class Meta:
         model = DetalleRequisitos
-        fields = ['id', 'Campana', 'Requisitos', 'CustomUser', 'CustomUser_info', 'Estado']
+        fields = [
+            'id',
+            'Requisitos',
+            'CustomUser_info',
+            'Estado'
+        ]
         read_only_fields = ['id', 'Requisitos', 'CustomUser_info']
-
 
 # ----- Provincias / Cantones -----
 class ProvinciaSerializer(serializers.ModelSerializer):
@@ -299,56 +307,6 @@ class CantonesSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre_canton', 'Provincia']
         read_only_fields = ['id', 'Provincia']
 
-
-
-class CampanaCreateSerializer(serializers.ModelSerializer):
-    Canton_nombre = serializers.CharField(source="Cantones.nombre_canton", read_only=True)
-    detalles_requisitos = DetalleRequisitosSerializer(
-        source="detallerequisitos_set", many=True, read_only=True
-    )
-
-    imagen = serializers.ListField(
-        child=serializers.ImageField(),
-        write_only=True
-    )
-
-    class Meta:
-        model = Campana
-        fields = [
-            "Titulo",
-            "Descripcion",
-            "Fecha_inicio",
-            "Fecha_fin",
-            "Contacto",
-            "CustomUser",
-            "Cantones",
-            "Canton_nombre",
-            "direccion_exacta",
-            "imagen",
-            "detalles_requisitos",
-            #"requisitos",
-        ]
-
-    def create(self, validated_data):
-        imagenes = validated_data.pop("imagen")
-
-        request = self.context["request"]        # ← Aquí está el usuario autenticado
-
-        campana = Campana.objects.create(
-            CustomUser=request.user,             # ← usuario automático
-            **validated_data
-        )
-
-        for img in imagenes:
-            Imagen_campana.objects.create(
-                Campana=campana,
-                imagen=img
-            )
-
-        return campana
-
-
-      
 
 
 class MapaSerializer(serializers.ModelSerializer):
@@ -382,6 +340,7 @@ class Urgente_Tip_SangSerializer(serializers.ModelSerializer):
         model = Urgente_Tip_Sang
         fields = '__all__'
 
+#Galeria
 class GaleriaSerializer(serializers.ModelSerializer):
     # Campo calculado que devuelve la URL de Cloudinary
     image_url = serializers.SerializerMethodField()
@@ -389,14 +348,17 @@ class GaleriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Galeria
         # Incluye 'image_url' explícitamente
-        fields = ['id', 'image_url', 'descripcion', 'video_url', 'fecha_publicacion', 'activo', 'CustomUser']
+        fields = ['id','imagen_g', 'image_url', 'descripcion', 'video_url', 'fecha_publicacion', 'activo', 'CustomUser']
 
     def get_image_url(self, obj):
         try:
             return obj.imagen_g.url if obj.imagen_g else None
         except Exception:
             return None
+        
 
+
+#Red de bancos
 class Red_bancosSerializer(serializers.ModelSerializer):
     class Meta:
         model = Red_bancos
@@ -452,98 +414,68 @@ from rest_framework import serializers
 from .models import Campana, Imagen_campana, DetalleRequisitos, Cantones
 
 
-class DetalleRequisitosSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DetalleRequisitos
-        fields = ["id", "requisito"]
-
 
 class CampanaCreateSerializer(serializers.ModelSerializer):
-    Fecha_inicio = serializers.DateField(
-        format="%d-%m-%Y",
-        input_formats=["%d-%m-%Y", "%Y-%m-%d"]
-    )
-    Fecha_fin = serializers.DateField(
-        format="%d-%m-%Y",
-        input_formats=["%d-%m-%Y", "%Y-%m-%d"]
-    )
+    CustomUser = serializers.StringRelatedField(read_only=True)
+    Contacto = serializers.CharField(required=False, allow_blank=True)
 
-    CustomUser = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    Cantones = serializers.PrimaryKeyRelatedField(
-        queryset=Cantones.objects.all(),
-        required=False,
-        allow_null=True
-    )
-
-    Canton_nombre = serializers.CharField(
-        source="Cantones.nombre_canton",
-        read_only=True
-    )
-
-    detalles_requisitos = DetalleRequisitosSerializer(
-        source="detallerequisitos_set",
+    Imagen_campana = ImagenCampanaSerializer(
         many=True,
         read_only=True
     )
 
-    # 🔴 SOLO PARA ESCRIBIR
-    imagen = serializers.ListField(
-        child=serializers.ImageField(),
-        write_only=True,
-        required=False
-    )
-
-    # 🟢 SOLO PARA LEER
-    Imagenes = ImagenCampanaSerializer(
-        source="Imagen_campana",
+    DetalleRequisito = DetalleRequisitosSerializer(
         many=True,
         read_only=True
     )
 
     class Meta:
         model = Campana
-        fields = [
-            "id",
-            "Titulo",
-            "Descripcion",
-            "Fecha_inicio",
-            "Fecha_fin",
-            "Hora_inicio",
-            "Hora_fin",
-            "Activo",
-            "Contacto",
-            "direccion_exacta",
-            "CustomUser",
-            "Cantones",
-            "Canton_nombre",
-            "imagen",
-            "Imagenes",   # 🔥 CLAVE
-            "detalles_requisitos",
-        ]
-        read_only_fields = ["id", "CustomUser"]
+        fields = "__all__"
 
     def create(self, validated_data):
-        imagenes = validated_data.pop("imagen", [])
-        validated_data.pop("CustomUser", None)
-
         request = self.context.get("request")
-        if not request or not request.user.is_authenticated:
-            raise serializers.ValidationError("Usuario no autenticado")
+        user = request.user if request else None
 
-        campana = Campana.objects.create(
-            CustomUser=request.user,
-            **validated_data
-        )
-
-        for img in imagenes:
-            Imagen_campana.objects.create(
-                Campana=campana,
-                imagen=img
+        if not user or not user.is_authenticated:
+            raise serializers.ValidationError(
+                {"detail": "Usuario no autenticado"}
             )
 
-        return campana
+        requisitos_ids = request.data.getlist("requisitos")
+        imagen_file = request.FILES.get("imagen")
 
+        try:
+            with transaction.atomic():
+
+                # 1️⃣ Crear campaña
+                campana = Campana.objects.create(
+                    CustomUser=user,
+                    **validated_data
+                )
+
+                # 2️⃣ Crear requisitos
+                for requisito_id in requisitos_ids:
+                    DetalleRequisitos.objects.create(
+                        Campana=campana,
+                        Requisitos_id=requisito_id,
+                        CustomUser=user,
+                        Estado=True
+                    )
+
+                # 3️⃣ Crear imagen
+                if imagen_file:
+                    Imagen_campana.objects.create(
+                        Campana=campana,
+                        imagen=imagen_file
+                    )
+
+                return campana
+
+        except Exception as e:
+            raise serializers.ValidationError(
+                {"detail": f"Error al crear la campaña: {str(e)}"}
+            )
 
 class CampanaPublicaSerializer(serializers.ModelSerializer):
     Canton_nombre = serializers.CharField(

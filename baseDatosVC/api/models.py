@@ -192,7 +192,7 @@ class carusel (models.Model):
         return f"{self.imagen}"
     
 class Galeria(models.Model):
-    imagen_g = CloudinaryField('imagen_g', folder='galeria')
+    imagen_g = models.URLField(blank=True, null=True)
     descripcion = models.TextField(blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
     fecha_publicacion = models.DateTimeField(auto_now_add=True)

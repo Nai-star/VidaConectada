@@ -13,6 +13,7 @@ import Contactanos from "../../Components/Contactanos/Contactanos"
 import Campanas from "../../Components/Campanas/Campanas"
 import Galeria from "../../Components/Galeria/Galeria"
 import Testimonios from "../../Components/Testimonios/Testimonios"
+import GuiaDonante from "../../Components/GuiaDonanate/GuiaDonante"
 
 
 
@@ -95,7 +96,7 @@ function Home() {
         
 
 
-
+      
 
         <Footer/>
     </div>

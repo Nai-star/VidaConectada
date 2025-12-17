@@ -11,6 +11,8 @@ import ModalEditar from "./ModalEditar/ModalEditar";
 import ModalEliminar from "./modaleliminar/ModalEliminar";
 
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
+
 import "./CaruselAdmin.css";
 
 function CarruselAdmin() {
@@ -224,14 +226,14 @@ function CarruselAdmin() {
                       className="btn-icon edit-icon"
                       onClick={() => abrirModalEditar(b)}
                     >
-                      ✏️
+                      <FiEdit size={20} />
                     </button>
 
                     <button
                       className="btn-icon delete-icon"
                       onClick={() => handleEliminar(b)}
                     >
-                      🗑️
+                      <FiTrash2 size={20} />
                     </button>
                   </td>
                 </tr>

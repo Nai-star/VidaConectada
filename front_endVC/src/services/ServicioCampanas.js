@@ -231,7 +231,7 @@ function toBackendDate(fecha) {
 // ================================
 // Crear campaña
 // ================================
-export async function crearCampana(data) {
+/* export async function crearCampana(data) {
   console.log("crearCampana - Datos de entrada:", data);
 
   if (!data.titulo || !String(data.titulo).trim()) throw new Error("El titulo es requerido");
@@ -269,6 +269,8 @@ export async function crearCampana(data) {
     form.append("Activo", String(data.Activo !== undefined ? data.Activo : true));
     form.append("Contacto", String(data.contacto ?? "info@vidaconectada.cr"));
     form.append("Cantones", String(canton));
+    requisitosSeleccionados.forEach(id => formData.append("detalles_requisitos", id));
+
     //form.append("CustomUser", String(usuarioId));
     form.append("imagen", data.imagen);
 
@@ -320,6 +322,23 @@ export async function crearCampana(data) {
   }
 
   return JSON.parse(texto);
+} */
+export async function crearCampana(data) {
+  const isFormData = data instanceof FormData;
+
+  const res = await authorizedFetch(`${API_URL}/admin/campanas/`, {
+    method: "POST",
+    body: isFormData ? data : JSON.stringify(data),
+    headers: isFormData ? {} : { "Content-Type": "application/json" },
+  });
+
+  const text = await res.text();
+
+  if (!res.ok) {
+    throw new Error(text);
+  }
+
+  return text ? JSON.parse(text) : null;
 }
 
 // ================================

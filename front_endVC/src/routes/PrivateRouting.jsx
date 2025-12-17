@@ -2,7 +2,7 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
 import { logout } from "../services/ServicioLogin";
 
-const INACTIVITY_LIMIT = 60 * 1000; // 60 segundos
+const INACTIVITY_LIMIT = 60 * 10000; // 60 segundos
 
 const PrivateRouting = () => {
   const navigate = useNavigate();

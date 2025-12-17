@@ -7,8 +7,10 @@ function Configuracion() {
 
   return (
     <div>
+       <div className="title-section">
         <h2>Configuraciones</h2>
-        <h3>Ajustes generales del panel administrativo</h3>
+        <p>Ajustes generales del panel administrativo</p>
+      </div>
         <Register/>
       
 

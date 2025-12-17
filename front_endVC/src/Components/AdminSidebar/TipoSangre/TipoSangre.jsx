@@ -239,14 +239,14 @@ export default function TipoSangre() {
                         {t.estado}
                       </span>
                     </td>
-                    <td style={{ textAlign: "right" }}>
+                    <td className="col-acciones">
                       <select
+                        className={`estado-select ${cls(t.estado)}`}
                         value={t.estado}
                         onChange={(e) =>
                           actualizarEstado(t.id_tipo_sangre, e.target.value)
                         }
                         disabled={savingId === t.id_tipo_sangre}
-                        style={{ padding: "6px 8px", borderRadius: 6 }}
                       >
                         <option value="Normal">Normal</option>
                         <option value="Baja disponibilidad">Baja disponibilidad</option>

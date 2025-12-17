@@ -3,17 +3,32 @@ import { logout } from "../../services/ServicioLogin";
 import { NavLink, useNavigate} from "react-router-dom";
 import "./AdminSidebar.css";
 
+import { 
+  FiGrid, 
+  FiImage, 
+  FiCalendar, 
+  FiMessageCircle, 
+  FiDroplet, 
+  FiFileText, 
+  FiUsers, 
+  FiSettings, 
+  FiMap 
+} from "react-icons/fi";
+
+
 const ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: "▦", path: "" },
-  { id: "banners", label: "Banners Principales", icon: "🖼️", path: "carusel_admin" },
-  { id: "campanas", label: "Campañas", icon: "📅", path: "CampanaAdmin" },
-  { id: "preguntas", label: "Preguntas y FAQs", icon: "💬", path: "admin_buzon" },
-  { id: "tipos", label: "Tipos de Sangre", icon: "💧", path: "TS" },
-  { id: "requisitos", label: "Requisitos para Donar", icon: "📋", path: "requisitos_admin" },
-  { id: "red_bancos", label: "Red de Bancos ", icon: "🏥", path: "red_bancos" },
-  { id: "usuarios", label: "Usuarios", icon: "👥", path: "gestion_usuarios" },
-  { id: "config", label: "Configuración", icon: "⚙️", path: "configuracion" },
+  { id: "dashboard", label: "Dashboard", icon: <FiGrid />, path: "" },
+  { id: "banners", label: "Banners Principales", icon: <FiImage />, path: "carusel_admin" },
+  { id: "galeria", label: "Galería", icon: <FiImage />, path: "galeria_admin" },
+  { id: "campanas", label: "Campañas", icon: <FiCalendar />, path: "CampanaAdmin" },
+  { id: "preguntas", label: "Preguntas y FAQs", icon: <FiMessageCircle />, path: "admin_buzon" },
+  { id: "tipos", label: "Tipos de Sangre", icon: <FiDroplet />, path: "TS" },
+  { id: "requisitos", label: "Requisitos para Donar", icon: <FiFileText />, path: "requisitos_admin" },
+  { id: "red_bancos", label: "Red de Bancos", icon: <FiMap />, path: "red_bancos" },
+  { id: "usuarios", label: "Usuarios", icon: <FiUsers />, path: "gestion_usuarios" },
+  { id: "config", label: "Configuración", icon: <FiSettings />, path: "configuracion" },
 ];
+
 
 function AdminSidebar() {
   const navigate = useNavigate();

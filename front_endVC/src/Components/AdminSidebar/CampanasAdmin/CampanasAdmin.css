@@ -183,3 +183,76 @@ body {
 .action-button:hover {
     color: #dc3545; /* Rojo al pasar el ratón */
 }
+.campanas-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.campaign-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.campaign-table th,
+.campaign-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  vertical-align: top;
+  text-align: left;
+}
+
+/* 🔴 EVITA QUE LA TABLA APLASTE EL TEXTO */
+.campaign-table td {
+  white-space: normal;
+}
+
+/* ✅ REQUISITOS */
+.requisitos-td {
+  min-width: 250px;
+}
+
+.requisitos-texto {
+  display: block;
+  white-space: normal;
+  line-height: 1.5;
+}
+
+/* Cada requisito en su propia línea */
+.requisitos-texto div {
+  margin-bottom: 4px;
+}
+
+/* Select estado */
+select {
+  width: 100%;
+  padding: 4px;
+}
+
+/* Botones */
+button {
+  margin-right: 5px;
+  cursor: pointer;
+}
+/* ===== REQUISITOS (CLASES CORRECTAS) ===== */
+.requisitos-cell {
+  min-width: 250px;
+  padding: 10px;
+  vertical-align: top;
+  white-space: normal;
+}
+
+.requisito-item {
+  display: block;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+
+  background-color: #f4f7f6;
+  border-left: 4px solid #dc3545;
+  border-radius: 4px;
+
+  font-size: 14px;
+  line-height: 1.5;
+  color: #343a40;
+
+  word-break: break-word;
+}

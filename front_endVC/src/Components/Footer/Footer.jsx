@@ -10,7 +10,9 @@ function Footer() {
 
 
   return (
+    
     <footer className="footer">
+ 
       <div className="footer-content">
         {/* Columna 1 */}
         <div className="footer-section">
@@ -40,7 +42,7 @@ function Footer() {
           <ul>
             <li><HashLink to="/home#faq">Preguntas Frecuentes</HashLink></li>
             <li><HashLink to="/home#contacto">Contacto</HashLink></li>
-            <li><HashLink to="/home# ">Guía Completa del Donante</HashLink></li>
+            <li> <Link to="/guia-donante">Guía Completa del Donante</Link></li>
           </ul>
         </div>
 

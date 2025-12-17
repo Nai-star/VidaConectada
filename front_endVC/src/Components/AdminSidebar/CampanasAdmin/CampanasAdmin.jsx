@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import {
   obtenerCampanas,
-  crearCampana,
   actualizarEstadoCampana
 } from "../../../services/ServicioCampanas";
+import { crearCampana } from "../../../services/ServicioCampanas";
 import { obtenerParticipaciones } from "../../../services/ServicioSuscripcion";
 import { obtenerProvincias, obtenerCantones } from "../../../services/ServicioProvincias";
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock } from "react-icons/fa";
@@ -25,10 +25,6 @@ export default function GestionCampanas() {
   const [campanaAEliminar, setCampanaAEliminar] = useState(null);
 
   const [rawMap, setRawMap] = useState({});
-  const [expandedIds, setExpandedIds] = useState(new Set());
-
-  const sections = ["Resumen", "Ubicación", "Detalles"];
-  const [activeSection, setActiveSection] = useState(sections[0]);
 
   const [provLookup, setProvLookup] = useState({});
   const [cantonLookup, setCantonLookup] = useState({});
@@ -37,12 +33,7 @@ export default function GestionCampanas() {
     const map = {};
     participaciones.forEach(p => {
       const campanaId =
-        p.campana ??
-        p.campana_id ??
-        p.Campana ??
-        p.Campana_id ??
-        (typeof p.campana === "object" ? p.campana?.id : null);
-
+        p.campana ?? p.campana_id ?? p.Campana ?? p.Campana_id ?? (typeof p.campana === "object" ? p.campana?.id : null);
       if (!campanaId) return;
       map[campanaId] = (map[campanaId] || 0) + 1;
     });
@@ -105,9 +96,7 @@ export default function GestionCampanas() {
       setRawMap(map);
 
       const normalizadas = (Array.isArray(data) ? data : []).map(c => {
-        const cantonId =
-          typeof c.Cantones === "object" ? c.Cantones?.id : c.Cantones;
-
+        const cantonId = typeof c.Cantones === "object" ? c.Cantones?.id : c.Cantones;
         const cantonInfo = cantonLookup[String(cantonId)] ?? {};
 
         return {
@@ -118,17 +107,19 @@ export default function GestionCampanas() {
           fecha_fin: c.Fecha_fin,
           hora_inicio: c.Hora_inicio,
           hora_fin: c.Hora_fin,
-          imagenes: (c.Imagen_campana ?? c.imagenes ??
-            []).map(img => { if (!img) return null; if (typeof img === "string")
-              return img;
-                return img.imagen_url ?? img.url ?? img.secure_url ?? img.imagen ?? null; 
-              }).filter(Boolean),
-        
+          imagenes: (c.Imagen_campana ?? c.imagenes ?? [])
+            .map(img => {
+              if (!img) return null;
+              if (typeof img === "string") return img;
+              return img.imagen_url ?? img.url ?? img.secure_url ?? img.imagen ?? null;
+            })
+            .filter(Boolean),
           ubicacion: c.direccion_exacta,
           inscritos: suscritosPorCampana[c.id] || 0,
           canton_id: cantonId,
           canton_nombre: cantonInfo.name ?? null,
-          provincia_nombre: provLookup[String(cantonInfo.provId)] ?? null
+          provincia_nombre: provLookup[String(cantonInfo.provId)] ?? null,
+          detalles_requisitos: c.DetalleRequisito ?? [] // 🔹 CORREGIDO
         };
       });
 
@@ -168,14 +159,6 @@ export default function GestionCampanas() {
       console.error("Error actualizando estado", e);
       alert("No se pudo actualizar el estado");
     }
-  }
-
-  function toggleExpand(id) {
-    setExpandedIds(prev => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
   }
 
   function abrirModalEditar(id) {
@@ -278,6 +261,21 @@ export default function GestionCampanas() {
                     </select>
                   </td>
 
+                  {/* 🔹 CORREGIDO: mostrar requisitos correctamente */}
+                  <td className="requisitos-cell">
+                    {c.detalles_requisitos.length ? (
+                      c.detalles_requisitos
+                        .filter(r => r.Estado === true)
+                        .map(r => (
+                          <div key={r.id} className="requisito-item">
+                            {r.Requisitos?.requisitos ?? "—"}
+                          </div>
+                        ))
+                    ) : (
+                      "—"
+                    )}
+                  </td>
+
                   <td>
                     <button onClick={() => abrirModalEditar(c.id)}>✏️</button>
                     <button onClick={() => abrirModalEliminar(c)}>🗑️</button>
@@ -288,8 +286,17 @@ export default function GestionCampanas() {
           </tbody>
         </table>
       </div>
-
       {mostrarModal && (
+        <ModalNuevoCampana
+          onClose={() => setMostrarModal(false)}
+          onSave={async (formData) => {
+          const nueva = await crearCampana(formData);
+          await cargar();
+          return nueva; 
+          }}
+        />
+      )}
+    {/*   {mostrarModal && (
         <ModalNuevoCampana
           onClose={() => setMostrarModal(false)}
           onSave={async () => {
@@ -297,7 +304,7 @@ export default function GestionCampanas() {
             setMostrarModal(false);
           }}
         />
-      )}
+      )} */}
 
       {mostrarModalEditar && campanaSeleccionada && (
         <ModalEditar

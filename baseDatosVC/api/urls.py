@@ -3,6 +3,9 @@ from .views import *
 from rest_framework_simplejwt.views import ( TokenObtainPairView,TokenRefreshView,)
 
 
+
+
+
 urlpatterns = [
     # Usuarios
     path('usuarios/', CustomUserListCreateView.as_view(), name="crear_listar_usuarios"),
@@ -80,7 +83,8 @@ urlpatterns = [
 
     #Galeria
     path('galeria/', GaleriaListCreateView.as_view(), name='crear y listar '),
-    path('galeria2/', GaleriaRetrieveUpdateDestroyAPIView.as_view(), name='"actualizar y eliminar respuestas"'),
+   
+    path('galeria/<int:pk>/', GaleriaRetrieveUpdateDestroyAPIView.as_view(), name='"actualizar y eliminar respuestas"'),
     #provincia
     path('provincia/', ProvinciaListCreateView.as_view(), name='token_obtain_pair'),
     path('provincia/<int:pk>/', ProvinciaRetrieveUpdateDestroyAPIView.as_view(), name='token_refresh'),

@@ -1,5 +1,8 @@
 .dashboard {
   padding: 24px;
+ 
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
 .subtitle {
@@ -7,10 +10,13 @@
 }
 
 .cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-  margin: 24px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 120px));
+    gap: 5px;
+    margin: 24px 0;
+    box-sizing: border-box;
+    justify-content: space-evenly;
+
 }
 
 .card {
@@ -18,11 +24,16 @@
   padding: 16px;
   border-radius: 12px;
   position: relative;
+  box-sizing: border-box;
 }
 
 .card .value {
   font-size: 28px;
   font-weight: bold;
+}
+
+.card p {
+  margin: 5px;
 }
 
 .badge1 {

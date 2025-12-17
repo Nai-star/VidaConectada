@@ -1,7 +1,7 @@
-// ModalNuevoCampana.jsx
 import React, { useState, useEffect } from "react";
 import "./ModalNuevoCampana.css";
 import { obtenerProvincias, obtenerCantones } from "../../../../services/ServicioProvincias";
+import { obtenerRequisitos } from "../../../../services/ServicioRequisitos";
 
 export default function ModalNuevoCampana({ onClose, onSave }) {
   const [titulo, setTitulo] = useState("");
@@ -18,105 +18,126 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
   const [canton, setCanton] = useState("");
   const [cantones, setCantones] = useState([]);
 
-  const [imagen, setImagen] = useState(null); // solo 1 archivo (ajusta si necesitas múltiples)
+  const [imagen, setImagen] = useState(null);
+
+  const [requisitos, setRequisitos] = useState([]);
+  const [requisitosSeleccionados, setRequisitosSeleccionados] = useState([]);
+
+  const [error, setError] = useState("");
 
   useEffect(() => {
+    // Provincias
     obtenerProvincias()
       .then((res) => {
         const data = Array.isArray(res) ? res : (res?.data ?? []);
-        const norm = (data || []).map((p) => ({
+        const norm = data.map((p) => ({
           id: p.id ?? p.ID ?? p.value,
           nombre_p: p.nombre_p ?? p.nombre ?? p.name ?? String(p.id ?? p.value ?? "")
         }));
         setProvincias(norm.filter(Boolean));
       })
-      .catch((err) => {
-        console.error("Error al obtener provincias:", err);
-        setProvincias([]);
-      });
+      .catch(() => setProvincias([]));
 
+    // Cantones
     obtenerCantones()
       .then((res) => {
         const data = Array.isArray(res) ? res : (res?.data ?? []);
         setCantones(Array.isArray(data) ? data : []);
       })
-      .catch((err) => {
-        console.error("Error al obtener cantones:", err);
-        setCantones([]);
-      });
+      .catch(() => setCantones([]));
+
+    // Requisitos
+    obtenerRequisitos()
+      .then((res) => setRequisitos(Array.isArray(res) ? res : []))
+      .catch(() => setRequisitos([]));
   }, []);
 
   const cantonesFiltrados = (cantones || []).filter((c) => {
     if (!provincia || !c) return false;
     const provObj = c.Provincia ?? c.provincia ?? c.ProvinciaId ?? c.provincia_id;
     if (!provObj) return false;
-    if (typeof provObj === "object" && "id" in provObj) {
-      return String(provObj.id) === String(provincia);
-    }
+    if (typeof provObj === "object" && "id" in provObj) return String(provObj.id) === String(provincia);
     return String(provObj) === String(provincia);
   });
 
-  const guardar = () => {
-    // validaciones básicas
-    if (!titulo?.trim()) {
-      alert("El título es requerido");
-      return;
-    }
-    if (!subtitulo?.trim()) {
-      alert("La descripción es requerida");
-      return;
-    }
-    if (!fecha) {
-      alert("La fecha de inicio es requerida");
-      return;
-    }
-    if (!hora) {
-      alert("La hora de inicio es requerida");
-      return;
-    }
-    if (!lugar?.trim()) {
-      alert("La dirección es requerida");
+  const toggleRequisito = (id) => {
+    setRequisitosSeleccionados((prev) => 
+      prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
+    );
+  };
+
+  const guardar = async () => {
+    setError("");
+
+    if (!titulo.trim() || !subtitulo.trim() || !fecha || !hora || !lugar.trim() || !canton || requisitosSeleccionados.length === 0) {
+      setError("Por favor complete todos los campos y seleccione al menos un requisito.");
       return;
     }
 
-    // Cantón: puede venir como string -> convertir a Number
-    const cantonId = canton === "" ? null : (Number.isNaN(Number(canton)) ? null : Number(canton));
-    if (cantonId === null) {
-      alert("Debe seleccionar un cantón");
-      return;
+    try {
+      // FormData para enviar imagen + requisitos
+      const formData = new FormData();
+      formData.append("Titulo", titulo.trim());
+      formData.append("Descripcion", subtitulo.trim());
+      formData.append("Fecha_inicio", fecha);
+      formData.append("Fecha_fin", fechaFin || fecha);
+      formData.append("Hora_inicio", hora);
+      formData.append("Hora_fin", horaFin || hora);
+      formData.append("direccion_exacta", lugar.trim());
+      formData.append("Cantones", canton);
+      formData.append("Activo", true);
+      /* formData.append("Contacto", contacto.trim()); */
+
+      // requisitos (MUY IMPORTANTE)
+      requisitosSeleccionados.forEach(id => {
+        formData.append("requisitos", id);
+      });
+      // imagen (UNA SOLA)
+      if (imagen instanceof File) {
+        formData.append("imagen", imagen);
+      }
+      
+
+      requisitosSeleccionados.forEach((id) => formData.append("requisitos", id));
+
+      // Llamada al backend
+      const nuevaCampana = await onSave(formData); // onSave debe devolver la campaña creada
+      console.log("Guardado exitoso ✅");
+      console.log("Payload enviado:", {
+        titulo,
+        subtitulo,
+        fecha,
+        fechaFin: fechaFin || fecha,
+        hora,
+        horaFin: horaFin || hora,
+        lugar,
+        Cantones: canton,
+        requisitos: requisitosSeleccionados,
+        imagen
+      });
+      console.log("Respuesta del backend:", nuevaCampana);
+
+      // Se actualiza la lista en el componente padre automáticamente
+      onClose(nuevaCampana); // pasamos la nueva campaña para que el padre la agregue
+
+    } catch (err) {
+      console.error("Error al crear campaña:", err);
+      setError("No se ha podido crear la campaña.");
     }
-
-    // preparar payload con los nombres que espera el servicio
-    const payload = {
-      titulo: titulo.trim(),
-      subtitulo: subtitulo.trim(),
-      fecha,               // YYYY-MM-DD (input type=date)
-      fechaFin: fechaFin || fecha,
-      hora,                // HH:MM (input type=time)
-      horaFin: horaFin || hora,
-      lugar: lugar.trim(),
-      Cantones: cantonId,
-      imagen: imagen || null
-    };
-
-    console.log("[ModalNuevo] Payload final:", payload);
-    onSave(payload);
-    onClose();
   };
 
   return (
     <div className="modal fondo">
       <div className="modal-content">
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom: 8}}>
+        <div className="modal-header">
           <h2>Nueva Campaña</h2>
-          <button aria-label="Cerrar" onClick={onClose} style={{border:'none',background:'transparent',fontSize:18,cursor:'pointer'}}>×</button>
+          <button aria-label="Cerrar" onClick={() => onClose(null)}>×</button>
         </div>
 
+        {error && <p className="error">{error}</p>}
+
         <label>Provincia</label>
-        <select
-          value={provincia}
-          onChange={(e) => { setProvincia(e.target.value); setCanton(""); }}
-        >
+        <select value={provincia} onChange={(e) => { setProvincia(e.target.value); setCanton(""); }}>
           <option value="">Seleccione una provincia</option>
           {provincias.map(p => <option key={p.id} value={p.id}>{p.nombre_p}</option>)}
         </select>
@@ -125,11 +146,24 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
         <select value={canton} onChange={(e) => setCanton(e.target.value)} disabled={!provincia}>
           <option value="">Seleccione un cantón</option>
           {cantonesFiltrados.map(c => (
-            <option key={c.id} value={c.id}>
-              {c.nombre_canton ?? c.nombre ?? c.name ?? String(c.id)}
-            </option>
+            <option key={c.id} value={c.id}>{c.nombre_canton ?? c.nombre ?? c.name ?? String(c.id)}</option>
           ))}
         </select>
+
+        <label>Requisitos</label>
+        <div className="multi-select">
+          {requisitos.map(r => (
+            <label key={r.id}>
+              <input
+                type="checkbox"
+                value={r.id}
+                checked={requisitosSeleccionados.includes(r.id)}
+                onChange={() => toggleRequisito(r.id)}
+              />
+              {r.requisitos}
+            </label>
+          ))}
+        </div>
 
         <label>Título</label>
         <input type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} />
@@ -153,11 +187,11 @@ export default function ModalNuevoCampana({ onClose, onSave }) {
         <input type="text" value={lugar} onChange={(e) => setLugar(e.target.value)} />
 
         <label>Imagen (opcional)</label>
-        <input type="file" accept="image/*" onChange={(e) => setImagen(e.target.files?.[0] ?? null)} />
+        <input type="file" accept="image/*" onChange={(e) => setImagen(e.target.files[0] || null)} />
 
-        <div className="botones" style={{marginTop:12}}>
+        <div className="botones">
           <button onClick={guardar}>Guardar</button>
-          <button onClick={onClose} className="cancelar">Cancelar</button>
+          <button onClick={() => onClose(null)} className="cancelar">Cancelar</button>
         </div>
       </div>
     </div>
