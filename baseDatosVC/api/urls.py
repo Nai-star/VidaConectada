@@ -23,8 +23,6 @@ urlpatterns = [
      #tokens
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    
-
 
     # Publicaciones
     path('publicaciones', PublicacionesListCreateView.as_view(), name="crear y listar publicaciones"),
@@ -38,9 +36,6 @@ urlpatterns = [
     # Suscritos
     path('suscritos/', SuscritosListCreateView.as_view(), name="crear y listar suscritos"),
     path('suscritos/<int:pk>/', SuscritosDetailView.as_view(), name="actualizar y eliminar suscritos"),
-    
-    # Lugar de campaña
-
 
     # Campañas
     path("campanas/", CampanasPublicasView.as_view()),          # 🌍 público
@@ -72,13 +67,16 @@ urlpatterns = [
 
     #carrusel
     path('carusel/', CaruselListCreateView.as_view(), name="crear y listar urgentes"),
-     path('carusel/<int:pk>/', CaruselRetrieveUpdateDestroyAPIView.as_view(), name="actualizar y eliminar respuestas"),
+    path('carusel/<int:pk>/', CaruselRetrieveUpdateDestroyAPIView.as_view(), name="actualizar y eliminar respuestas"),
 
+    #cantones
     path('Cantones/', CantonesListCreateView.as_view(), name="crear y listar cantones"),
+
   
     #requistos
     path("requisitos/", RequisitosListCreateView.as_view(), name="requisitos-list-create"),
     path("requisitos/<int:pk>/", RequisitosRetrieveUpdateDestroyAPIView.as_view(), name="requisitos-detail"),
+    path("Testimonio/", TestimonioCreateAPIView.as_view(), name="testimonio-create"),
 
 
     #Galeria

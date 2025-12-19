@@ -191,9 +191,6 @@ function TestDonacionModal({ isOpen, onClose }) {
             </select>
           </div>
 
-          {answers.edad === "menor18" && <div className="tdm-alert error">No puedes donar: debes tener al menos 18 años.</div>}
-          {(answers.edad === "65a70" || answers.edad === "mayor70") && <div className="tdm-alert error">Según el rango de edad seleccionado, no puedes donar.</div>}
-
           {/* Peso */}
           {showPeso && (
             <div className="tdm-field">
@@ -210,8 +207,6 @@ function TestDonacionModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {answers.peso === "menos50" && <div className="tdm-alert error">No puedes donar: peso menor a 50 kg.</div>}
-
           {/* Embarazo */}
           {showEmbarazo && (
             <div className="tdm-field">
@@ -224,12 +219,9 @@ function TestDonacionModal({ isOpen, onClose }) {
                 <option value="">Seleccionar</option>
                 <option value="si">Sí</option>
                 <option value="no">No</option>
-                <option value="noaplica">No aplica</option>
               </select>
             </div>
           )}
-
-          {answers.embarazada === "si" && <div className="tdm-alert error">No puedes donar si estás embarazada o sospechas que podrías estarlo.</div>}
 
           {/* Salud */}
           {showSalud && (
@@ -247,8 +239,6 @@ function TestDonacionModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {answers.salud === "no" && <div className="tdm-alert error">No puedes donar si no gozas de buen estado de salud.</div>}
-
           {/* Cirugía menor */}
           {showCirugiaMenor && (
             <div className="tdm-field">
@@ -264,8 +254,6 @@ function TestDonacionModal({ isOpen, onClose }) {
               </select>
             </div>
           )}
-
-          {answers.cirugiaMenor === "si" && <div className="tdm-alert error">No puedes donar si tuviste cirugía menor en la última semana.</div>}
 
           {/* Cirugía mayor / tattoo */}
           {showCirugiaMayor && (
@@ -283,8 +271,6 @@ function TestDonacionModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {answers.cirugiaMayor === "si" && <div className="tdm-alert error">No puedes donar si tuviste cirugía mayor o te realizaste tatuaje/piercing/microblading en los últimos 3 meses.</div>}
-
           {/* Tratamiento / medicación */}
           {showTratamiento && (
             <div className="tdm-field">
@@ -300,8 +286,6 @@ function TestDonacionModal({ isOpen, onClose }) {
               </select>
             </div>
           )}
-
-          {answers.tratamiento === "si" && <div className="tdm-alert error">Es posible que no puedas donar si estás en tratamiento o tomas medicación. Consulta al personal.</div>}
 
           {/* Hepatitis */}
           {showHepatitis && (
@@ -319,8 +303,6 @@ function TestDonacionModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {answers.hepatitis === "si" && <div className="tdm-alert error">No puedes donar si has tenido hepatitis.</div>}
-
           {/* VIH */}
           {showVih && (
             <div className="tdm-field">
@@ -337,7 +319,6 @@ function TestDonacionModal({ isOpen, onClose }) {
             </div>
           )}
 
-          {answers.vih === "si" && <div className="tdm-alert error">No puedes donar si has sido diagnosticado con VIH.</div>}
 
           {/* Parejas recientes */}
           {showParejas && (

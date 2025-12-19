@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./TarjetasTipoSangre.css";
 import { GetTiposSangre } from "../../services/Servicio_TS";
-
+import {
+  FiDroplet,
+} from "react-icons/fi";
 
 const badgeClass = (frecuencia = "") => {
   const f = frecuencia.toLowerCase();
@@ -31,7 +33,7 @@ function TarjetasTipoSangre() {
  
     <section  className="ts2-container" id="tipos-sangre">
       <div id="info"  className="ts2-header">
-        <h2 className="ts2-title">🩸 Tipos de Sangre</h2>
+        <h2 className="ts2-title"> <FiDroplet/>  Tipos de Sangre</h2>
         <p className="ts2-subtitle">
           Conoce los diferentes tipos sanguíneos y sus compatibilidades
         </p>

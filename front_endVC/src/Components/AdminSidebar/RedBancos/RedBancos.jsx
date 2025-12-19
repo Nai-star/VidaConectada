@@ -25,7 +25,7 @@ export default function RedBancos() {
       setBancos(data);
     } catch (error) {
       console.error(error);
-      alert("Error cargando red de bancos");
+    
     }
   };
 
@@ -63,7 +63,6 @@ export default function RedBancos() {
       setModalEliminar(false);
     } catch (err) {
       console.error(err);
-      alert("Error al eliminar");
     }
   };
 

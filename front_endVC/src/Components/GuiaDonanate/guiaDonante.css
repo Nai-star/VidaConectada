@@ -1,94 +1,131 @@
-/* Contenedor principal */
 .guia-ccss {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2.5rem 1.5rem;
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #2c2c2c;
-  line-height: 1.7;
-  background-color: #ffffff;
+  max-width: 1000px;
+  margin: auto;
+  padding: 4rem 1.5rem;
+  font-family: "Inter", system-ui, sans-serif;
+  color: #2b2b2b;
 }
 
-/* Título principal */
-.guia-ccss h1 {
-  text-align: center;
-  color: #b5121b; /* Rojo CCSS */
-  font-size: 2rem;
-  margin-bottom: 0.3rem;
+/* ---------- TÍTULO ---------- */
+.titulo1 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 2.2rem;
+  color: #b11226;
+  margin-bottom: 0.5rem;
+  justify-content: center;
 }
 
-/* Subtítulo */
-.subtitulo {
-  text-align: center;
-  font-size: 0.95rem;
+.icon-titulo {
+  font-size: 2.5rem;
+}
+
+/* ---------- TEXTOS ---------- */
+.subtitulo1 {
   color: #6b6b6b;
+  font-size: 0.95rem;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
-/* Párrafos introductorios */
 .intro {
-  text-align: center;
   font-size: 1.05rem;
+  line-height: 1.7;
   margin-bottom: 1rem;
 }
 
-/* Bloques de contenido */
+/* ---------- BLOQUES ---------- */
 .bloque {
-  background-color: #f6f8fa;
-  border-left: 6px solid #b5121b;
-  padding: 1.5rem;
-  margin-bottom: 1.8rem;
-  border-radius: 4px;
+  background: #ffffff;
+  width: 700px;
+  border-radius: 14px;
+  padding: 1.75rem;
+  margin-top: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 6px solid #b11226;
 }
 
-/* Títulos de sección */
+.bloque:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+}
+
 .bloque h2 {
-  color: #1f1f1f;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 1.3rem;
-  margin-bottom: 0.8rem;
+  color: #b11226;
+  margin-bottom: 1rem;
 }
 
-/* Listas */
+/* ---------- LISTAS ---------- */
 .bloque ul,
 .bloque ol {
-  padding-left: 1.4rem;
+  padding-left: 1.2rem;
 }
 
 .bloque li {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.6;
 }
 
-/* Nota informativa */
+/* ---------- NOTAS ---------- */
 .nota {
-  margin-top: 0.9rem;
-  font-size: 0.95rem;
-  color: #4d4d4d;
-  background-color: #ffffff;
-  padding: 0.6rem 0.8rem;
-  border-left: 4px solid #b5121b;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #555;
+  background: #f9f1f2;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
 }
 
-/* Cierre */
+/* ---------- CIERRE ---------- */
 .cierre {
+  margin-top: 3rem;
+  padding: 2rem;
   text-align: center;
-  margin-top: 2.5rem;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #2f2f2f;
+  color: #b30021;
+  border-radius: 16px;
+  font-size: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-/* Responsive */
+.icon-corazon {
+  font-size: 2rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
-  .guia-ccss {
-    padding: 1.5rem 1rem;
+  .titulo {
+    font-size: 1.8rem;
   }
 
-  .guia-ccss h1 {
-    font-size: 1.6rem;
+  .bloque {
+    padding: 1.4rem;
   }
+}
 
-  .bloque h2 {
-    font-size: 1.15rem;
-  }
+.guia-ccss ul {
+  list-style: none;
+  padding-left: 0;
+  text-align: left;
+}
+
+.guia-ccss li {
+  padding-left: 1.4rem;
+  position: relative;
+  text-align: left;
+}
+
+.contenedor-bloques {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
 }

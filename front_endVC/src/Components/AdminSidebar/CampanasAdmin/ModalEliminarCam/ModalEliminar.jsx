@@ -21,6 +21,7 @@ export default function ModalEliminarCampana({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
   // cerrar con ESC
   useEffect(() => {
     function onKey(e) {
@@ -35,9 +36,6 @@ export default function ModalEliminarCampana({
   async function handleDelete() {
     if (!campanaId) {
       setError("ID de campaña inválido");
-      return;
-    }
-    if (!confirm(`¿Seguro que deseas eliminar la campaña${campanaTitulo ? ` "${campanaTitulo}"` : ""}? Esta acción no se puede deshacer.`)) {
       return;
     }
 
@@ -75,7 +73,7 @@ export default function ModalEliminarCampana({
           <button className="btn-cancel" onClick={onClose} disabled={loading}>
             Cancelar
           </button>
-          <button className="btn-delete" onClick={handleDelete} disabled={loading}>
+          <button className="btn-delete1" onClick={handleDelete} disabled={loading}>
             {loading ? "Eliminando..." : "Eliminar"}
           </button>
         </div>

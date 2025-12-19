@@ -6,6 +6,7 @@ import {
   obtenerDonantesActivosPorMes,
 } from "../../../services/ServicioDashboard";
 
+
 import {
   BarChart,
   Bar,
@@ -24,6 +25,7 @@ export default function Dashboard() {
   const [campanasMes, setCampanasMes] = useState([]);
   const [donantesActivos, setDonantesActivos] = useState([]);
   const [recientes, setRecientes] = useState([]);
+  
 
   useEffect(() => {
     async function cargar() {
@@ -46,6 +48,22 @@ export default function Dashboard() {
   }, [campanasMes, donantesActivos]);
 
   if (!metricas) return <p>Cargando dashboard…</p>;
+
+  function obtenerEstadoCampana(c) {
+  // Estado REAL desde BD
+  if (c.Activo === false) return "vencida";
+
+  const hoy = new Date();
+  const inicio = new Date(c.Fecha_inicio);
+  const fin = new Date(c.Fecha_fin || c.Fecha_inicio);
+
+  if (hoy < inicio) return "programada";
+  if (hoy > fin) return "vencida";
+  return "activa";
+}
+const recientesActivas = recientes.filter(c => c.Activo === true);
+
+
 
   return (
     <div className="dashboard">
@@ -91,22 +109,32 @@ export default function Dashboard() {
 
       {/* CAMPAÑAS RECIENTES */}
       <div className="recientes">
-        <h3>Campañas recientes</h3>
+      <h3>Campañas recientes</h3>
 
-        {recientes.length === 0 && <p className="empty">No hay campañas recientes</p>}
+      {recientesActivas.length === 0 && (
+        <p className="empty">No hay campañas recientes</p>
+      )}
 
-        {recientes.map(c => (
+      {recientesActivas.map(c => {
+        const estado = obtenerEstadoCampana(c);
+
+        return (
           <div key={c.id} className="reciente-item">
             <div>
               <strong>{c.Titulo}</strong>
               <small>{c.Fecha_inicio}</small>
             </div>
-            <span className={`estado ${c.Activo ? "activo" : "programada"}`}>
-              {c.Activo ? "Activa" : "Programada"}
+
+            <span className={`estado ${estado}`}>
+              {estado === "activa" && "Activa"}
+              {estado === "programada" && "Programada"}
+              {estado === "vencida" && "Vencida"}
             </span>
           </div>
-        ))}
-      </div>
+    );
+  })}
+</div>
+
     </div>
   );
 }

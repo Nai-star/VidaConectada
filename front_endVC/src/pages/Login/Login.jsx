@@ -1,5 +1,5 @@
 // src/components/LoginComponent.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlineMail, AiOutlineEye, AiOutlineEyeInvisible, AiOutlineCloseCircle } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { loginAdmin } from "../../services/ServicioLogin"; // ajusta ruta si tu estructura es distinta
@@ -13,6 +13,15 @@ import "./Login.css";
  * - Usa la imagen mockup local (ruta entregada) para la columna derecha
  */
 const Login = () => {
+       // Favicon y título dinámicos
+  useEffect(() => {
+    const link = document.querySelector("link[rel~='icon']");
+    if (link) link.href = "/logo_vidaconectada.png";
+    document.title = "Login | Vida Conectada";
+  }, []);
+
+
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

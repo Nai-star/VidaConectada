@@ -10,7 +10,7 @@ export default function ModalEliminar({ cerrar, bannerId, recargar }) {
       cerrar(); // cierra el modal
     } catch (error) {
       console.error("Error eliminando banner:", error);
-      alert("No se pudo eliminar el banner. Intenta de nuevo.");
+   
     }
   };
 

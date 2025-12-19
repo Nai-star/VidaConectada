@@ -11,7 +11,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 #from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from .utils import upload_to_cloudinary
+
 
 
 #Usuarios
@@ -410,10 +410,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 				return data
             
 
-from rest_framework import serializers
-from .models import Campana, Imagen_campana, DetalleRequisitos, Cantones
-
-
 
 class CampanaCreateSerializer(serializers.ModelSerializer):
     CustomUser = serializers.StringRelatedField(read_only=True)
@@ -514,27 +510,33 @@ class CampanaPublicaSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers
-from .models import Testimonio, Testimonio_texto
+
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
 class TestimonioTextoSerializer(serializers.ModelSerializer):
-    # Construimos la URL completa de la foto
-    Foto_P = serializers.SerializerMethodField()
+    Testimonio = serializers.PrimaryKeyRelatedField(
+        queryset=Testimonio.objects.all(),
+        write_only=True
+    )
+
+    Foto_P = serializers.ImageField(required=False)
 
     class Meta:
         model = Testimonio_texto
-        fields = ["Nombre", "Frase", "Foto_P"]
+        fields = ["id", "Testimonio", "Nombre", "Frase", "Foto_P"]
 
-    def get_Foto_P(self, obj):
-        if obj.Foto_P:
-            request = self.context.get("request")
-            if request is not None:
-                return request.build_absolute_uri(obj.Foto_P.url)
-            return obj.Foto_P.url
-        return None
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        request = self.context.get("request")
+
+        if instance.Foto_P and request:
+            data["Foto_P"] = request.build_absolute_uri(instance.Foto_P.url)
+        else:
+            data["Foto_P"] = None
+
+        return data
 
 class TestimonioSerializer(serializers.ModelSerializer):
     # Para creación
@@ -613,6 +615,14 @@ class TestimonioVideoSerializer(serializers.ModelSerializer):
         }
         for v in videos
     ]
+
+class TestimonioVideoUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Testimonio_video
+        fields = ["Descripcion", "Video"]
+        extra_kwargs = {
+            "Video": {"required": False},
+        }
 
     
 

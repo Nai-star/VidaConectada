@@ -30,7 +30,7 @@ function AdminGaleria() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!file) return alert("Selecciona un archivo");
+    if (!file) return
 
     try {
       await crearGaleriaAdmin({ file, descripcion, activo });
@@ -40,7 +40,7 @@ function AdminGaleria() {
       cargar();
     } catch (error) {
       console.error("Error creando galería:", error);
-      alert("No se pudo crear el elemento de galería");
+  
     }
   }
 

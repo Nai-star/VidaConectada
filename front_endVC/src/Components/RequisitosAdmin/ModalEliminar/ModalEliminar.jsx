@@ -12,7 +12,7 @@ export default function ModalConfirmar({ mensaje, onConfirmar, onCancelar }) {
             Sí, eliminar
           </button>
 
-          <button className="btn-cancel" onClick={onCancelar}>
+          <button className="btn-cancel11" onClick={onCancelar}>
             Cancelar
           </button>
         </div>

@@ -65,7 +65,7 @@
 
 .btn-cancel:disabled { opacity: 0.6; cursor: default; }
 
-.btn-delete {
+.btn-delete1 {
   padding: 8px 12px;
   border-radius: 8px;
   background: #e23b3b;
@@ -74,4 +74,4 @@
   cursor: pointer;
 }
 
-.btn-delete:disabled { opacity: 0.75; cursor: default; }
+.btn-delete1:disabled { opacity: 0.75; cursor: default; }

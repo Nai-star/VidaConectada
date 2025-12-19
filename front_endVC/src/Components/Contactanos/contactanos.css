@@ -240,7 +240,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
-  box-shadow: 0 6px 14px rgba(30, 99, 218, .22);
+  box-shadow: 0 6px 14px rgba(218, 30, 71, 0.22);
 }
 
 .btn-toggle-tabla:hover {

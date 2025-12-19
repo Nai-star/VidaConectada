@@ -44,7 +44,6 @@ export default function RedBancosEditor({ banco, onClose, reloadData }) {
       onClose();
     } catch (error) {
       console.error(error);
-      alert("Error guardando los datos");
     }
   };
 

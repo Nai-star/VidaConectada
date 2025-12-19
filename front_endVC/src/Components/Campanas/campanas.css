@@ -8,7 +8,7 @@
   --shadow: 0 4px 12px rgba(13,34,56,0.12);
 }
 
-.campanas-container {
+.campanas-container1 {
     display: flex;
     padding: 25px;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -18,7 +18,8 @@
     margin-top: 28px;
     box-sizing: border-box;
     align-items: flex-start;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 /* TARJETA */
 /* ----- TARJETAS ----- */

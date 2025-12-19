@@ -184,7 +184,7 @@ export default function TipoSangre() {
       );
     } catch (err) {
       console.error("Error actualizarEstado:", err);
-      alert("Error actualizando estado. Mira la consola.");
+     
     } finally {
       setSavingId(null);
     }

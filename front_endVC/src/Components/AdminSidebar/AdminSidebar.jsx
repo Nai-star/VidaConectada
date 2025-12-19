@@ -21,7 +21,7 @@ const ITEMS = [
   { id: "banners", label: "Banners Principales", icon: <FiImage />, path: "carusel_admin" },
   { id: "galeria", label: "Galería", icon: <FiImage />, path: "galeria_admin" },
   { id: "campanas", label: "Campañas", icon: <FiCalendar />, path: "CampanaAdmin" },
-  { id: "Testimonios", label: "Testimonios", icon: <FiCalendar />, path: "/testimonio" },
+  { id: "Testimonios", label: "Testimonios", icon: <FiCalendar />, path: "testimonio_admin" },
   { id: "preguntas", label: "Preguntas y FAQs", icon: <FiMessageCircle />, path: "admin_buzon" },
   { id: "tipos", label: "Tipos de Sangre", icon: <FiDroplet />, path: "TS" },
   { id: "requisitos", label: "Requisitos para Donar", icon: <FiFileText />, path: "requisitos_admin" },

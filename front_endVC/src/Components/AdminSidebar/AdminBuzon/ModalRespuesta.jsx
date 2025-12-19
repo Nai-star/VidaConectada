@@ -24,7 +24,6 @@ export default function ModalRespuesta({ mensaje, respuestaExistente, onClose, o
   function handleSubmit(e) {
     e.preventDefault();
     if (!texto || texto.trim() === "") {
-      alert("Escribe una respuesta antes de guardar.");
       return;
     }
     try { onSave(texto.trim()); } catch (err) { console.error("Error onSave:", err); }

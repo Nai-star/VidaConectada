@@ -486,20 +486,19 @@ async function borrar(id) {
     setSuscritosOriginales(prev => prev.filter(p => String(p.id) !== String(id)));
     if (selected?.id === id) setSelected(null);
     console.info("Suscrito eliminado o no existía:", id, resp);
-    // opcional: mostrar notificación bonita (toast) en vez de alert
-    // alert("Suscrito eliminado.");
+   
+    
   } catch (err) {
     console.error("Error borrar:", err);
     if (err && err.server) console.error("Server payload:", err.server);
     if (err && err.status === 404) {
-      alert("Registro no encontrado en el servidor (404). Se quitará de la lista local.");
       setSuscritos(prev => prev.filter(p => String(p.id) !== String(id)));
       setSuscritosOriginales(prev => prev.filter(p => String(p.id) !== String(id)));
       if (selected?.id === id) setSelected(null);
       return;
     }
     const serverMsg = err?.server?.detail || err?.server || err.message || "No se pudo eliminar, revisa consola.";
-    alert(`Error al eliminar: ${serverMsg}`);
+  
   }
 }
 

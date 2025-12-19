@@ -69,7 +69,7 @@ export default function ModalEditarRequisito({ cerrar, recargar, requisito }) {
 
           <div className="modal-buttons">
             <button type="submit" className="btn-save">Actualizar</button>
-            <button type="button" className="btn-cancel" onClick={cerrar}>
+            <button type="button" className="btn-cancel1" onClick={cerrar}>
               Cancelar
             </button>
           </div>

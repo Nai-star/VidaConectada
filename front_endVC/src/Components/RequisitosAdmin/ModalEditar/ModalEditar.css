@@ -273,7 +273,7 @@
   background-color: #218838;
 }
 
-.btn-cancel {
+.btn-cancel1 {
   background-color: #6c757d; /* Gris */
   color: white;
   border: none;
@@ -283,6 +283,6 @@
   cursor: pointer;
 }
 
-.btn-cancel:hover {
+.btn-cancel1:hover {
   background-color: #5a6268;
 }

@@ -17,8 +17,8 @@
 
 /* Parrafo ¿Sabías que? */
 .info-box {
-  background: #eef6ff;
-  border: 1px solid #d7e9ff;
+  background: #ffeeee;
+
   border-radius: 14px;
   padding: 18px 22px;
   max-width: 760px;
@@ -33,13 +33,13 @@
   margin: 0 0 10px 0;
   font-weight: 600;
   font-size: 18px;
-  color: #1e6ee5;
+  color: #aa0606;
 }
 
 .info-box ul {
   margin: 0;
   padding-left: 1.2rem;
-  color: #2f3b4a;
+  color: #4a2f2f;
 }
 
 .info-box li {

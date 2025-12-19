@@ -72,6 +72,7 @@ function GaleriaVermas() {
     <div>
       <Barrainfo />
       <Navbar />
+      <br /><br /><br /><br />
       <main className="gp-wrap">
         <div className="gp-header">
           <h1>Galería</h1>

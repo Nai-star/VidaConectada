@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Navbar from '../../Components/NavBar/Navbar';
 import Footer from '../../Components/Footer/Footer';
-import './LegalPages.css';
+import './politica.css';
 
 function PoliticasP() {
   useEffect(() => {
@@ -12,11 +12,11 @@ function PoliticasP() {
 
   return (
     <div className="legal-page">
-      <Navbar />
+     
       <br />
       <br />
       <div className="legal-container">
-        <h1>Política de Privacidad</h1>
+        <h1 id='politicas'>Política de Privacidad</h1>
 
         <p>
           En VidaConectada valoramos y respetamos la privacidad de nuestros

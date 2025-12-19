@@ -7,6 +7,7 @@ import { crearCampana } from "../../../services/ServicioCampanas";
 import { obtenerParticipaciones } from "../../../services/ServicioSuscripcion";
 import { obtenerProvincias, obtenerCantones } from "../../../services/ServicioProvincias";
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock } from "react-icons/fa";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 import "./CampanasAdmin.css";
 import ModalNuevoCampana from "./ModalNuevoCam/ModalNuevoCampana";
@@ -25,19 +26,68 @@ export default function GestionCampanas() {
   const [campanaAEliminar, setCampanaAEliminar] = useState(null);
 
   const [rawMap, setRawMap] = useState({});
-
   const [provLookup, setProvLookup] = useState({});
   const [cantonLookup, setCantonLookup] = useState({});
+  const [requisitosExpandido, setRequisitosExpandido] = useState({});
+
+  const [busqueda, setBusqueda] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("todos");
+
+  /* ======================================================
+     🔹 ESTADO AUTOMÁTICO POR FECHAS (ÚNICA FUENTE DE VERDAD)
+  ====================================================== */
+  function obtenerEstadoCampana(c, raw) {
+    if (raw?.Activo === false) return "vencida";
+
+    const hoy = new Date();
+    const inicio = new Date(c.fecha_inicio);
+    const fin = new Date(c.fecha_fin || c.fecha_inicio);
+
+    if (hoy < inicio) return "proxima";
+    if (hoy > fin) return "vencida";
+    return "activa";
+  }
+
+  // Abrir modal editar
+function abrirModalEditar(campanaId) {
+  const raw = rawMap[campanaId];
+  if (!raw) return;
+
+  setCampanaSeleccionada(raw);
+  setMostrarModalEditar(true);
+}
+
+// Abrir modal eliminar
+function abrirModalEliminar(campana) {
+  setCampanaAEliminar(campana);
+  setMostrarModalEliminar(true);
+}
+
+// Callback cuando se elimina
+async function onDeletedCampana() {
+  setMostrarModalEliminar(false);
+  setCampanaAEliminar(null);
+  await cargar();
+}
+
 
   function contarSuscritosPorCampana(participaciones = []) {
     const map = {};
     participaciones.forEach(p => {
-      const campanaId =
-        p.campana ?? p.campana_id ?? p.Campana ?? p.Campana_id ?? (typeof p.campana === "object" ? p.campana?.id : null);
-      if (!campanaId) return;
-      map[campanaId] = (map[campanaId] || 0) + 1;
+      const id =
+        p.campana ??
+        p.campana_id ??
+        p.Campana ??
+        p.Campana_id ??
+        (typeof p.campana === "object" ? p.campana?.id : null);
+      if (!id) return;
+      map[id] = (map[id] || 0) + 1;
     });
     return map;
+  }
+
+  function toggleRequisitos(id) {
+    setRequisitosExpandido(p => ({ ...p, [id]: !p[id] }));
   }
 
   function getCantonNombreFromRaw(raw) {
@@ -51,30 +101,21 @@ export default function GestionCampanas() {
 
   useEffect(() => {
     async function cargarUbicaciones() {
-      try {
-        const provincias = await obtenerProvincias();
-        const provMap = {};
-        (Array.isArray(provincias) ? provincias : []).forEach(p => {
-          if (p?.id != null) {
-            provMap[String(p.id)] = p.nombre_p ?? p.nombre;
-          }
-        });
-        setProvLookup(provMap);
-      } catch {}
+      const provincias = await obtenerProvincias();
+      const cantones = await obtenerCantones();
 
-      try {
-        const cantones = await obtenerCantones();
-        const cantonMap = {};
-        (Array.isArray(cantones) ? cantones : []).forEach(c => {
-          if (c?.id != null) {
-            cantonMap[String(c.id)] = {
-              name: c.nombre_canton ?? c.nombre,
-              provId: c.Provincia?.id ?? null
-            };
-          }
-        });
-        setCantonLookup(cantonMap);
-      } catch {}
+      const provMap = {};
+      provincias?.forEach(p => provMap[p.id] = p.nombre_p ?? p.nombre);
+      setProvLookup(provMap);
+
+      const cantonMap = {};
+      cantones?.forEach(c => {
+        cantonMap[c.id] = {
+          name: c.nombre_canton ?? c.nombre,
+          provId: c.Provincia?.id ?? null
+        };
+      });
+      setCantonLookup(cantonMap);
     }
 
     cargarUbicaciones();
@@ -85,48 +126,35 @@ export default function GestionCampanas() {
     try {
       const data = await obtenerCampanas();
       const participaciones = await obtenerParticipaciones();
-      const suscritosPorCampana = contarSuscritosPorCampana(
-        Array.isArray(participaciones) ? participaciones : []
-      );
+      const suscritos = contarSuscritosPorCampana(participaciones);
 
       const map = {};
-      (Array.isArray(data) ? data : []).forEach(c => {
-        if (c?.id != null) map[c.id] = c;
-      });
+      data.forEach(c => map[c.id] = c);
       setRawMap(map);
 
-      const normalizadas = (Array.isArray(data) ? data : []).map(c => {
+      setCampanas(data.map(c => {
         const cantonId = typeof c.Cantones === "object" ? c.Cantones?.id : c.Cantones;
-        const cantonInfo = cantonLookup[String(cantonId)] ?? {};
+        const cantonInfo = cantonLookup[cantonId] ?? {};
 
         return {
           id: c.id,
           nombre_campana: c.Titulo,
           descripcion: c.Descripcion,
-          contacto: c.Contacto ?? "", 
+          contacto: c.Contacto ?? "",
           fecha_inicio: c.Fecha_inicio,
           fecha_fin: c.Fecha_fin,
           hora_inicio: c.Hora_inicio,
           hora_fin: c.Hora_fin,
-          imagenes: (c.Imagen_campana ?? c.imagenes ?? [])
-            .map(img => {
-              if (!img) return null;
-              if (typeof img === "string") return img;
-              return img.imagen_url ?? img.url ?? img.secure_url ?? img.imagen ?? null;
-            })
-            .filter(Boolean),
+          imagenes: (c.Imagen_campana ?? []).map(i =>
+            typeof i === "string" ? i : i.imagen_url
+          ),
           ubicacion: c.direccion_exacta,
-          inscritos: suscritosPorCampana[c.id] || 0,
-          canton_id: cantonId,
+          inscritos: suscritos[c.id] || 0,
           canton_nombre: cantonInfo.name ?? null,
-          provincia_nombre: provLookup[String(cantonInfo.provId)] ?? null,
-          detalles_requisitos: c.DetalleRequisito ?? [] // 🔹 CORREGIDO
+          provincia_nombre: provLookup[cantonInfo.provId] ?? null,
+          detalles_requisitos: c.DetalleRequisito ?? []
         };
-      });
-
-      setCampanas(normalizadas);
-    } catch (e) {
-      console.error("Error cargando campañas:", e);
+      }));
     } finally {
       setCargando(false);
     }
@@ -134,49 +162,53 @@ export default function GestionCampanas() {
 
   useEffect(() => {
     cargar();
-  }, [Object.keys(cantonLookup).length, Object.keys(provLookup).length]);
+  }, [Object.keys(provLookup).length, Object.keys(cantonLookup).length]);
+
+
+async function cambiarEstadoCampana(c, raw, nuevoEstado) {
+  const hoy = new Date();
+  const inicio = new Date(c.fecha_inicio);
+  const fin = new Date(c.fecha_fin || c.fecha_inicio);
+
+  // Bloqueo REAL: vencida POR FECHA
+  const vencidaPorFecha = hoy > fin;
+
+  if (nuevoEstado === "activa" && vencidaPorFecha) {
+   
+    return;
+  }
+
+  const activo = nuevoEstado === "activa";
+
+  try {
+    await actualizarEstadoCampana(c.id, activo);
+    await cargar();
+  } catch (e) {
+    console.error("Error actualizando estado", e);
+   
+  }
+}
+
+
+
+  const campanasFiltradas = campanas.filter(c => {
+    const raw = rawMap[c.id];
+    const estado = obtenerEstadoCampana(c, raw);
+    const texto = busqueda.toLowerCase();
+
+    const coincideBusqueda =
+      c.nombre_campana?.toLowerCase().includes(texto) ||
+      c.descripcion?.toLowerCase().includes(texto) ||
+      c.ubicacion?.toLowerCase().includes(texto);
+
+    const coincideEstado =
+      filtroEstado === "todos" || estado === filtroEstado;
+
+    return coincideBusqueda && coincideEstado;
+  });
 
   if (cargando) return <p>Cargando campañas...</p>;
 
-  const getEstadoSelectValue = (c, raw) => {
-    if (raw?.Activo === false) return "vencida";
-
-    const hoy = new Date();
-    const inicio = new Date(c.fecha_inicio);
-    const fin = new Date(c.fecha_fin || c.fecha_inicio);
-
-    if (hoy < inicio) return "proxima";
-    if (hoy > fin) return "vencida";
-
-    return "activa";
-  };
-
-  async function cambiarEstadoCampana(c, raw, nuevoEstado) {
-    const activo = nuevoEstado !== "vencida";
-    try {
-      await actualizarEstadoCampana(c.id, activo);
-      await cargar();
-    } catch (e) {
-      console.error("Error actualizando estado", e);
-      alert("No se pudo actualizar el estado");
-    }
-  }
-
-  function abrirModalEditar(id) {
-    const raw = rawMap[id];
-    if (!raw) return;
-    setCampanaSeleccionada(raw);
-    setMostrarModalEditar(true);
-  }
-
-  function abrirModalEliminar(c) {
-    setCampanaAEliminar(c);
-    setMostrarModalEliminar(true);
-  }
-
-  function onDeletedCampana(id) {
-    setCampanas(prev => prev.filter(c => c.id !== id));
-  }
 
   return (
     <div className="campanas-container">
@@ -184,8 +216,31 @@ export default function GestionCampanas() {
         <div className="title-section">
           <h1>Gestión de Campañas</h1>
           <p>Administra las campañas de donación de sangre</p>
-        </div>
 
+          <br />
+          <div className="filters-container">
+            <input
+              type="text"
+              placeholder="Buscar campaña, ubicación, provincia..."
+              value={busqueda}
+              onChange={e => setBusqueda(e.target.value)}
+              className="search-input"
+            />
+
+            <select
+              value={filtroEstado}
+              onChange={e => setFiltroEstado(e.target.value)}
+              className="filter-select"
+            >
+              <option value="todos">Todas</option>
+              <option value="activa">Activas</option>
+              <option value="proxima">Programadas</option>
+              <option value="vencida">Vencidas</option>
+            </select>
+          </div>
+          
+        </div>
+      
         <button
           className="btn-new-campaign"
           onClick={() => setMostrarModal(true)}
@@ -200,7 +255,8 @@ export default function GestionCampanas() {
             <tr>
               <th>Imagen</th>
               <th>Campaña</th>
-              <th>Fecha / Hora</th>
+              <th>Fecha</th>
+              <th>Hora</th>
               <th>Provincia</th>
               <th>Cantón</th>
               <th>Ubicación</th>
@@ -213,7 +269,7 @@ export default function GestionCampanas() {
           </thead>
 
           <tbody>
-            {campanas.map(c => {
+            { campanasFiltradas.map(c => {
               const raw = rawMap[c.id] ?? {};
               return (
                 <tr key={c.id}>
@@ -234,9 +290,10 @@ export default function GestionCampanas() {
                     <div>{c.descripcion}</div>
                   </td>
 
-                  <td>
+                  <td >
                     <FaCalendarAlt /> {c.fecha_inicio} → {c.fecha_fin}
-                    <br />
+                  </td>
+                  <td>
                     <FaClock /> {c.hora_inicio} → {c.hora_fin}
                   </td>
 
@@ -267,34 +324,61 @@ export default function GestionCampanas() {
                   <td>
                     <select
                       className="estado-select"
-                      value={getEstadoSelectValue(c, raw)}
-                      onChange={e =>
-                        cambiarEstadoCampana(c, raw, e.target.value)
-                      }
+                      value={obtenerEstadoCampana(c, raw)}
+                      onChange={e => cambiarEstadoCampana(c, raw, e.target.value)}
                     >
-                      <option value="activa">Activa</option>
-                      <option value="proxima">Próxima</option>
+                      <option
+                        value="activa"
+                        disabled={new Date() > new Date(c.fecha_fin || c.fecha_inicio)}
+                      >
+                        Activa
+                      </option>
+                      <option value="proxima" disabled>Programada</option>
                       <option value="vencida">Vencida</option>
                     </select>
                   </td>
 
+            
+
                   <td className="requisitos-cell">
-                    {c.detalles_requisitos.length ? (
-                      c.detalles_requisitos
-                        .filter(r => r.Estado === true)
-                        .map(r => (
-                          <div key={r.id} className="requisito-item">
-                            {r.Requisitos?.requisitos ?? "—"}
-                          </div>
-                        ))
-                    ) : (
-                      "—"
-                    )}
-                  </td>
+                      {(() => {
+                        const requisitosActivos = c.detalles_requisitos.filter(
+                          r => r.Estado === true
+                        );
+
+                        if (!requisitosActivos.length) return "—";
+
+                        const expandido = requisitosExpandido[c.id];
+
+                        return (
+                          <>
+                            {(expandido ? requisitosActivos : requisitosActivos.slice(0, 1)).map(
+                              r => (
+                                <div key={r.id} className="requisito-item">
+                                  {r.Requisitos?.requisitos ?? "—"}
+                                </div>
+                              )
+                            )}
+
+                            {requisitosActivos.length > 1 && (
+                              <span
+                                className="ver-mas"
+                                onClick={() => toggleRequisitos(c.id)}
+                              >
+                                {expandido
+                                  ? "Ver menos"
+                                  : `Ver más (${requisitosActivos.length - 1})`}
+                              </span>
+                            )}
+                          </>
+                        );
+                      })()}
+                    </td>
+
 
                   <td>
-                    <button onClick={() => abrirModalEditar(c.id)}>✏️</button>
-                    <button onClick={() => abrirModalEliminar(c)}>🗑️</button>
+                    <button onClick={() => abrirModalEditar(c.id)}><FiEdit /></button>
+                    <button onClick={() => abrirModalEliminar(c)}> <FiTrash2 /> </button>
                   </td>
                 </tr>
               );
@@ -312,15 +396,7 @@ export default function GestionCampanas() {
           }}
         />
       )}
-    {/*   {mostrarModal && (
-        <ModalNuevoCampana
-          onClose={() => setMostrarModal(false)}
-          onSave={async () => {
-            await cargar();
-            setMostrarModal(false);
-          }}
-        />
-      )} */}
+    
 
       {mostrarModalEditar && campanaSeleccionada && (
         <ModalEditar

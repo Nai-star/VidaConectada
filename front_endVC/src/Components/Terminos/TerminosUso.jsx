@@ -12,7 +12,7 @@ function TerminosUso() {
 
   return (
     <div className="legal-page">
-      <Navbar />
+
       <br />
       <br />
       <div className="legal-container">

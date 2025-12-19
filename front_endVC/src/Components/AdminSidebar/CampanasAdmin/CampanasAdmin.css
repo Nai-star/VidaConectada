@@ -1,13 +1,153 @@
-/* Estilos Generales y Reseteo */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f7f6; /* Fondo gris claro */
-    margin: 20px;
-    padding: 0;
+/* =========================
+   CONTENEDOR GENERAL
+========================= */
+.campanas-container {
+  padding: 32px;
+ 
+  min-height: 100vh;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* =========================
+   HEADER
+========================= */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  flex-direction: column;
+}
+
+.title-section h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.title-section p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Botón crear */
+.btn-new-campaign {
+  background: #e11d48;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-new-campaign:hover {
+  background: #be123c;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   TABLA CONTENEDOR
+========================= */
+.campaign-table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+  overflow-x: auto;
+}
+
+/* Scroll horizontal bonito */
+.campaign-table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.campaign-table-container::-webkit-scrollbar-thumb {
+  background: #cbd5f5;
+  border-radius: 8px;
+}
+
+/* =========================
+   TABLA
+========================= */
+.campaign-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1200px;
+}
+
+.campaign-table thead th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  padding: 14px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.campaign-table tbody td {
+  padding: 16px 12px;
+  vertical-align: top;
+  font-size: 14px;
+  color: #0f172a;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.campaign-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* =========================
+   IMAGEN
+========================= */
+.campaign-image {
+  width: 64px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+/* =========================
+   COLUMNA CAMPAÑA
+========================= */
+.campaign-table td strong {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.campaign-table td div {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* =========================
+   FECHA / HORA
+========================= */
+.campaign-table svg {
+  margin-right: 6px;
+  vertical-align: middle;
+  color: #475569;
+}
+
+/* =========================
+   UBICACIÓN
+========================= */
+.campaign-table td svg {
+  color: #0ea5e9;
+}
+
+/* =========================
+   CONTACTO
+========================= */
 .contacto-cell a {
-  color: #1a73e8;
+  color: #2563eb;
   text-decoration: none;
   font-weight: 500;
 }
@@ -16,254 +156,132 @@ body {
   text-decoration: underline;
 }
 
-
-/* --- Encabezado Principal --- */
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: baseline;
-    margin-bottom: 20px;
-    flex-direction: column;
-    
-}
-
-.title-section h1 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.title-section p {
-    font-size: 14px;
-    color: #6c757d;
-    margin: 0;
-}
-
-/* Botón "Crear Nueva Campaña" */
-.btn-new-campaign {
-    background-color: #dc3545; /* Rojo */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 14px;
-    border-radius: 5px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    text-transform: capitalize;
-}
-
-.btn-new-campaign:hover {
-    background-color: #c82333;
-}
-
-/* Icono dentro del botón (asumiendo que se usa un icono de fuente o SVG) */
-.btn-new-campaign::before {
-    content: '+'; /* Usando un '+' como marcador de posición */
-    font-weight: bold;
-    font-size: 18px;
-    margin-right: 5px;
-}
-
-/* --- Estilos de la Tabla --- */
-.campaign-table-container {
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    overflow: visible; /* 🔥 FIX */
-}
-
-
-.campaign-table {
-    width: 100%;
-    border-collapse: collapse; /* Quita los bordes dobles de la tabla */
-}
-
-/* Encabezados de la Tabla (Thead) */
-.campaign-table thead th {
-    background-color: #f8f9fa; /* Fondo muy claro para el encabezado */
-    color: #495057;
-    font-weight: 600;
-    padding: 15px 10px;
-    text-align: left;
-    border-bottom: 2px solid #e9ecef; /* Separador */
-    font-size: 14px;
-}
-
-/* Filas de la Tabla (Tbody) */
-.campaign-table tbody tr {
-    border-bottom: 1px solid #e9ecef; /* Separador de fila */
-}
-
-.campaign-table tbody tr:hover {
-    background-color: #f0f0f0; /* Efecto hover sutil */
-}
-
-.campaign-table tbody td {
-    padding: 15px 10px;
-    vertical-align: middle;
-    font-size: 14px;
-    color: #343a40;
-}
-
-/* Estilo para las celdas 'Imagen' */
-.campaign-table td:first-child {
-    width: 50px; /* Ancho fijo para la columna de la imagen */
-}
-
-/* Contenedor de la Imagen */
-.campaign-image {
-    width: 40px;
-    height: 40px;
-    display: block;        /* 🔥 CLAVE */
-    object-fit: cover;
-    border-radius: 4px;
-}
-
-
-/* Estilos de las celdas de 'Campaña' (Título y Subtítulo) */
-.campaign-details strong {
-    display: block;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 2px;
-}
-
-.campaign-details span {
-    display: block;
-    font-size: 12px;
-    color: #6c757d;
-}
-
-/* Iconos de Fecha/Hora y Ubicación */
-.date-time, .location-text {
-    display: flex;
-    align-items: center;
-    font-size: 13px;
-    color: #495057;
-}
-
-.date-time span, .location-text span {
-    margin-right: 5px; /* Espacio para el icono */
-    /* Aquí se usarían íconos de fuente (ej. Font Awesome) o SVGs */
-}
-
-/* --- Tags de Estado --- */
-.status-tag {
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 12px;
-    text-align: center;
-    display: inline-block;
-    min-width: 65px; /* Para asegurar un ancho similar entre tags */
-}
-
-/* Estado 'Expirada' - Amarillo */
-.status-expired {
-    background-color: #fff3cd; /* Fondo amarillo muy claro */
-    color: #856404; /* Texto marrón/oscuro */
-    border: 1px solid #ffeeba;
-}
-
-/* Estado 'Finalizada' - Verde/Azul (similar al de la imagen) */
-.status-finished {
-    background-color: #d1ecf1; /* Fondo verde/azul claro */
-    color: #0c5460; /* Texto oscuro */
-    border: 1px solid #bee5eb;
-}
-
-/* --- Botones de Acción (Iconos) --- */
-.action-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
-.action-button {
-    background: none;
-    border: none;
-    color: #6c757d;
-    cursor: pointer;
-    padding: 5px;
-    font-size: 16px; /* Para el icono */
-    line-height: 1;
-}
-
-.action-button:hover {
-    color: #dc3545; /* Rojo al pasar el ratón */
-}
-.campanas-container {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.campaign-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.campaign-table th,
-.campaign-table td {
-  border: 1px solid #ddd;
-  padding: 10px;
-  vertical-align: top;
-  text-align: left;
-}
-
-/* 🔴 EVITA QUE LA TABLA APLASTE EL TEXTO */
-.campaign-table td {
-  white-space: normal;
-}
-
-/* ✅ REQUISITOS */
-.requisitos-td {
-  min-width: 250px;
-}
-
-.requisitos-texto {
-  display: block;
-  white-space: normal;
-  line-height: 1.5;
-}
-
-/* Cada requisito en su propia línea */
-.requisitos-texto div {
-  margin-bottom: 4px;
-}
-
-/* Select estado */
-select {
-  width: 100%;
-  padding: 4px;
-}
-
-/* Botones */
-button {
-  margin-right: 5px;
+/* =========================
+   ESTADO (SELECT)
+========================= */
+.estado-select {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
   cursor: pointer;
 }
-/* ===== REQUISITOS (CLASES CORRECTAS) ===== */
+
+.estado-select:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+/* =========================
+   REQUISITOS
+========================= */
 .requisitos-cell {
-  min-width: 250px;
-  padding: 10px;
-  vertical-align: top;
-  white-space: normal;
+  max-width: 220px;
 }
 
 .requisito-item {
-  display: block;
-  padding: 6px 10px;
-  margin-bottom: 6px;
+  background: #fcfcff;
+  color: #0f172a;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  display: inline-block;
+}
 
-  background-color: #f4f7f6;
-  border-left: 4px solid #dc3545;
-  border-radius: 4px;
+/* =========================
+   ACCIONES
+========================= */
+.campaign-table td:last-child {
+  white-space: nowrap;
+}
 
+.campaign-table button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 6px;
+  padding: 6px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.campaign-table button:hover {
+  background: #f1f5f9;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .btn-new-campaign {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* =========================
+   VER MÁS / VER MENOS
+========================= */
+.ver-mas {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #2563eb;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ver-mas:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   FILTROS Y BÚSQUEDA
+========================= */
+.filters-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.search-input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
   font-size: 14px;
-  line-height: 1.5;
-  color: #343a40;
+  background: #fff;
+}
 
-  word-break: break-word;
+.search-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.filter-select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  font-size: 14px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }

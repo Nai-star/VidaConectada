@@ -351,9 +351,20 @@ class Testimonio_videoListCreateView(ListCreateAPIView):
 
 
 class Testimonio_videoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    queryset = Testimonio.objects.all()
-    serializer_class = TestimonioVideoSerializer
+    queryset = Testimonio_video.objects.all()
+    serializer_class = TestimonioVideoUpdateSerializer
     permission_classes = [AllowAny]
+
+class TestimonioCreateAPIView(generics.CreateAPIView):
+    queryset = Testimonio_video.objects.all()  # ⚠ Aquí debe ser el modelo relacionado
+    serializer_class = TestimonioVideoUpdateSerializer
+    permission_classes = [AllowAny]
+
+    def get_serializer_class(self):
+        # Si viene video, usamos el serializer de video
+        if "Video" in self.request.data:
+            return TestimonioVideoSerializer
+        return TestimonioSerializer
 
 
 from rest_framework_simplejwt.views import TokenObtainPairView

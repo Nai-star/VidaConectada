@@ -1,11 +1,13 @@
-import React from 'react'
+import { useState } from "react";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa"
 import { Link } from "react-router-dom"
 import { HashLink } from 'react-router-hash-link';
+import ModalGuiaDonante from "../../Components/GuiaDonanate/ModalGuiaDonante";
 
 import "./Footer.css"
 
 function Footer() {
+   const [openGuia, setOpenGuia] = useState(false);
 
 
 
@@ -42,7 +44,12 @@ function Footer() {
           <ul>
             <li><HashLink to="/home#faq">Preguntas Frecuentes</HashLink></li>
             <li><HashLink to="/home#contacto">Contacto</HashLink></li>
-            <li> <Link to="/guia-donante">Guía Completa del Donante</Link></li>
+            <li
+              style={{ cursor: "pointer" }}
+              onClick={() => setOpenGuia(true)}
+            >
+              Guía Completa del Donante
+            </li>
           </ul>
         </div>
 
@@ -59,6 +66,11 @@ function Footer() {
         </div>
       </div>
 
+      <ModalGuiaDonante
+        isOpen={openGuia}
+        onClose={() => setOpenGuia(false)}
+      />
+
       <hr className="footer-divider" />
 
       <div className="footer-bottom">
@@ -67,8 +79,15 @@ function Footer() {
           Desarrollado con <span className="heart">❤</span> para la comunidad costarricense
         </p>
         <div className="footer-links">
-          <Link to="/privacidad">Política de Privacidad</Link>
-          <Link to="/terminos">Términos de Uso</Link>
+          <div >
+          <a className="gal-btn" href="/privacidad">Política de Privacidad</a>
+          </div>
+
+          <div >
+            <a className="gal-btn" href="/terminos">Términos de Uso</a>
+          </div>
+
+
         </div>
       </div>
     </footer>

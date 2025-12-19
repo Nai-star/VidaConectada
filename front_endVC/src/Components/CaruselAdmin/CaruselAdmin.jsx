@@ -35,7 +35,7 @@ function CarruselAdmin() {
       const data = await obtenerTodosLosBanners();
       setBanners(data);
     } catch {
-      alert("Error cargando carrusel");
+
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ function CarruselAdmin() {
         )
       );
     } catch {
-      alert("No se pudo cambiar el estado del banner.");
+    
     }
   };
 

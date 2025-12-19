@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Navbar from '../../Components/NavBar/Navbar'
 import Carrusel from '../../Components/Carrusel/Carrusel'
 import TiposSangreEscasez from '../../Components/TiposSangreEscasez/TiposSangreEscasez'
@@ -25,6 +25,14 @@ import "./Home.css"
 
 
 function Home() {
+
+       // Favicon y título dinámicos
+    useEffect(() => {
+      const link = document.querySelector("link[rel~='icon']");
+      if (link) link.href = "/logo_vidaconectada.png";
+      document.title = "Vida Conectada";
+    }, []);
+  
 
 
   const stats = [
@@ -64,6 +72,7 @@ function Home() {
         <BeneficiosDonar/>
         
         <hr className="hr-brillo" />
+        <br /><br />
         <Campanas/>
         <hr className="hr-brillo" />
 

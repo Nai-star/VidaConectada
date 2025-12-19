@@ -46,17 +46,13 @@ export default function AdminBuzon() {
       setRespuestas(Array.isArray(rs) ? rs : []);
     } catch (err) {
       console.error("Error cargando datos:", err);
-      showAlert("Error", "No se pudieron cargar los datos. Revisa la consola.");
+     
     } finally {
       setLoading(false);
     }
   }
 
-  function showAlert(title, message) {
-    setAlertTitle(title || "Mensaje");
-    setAlertMessage(message || "");
-    setAlertOpen(true);
-  }
+
 
   // --- helpers de datos / nombres ---
   function obtenerIdDesdeUsuario(u) {
@@ -103,11 +99,6 @@ export default function AdminBuzon() {
   // obtener userId preferible desde el estado `usuario`, con fallback a localStorage
   const userId = obtenerIdDesdeUsuario(usuario) || (localStorage.getItem("userId") ? Number(localStorage.getItem("userId")) : null);
 
-  if (!userId) {
-    showAlert("Atención", "No se encontró id del usuario. Inicia sesión correctamente.");
-    return;
-  }
-
   const respExistente = preguntaSeleccionada.respuestaExistente || null;
 
   try {
@@ -127,7 +118,7 @@ export default function AdminBuzon() {
       console.log("Actualizar respuesta (payload):", payload);
       // suponiendo que actualizarRespuesta recibe (id, payload)
       await actualizarRespuesta(respExistente.id, payload);
-      showAlert("Éxito", "Respuesta actualizada correctamente.");
+   
     } else {
       // crear nueva respuesta
       const payloadCreate = {
@@ -141,7 +132,6 @@ export default function AdminBuzon() {
 
       console.log("Crear respuesta (payload):", payloadCreate);
       await crearRespuesta(payloadCreate);
-      showAlert("Éxito", "Respuesta creada correctamente.");
     }
 
     // cerrar modal y recargar datos
@@ -151,7 +141,6 @@ export default function AdminBuzon() {
   } catch (err) {
     console.error("Error en handleSaveFromModal:", err);
     const detail = typeof err === "string" ? err : (err?.message ?? JSON.stringify(err));
-    showAlert("Error", `No se pudo guardar la respuesta. ${detail}`);
   }
 }
 
@@ -161,10 +150,8 @@ export default function AdminBuzon() {
     try {
       await cambiarEstadoRespuesta(r.id, { estado: nuevoEstado });
       await cargarDatos();
-      showAlert("Éxito", `Respuesta ${nuevoEstado === 1 ? "activada" : "desactivada"} correctamente.`);
     } catch (err) {
       console.error("Error actualizando estado de respuesta:", err);
-      showAlert("Error", "No se pudo actualizar el estado de la respuesta.");
     }
   }
 

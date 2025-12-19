@@ -36,11 +36,22 @@
   margin: 0 auto;
 }
 
-.frase {
-  margin-top: 20px;
-  font-size: 22px;
 
+
+.frase {
+  font-size: clamp(15px, 1.2vw, 22px);
+  line-height: 1.55;
+  color: #2f3b44;
+  max-width: 85%;
+  margin: 28px auto 20px auto;
+  text-align: left;
+  font-weight: 400;
+
+  /* 🔒 Limitar crecimiento */
+  max-height: 8.2em;
+  overflow: hidden;
 }
+
 
 .nombre {
   margin-top: 10px;
@@ -143,6 +154,11 @@
   flex-direction: column;
   justify-content: center;
 }
+.caja-texto {
+  min-height: 320px;     /* altura fija visual */
+  max-height: 320px;
+}
+
 
 /* Quotation icon (esquina superior izquierda).
    Usamos pseudo-elemento para no necesitar imagen */
@@ -530,4 +546,27 @@
   .pill-icon { width: 18px; height: 18px; font-size: 11px; }
   .hero-title { font-size: 18px; }
   .hero-desc { font-size: 14px; max-width: 92%; }
+}
+
+.sin-videos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  background: #f9fafb;
+  border-radius: 16px;
+  text-align: center;
+  color: #555;
+}
+
+.sin-videos .icono-video {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.mensaje-info {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
 }

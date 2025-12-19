@@ -17,17 +17,17 @@
   animation: fadeUp 0.6s ease;
 }
 
-/* ---------- TÍTULO PRINCIPAL ---------- */
-.legal-container h1 {
+/* ---------- TÍTULO ---------- */
+#politicas {
   font-size: 2.4rem;
   color: #b11226;
   margin-bottom: 2rem;
   position: relative;
 }
 
-.legal-container h1::after {
+#politicas::after {
   content: "";
-  width: 100px;
+  width: 90px;
   height: 4px;
   background: linear-gradient(90deg, #b11226, #e63946);
   display: block;
@@ -64,7 +64,7 @@
   margin-bottom: 1rem;
 }
 
-/* ---------- EFECTO SUTIL DE LECTURA ---------- */
+/* ---------- EFECTO DE LECTURA ---------- */
 .legal-container p:hover {
   background: #faf3f4;
   border-radius: 8px;
@@ -72,7 +72,7 @@
   transition: background 0.25s ease;
 }
 
-/* ---------- SEPARACIÓN VISUAL ---------- */
+/* ---------- SEPARADORES VISUALES ---------- */
 .legal-container h2:not(:first-of-type) {
   padding-top: 1.5rem;
 }
@@ -82,7 +82,7 @@
   margin-top: 4rem;
 }
 
-/* ---------- ANIMACIÓN ---------- */
+/* ---------- ANIMACIONES ---------- */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -100,7 +100,7 @@
     padding: 2rem 1.5rem;
   }
 
-  .legal-container h1 {
+  #politicas {
     font-size: 2rem;
   }
 

@@ -87,7 +87,6 @@
 .req-btn {
   margin-top: 30px;
   padding: 10px 26px;
-  background: #1976d2;
   color: white;
   border: none;
   border-radius: 6px;
@@ -97,7 +96,7 @@
 }
 
 .req-btn:hover {
-  background: #0d5bb5;
+  background: #c00202dc;
 }
 
 /* ===========================
@@ -143,7 +142,7 @@
   font-weight: 700;
   justify-content: center;
   line-height: 24px;
-  min-height: 60px;
+  min-height: 45px;
   padding: 18px 28px;
   position: relative;
   text-align: center;
@@ -213,4 +212,20 @@
   .button-77-red {
     padding: 19px 32px;
   }
+}
+
+.req-btn {
+  background: #b11226;
+  color: #fff;
+  padding: 0.7rem 1.6rem;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.req-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(177, 18, 38, 0.35);
 }

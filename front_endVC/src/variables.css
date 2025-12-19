@@ -13,3 +13,11 @@ body{
     padding: 0;
     border: 0;
 }
+.App {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto-oscuro);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}

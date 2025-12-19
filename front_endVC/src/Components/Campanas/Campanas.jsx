@@ -97,7 +97,7 @@ function Campanas() {
       <h2 className="cmp-title">Campañas Activas</h2>
       <p className="cmp-subtitle">Encuentra una jornada de donación cerca de ti y participa</p>
 
-      <div className="campanas-container">
+      <div className="campanas-container1">
         {campanas.length === 0 ? (
           <div className="cmp-empty">No hay campañas disponibles.</div>
         ) : (

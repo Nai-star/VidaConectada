@@ -137,9 +137,9 @@ export default function ModalEditarCampana({ campana = null, onClose, onSaved })
      GUARDAR
   ==========================*/
   async function guardar() {
-    if (!titulo.trim()) return alert("Título requerido");
-    if (!fecha || !hora) return alert("Fecha y hora requeridas");
-    if (!lugar.trim()) return alert("Dirección requerida");
+    if (!titulo.trim()) return
+    if (!fecha || !hora) return 
+    if (!lugar.trim()) return 
 
     setSaving(true);
     try {
@@ -166,7 +166,7 @@ export default function ModalEditarCampana({ campana = null, onClose, onSaved })
       onClose?.();
     } catch (e) {
       console.error(e);
-      alert("Error al actualizar campaña");
+   
     } finally {
       setSaving(false);
     }

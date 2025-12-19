@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import ModalGuiaDonante from "../../Components/GuiaDonanate/ModalGuiaDonante";
+
 import "./requisitosDonacion.css";
 import { obtenerRequisitos } from "../../services/ServicioRequisitos";
 import TestDonacionModal from "./TestDonacionModal/TestDonacionModal";
@@ -9,6 +11,7 @@ function RequisitosDonacion() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
   const [open, setOpen] = useState(false);
+  const [openGuia, setOpenGuia] = useState(false);
 
   useEffect(() => {
     obtenerRequisitos()
@@ -45,15 +48,26 @@ function RequisitosDonacion() {
             y que te mantengas hidratado. Evita alimentos grasosos el día de la donación.
           </div>
 
-          {/* <button className="req-btn">Ver Guía Completa</button> */}
+          <button
+            className="req-btn"
+            onClick={() => setOpenGuia(true)}
+          >
+            Ver Guía Completa
+          </button> 
         </div>
       )}
 
       <p className="req-footer">
         ¿Tienes dudas sobre si puedes donar?
       </p>
+      <br />
       <button className="button-77-red" role="button" onClick={() => setOpen(true)}>Hace el siguiente test para saberlo</button>
         <TestDonacionModal isOpen={open} onClose={() => setOpen(false)} />
+
+          <ModalGuiaDonante
+            isOpen={openGuia}
+            onClose={() => setOpenGuia(false)}
+          />
     </section>
   );
 }

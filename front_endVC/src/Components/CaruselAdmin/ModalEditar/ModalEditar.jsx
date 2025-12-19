@@ -24,7 +24,7 @@ export default function ModalEditar({ cerrar, recargar, banner }) {
       cerrar();
     } catch (error) {
       console.error("Error guardando banner:", error);
-      alert("No se pudo actualizar el banner.");
+
     }
   };
 

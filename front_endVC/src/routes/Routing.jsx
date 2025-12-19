@@ -23,6 +23,7 @@ import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmi
 import GuiaDonante from '../Components/GuiaDonanate/GuiaDonante';
 import TestimoniosAdmin from '../Components/AdminSidebar/TestimonioAdmin/TestimonioAdmin';
 import TerminosUso from "../Components/Terminos/TerminosUso"
+import PoliticasP from '../Components/politicas/PoliticasP';
 
 import PrivateRouting from './PrivateRouting';
 
@@ -43,9 +44,8 @@ function Routing() {
 
         <Route path='/login' element={<Login/>}/>
         <Route path='/guia-donante' element={<GuiaDonante/>}/>
-            <Route path='/terminos' element={<TerminosUso/>}/>
-         <Route path='/testimonio' element={<TestimoniosAdmin/>}/>
-        
+        <Route path='/terminos' element={<TerminosUso/>}/>
+        <Route path='/privacidad' element={<PoliticasP/>}/>
         {/* <Route path='/admin' element={<Admin/>}/> */}
 
 
@@ -71,6 +71,7 @@ function Routing() {
           <Route path='CampanaAdmin' element={<CampanasAdmin/>} />  
           <Route path='register' element={<Register/>}/>
           <Route path='galeria_admin' element={<AdminGaleria/>}/>
+          <Route path='testimonio_admin' element={<TestimoniosAdmin/>}/>
         </Route>
         </Route>
 

@@ -1,117 +1,281 @@
-/* Contenedor general */
+/* Contenedor Principal */
 .admin-panel {
-    background-color: #f8f9fa;
-    padding: 40px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 40px;
+  background-color: #f8fafd;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1a2b4b;
 }
 
-/* 1. EL "COSITO" DE ARRIBA (Pestañas/Tabs) */
+.admin-panel h2 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.admin-panel p {
+  color: #6c757d;
+  margin-bottom: 30px;
+}
+
+/* Tabs Navigation */
 .tabs-container {
-    background-color: #e9ecef;
-    display: inline-flex;
-    padding: 4px;
-    border-radius: 50px; /* Bordes muy redondeados tipo píldora */
-    margin-bottom: 30px;
+  display: flex;
+  background-color: #e9ecef;
+  padding: 5px;
+  border-radius: 25px;
+  width: fit-content;
+  margin-bottom: 30px;
 }
 
 .tab-item {
-    padding: 8px 20px;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: 0.3s;
-    border: none;
-    background: transparent;
-    color: #495057;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  background: transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Estado activo del botón de arriba */
 .tab-item.active {
-    background-color: #ffffff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    color: #000;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  color: #000;
 }
 
-/* 2. LA TARJETA BLANCA (Card) */
+/* Tarjeta Contenedora */
 .card-testimonios {
-    background: #ffffff;
-    border-radius: 15px;
-    border: 1px solid #e0e0e0;
-    padding: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  background: white;
+  border-radius: 15px;
+  border: 1px solid #eef0f2;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  padding: 20px;
 }
 
-/* Cabecera dentro de la tarjeta */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+.card-header09 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0 25px 0;
 }
 
-/* Título con el icono de play rojo */
-.title-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #333;
-    font-weight: 600;
+.card-header09 span {
+  font-weight: 600;
+  font-size: 18px;
+  color: #333;
 }
 
-.title-section i {
-    color: #d0021b; /* Rojo sangre de la imagen */
-}
-
-/* 3. EL BOTÓN ROJO (+ Nuevo Video) */
+/* Botones */
 .btn-red {
-    background-color: #d0021b;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 13px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  background-color: #e60000;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
-/* 4. TABLA INTERNA */
+.btn-red:hover {
+  background-color: #c40000;
+}
+
+/* Tabla */
 .tabla-testimonios {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
 }
 
 .tabla-testimonios th {
-    text-align: left;
-    color: #888;
-    font-size: 12px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .tabla-testimonios td {
-    padding: 15px 10px;
-    border-bottom: 1px solid #f9f9f9;
-    font-size: 14px;
+  padding: 15px;
+  border-bottom: 1px solid #f8f8f8;
+  vertical-align: middle;
+  font-size: 14px;
 }
 
-/* Imagen circular del donante */
+/* Imagen de usuario y video */
 .user-img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
-/* ID estilo burbuja */
-.id-badge {
+video {
+  border-radius: 8px;
+  background: #000;
+}
+
+/* Tags de Estado */
+.estado-tag {
+  background-color: #e6fffa;
+  color: #38b2ac;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Acciones (Iconos) */
+.acciones-cell {
+  display: flex;
+  gap: 15px;
+  font-size: 18px;
+}
+
+.btn-edit { color: #4a90e2; cursor: pointer; }
+.btn-delete { color: #e60000; cursor: pointer; }
+
+/* Modales */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 400px;
+}
+
+.modal-card form {
+  display: flex; flex-direction: column; gap: 15px;
+}
+
+.modal-card input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+/* ================================
+   ACCIONES (BOTONES)
+================================ */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Botón principal */
+.modal-actions button[type="submit"] {
+    background-color: #d0021b;
+    color: #ffffff;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/* Botón cancelar */
+.modal-actions button[type="button"] {
     background: #f1f3f5;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    color: #666;
+    color: #333;
+    border: none;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/* Hover */
+.modal-actions button:hover {
+    opacity: 0.9;
+}
+
+/* ================================
+   OVERLAY (FONDO OSCURO)
+================================ */
+.modal-overlay {
+
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    
+    justify-content: center;
+    align-items: center;
+  
+}
+
+/* ================================
+   TARJETA DEL MODAL
+================================ */
+.modal-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 520px;
+    border-radius: 16px;
+    padding: 25px 28px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+    animation: modalFadeIn 0.25s ease;
+}
+
+/* Animación */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================================
+   TÍTULO
+================================ */
+.modal-card h3 {
+    margin-bottom: 20px;
+    font-size: 18px;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* ================================
+   FORMULARIO
+================================ */
+.modal-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Inputs */
+.modal-card input[type="text"],
+.modal-card input[type="number"],
+.modal-card input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #333;
+    border: 1px solid #dcdcdc;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.modal-card input:focus {
+    outline: none;
+    border-color: #d0021b;
 }
