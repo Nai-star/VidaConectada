@@ -1,19 +1,17 @@
 import { useState, useEffect } from "react"
-import Navbar from '../../Components/NavBar/Navbar'
-import Carrusel from '../../Components/Carrusel/Carrusel'
-import TiposSangreEscasez from '../../Components/TiposSangreEscasez/TiposSangreEscasez'
-import TarjetasTipoSangre from '../../Components/TarjetasTipoSangre/TarjetasTipoSangre'
-import RequisitosDonacion from '../../Components/RequisitosDonacion/RequisitosDonacion'
-import BeneficiosDonar from '../../Components/Beneficios/BeneficiosDonar'
-import PreguntasFrecuentes from '../../Components/FAQ/PreguntasFrecuentes'
-import BuzonPreguntas from '../../Components/Buzon/BuzonPreguntas'
-import Footer from "../../Components/Footer/Footer"
-import Barrainfo from "../../Components/BarraInfo/Barrainfo"
-import Contactanos from "../../Components/Contactanos/Contactanos"
-import Campanas from "../../Components/Campanas/Campanas"
-import Galeria from "../../Components/Galeria/Galeria"
-import Testimonios from "../../Components/Testimonios/Testimonios"
-import GuiaDonante from "../../Components/GuiaDonanate/GuiaDonante"
+import Navbar from '../../Components/Pagehome/NavBar/Navbar'
+import Carrusel from '../../Components/Pagehome/Carrusel/Carrusel'
+import TiposSangreEscasez from '../../Components/Pagehome/TiposSangreEscasez/TiposSangreEscasez'
+import TarjetasTipoSangre from '../../Components/Pagehome/TarjetasTipoSangre/TarjetasTipoSangre'
+import RequisitosDonacion from '../../Components/Pagehome/RequisitosDonacion/RequisitosDonacion'
+import BeneficiosDonar from '../../Components/Pagehome/Beneficios/BeneficiosDonar'
+import PreguntasFrecuentes from '../../Components/Pagehome/FAQ/PreguntasFrecuentes'
+import Footer from "../../Components/Pagehome/Footer/Footer"
+import Barrainfo from "../../Components/Pagehome/BarraInfo/Barrainfo"
+import Contactanos from "../../Components/Pagehome/Contactanos/Contactanos"
+import Campanas from "../../Components/Pagehome/Campanas/Campanas"
+import Galeria from "../../Components/Pagehome/Galeria/Galeria"
+import Testimonios from "../../Components/Pagehome/Testimonios/Testimonios"
 
 
 

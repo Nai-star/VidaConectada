@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import Navbar from '../../Components/NavBar/Navbar';
-import Footer from '../../Components/Footer/Footer';
+
+import Footer from '../../Components/Pagehome/Footer/Footer';
 import './politica.css';
 
 function PoliticasP() {

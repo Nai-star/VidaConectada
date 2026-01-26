@@ -1,0 +1,228 @@
+/* =========================
+   CONTENEDOR GENERAL
+========================= */
+.testimonios-section {
+  background: radial-gradient(circle at 10% 30%, rgba(242,220,220,.45), rgba(255,255,255,0) 30%),
+              linear-gradient(180deg, #fffafa 0%, #fff5f5 100%);
+  padding: 60px 30px;
+  text-align: center;
+}
+
+.contenedor-testimonios {
+  display: flex;
+  gap: 40px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.testimonios-texto,
+.testimonios-video {
+  width: 50%;
+}
+
+/* =========================
+   TARJETA TEXTO (TAMAÑO FIJO)
+========================= */
+.caja-texto {
+  position: relative;
+  background: #fff;
+  border-radius: 28px;
+  /* padding: 42px 42px 110px; */
+  height: 360px;                 /* ALTURA FIJA */
+  /* box-shadow: 0 10px 30px rgba(2,6,23,.06); */
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* Comillas decorativas */
+.caja-texto::before {
+  content: "“";
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  font-size: 46px;
+  color: rgba(226,58,58,.15);
+  font-family: Georgia, serif;
+}
+
+/* Texto */
+.frase {
+  font-size: clamp(15px, 1.1vw, 20px);
+  line-height: 1.55;
+  color: #2f3b44;
+  margin: 24px auto 18px;
+  max-width: 88%;
+  text-align: left;
+
+  /* Limita líneas sin romper layout */
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Foto + nombre */
+.testimonio-info {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+
+.foto-circular {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 8px;
+}
+
+.nombre-badge {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+/* =========================
+   VIDEO (MISMO TAMAÑO QUE TARJETA)
+========================= */
+.video-container {
+  position: relative;
+  width: 100%;
+  height: 360px;               /* Igual que tarjeta */
+  border-radius: 28px;
+  overflow: hidden;
+  background: #ffffff00;       
+  
+  display: flex;             
+  align-items: center;
+  justify-content: center;
+}
+
+.video-testimonio {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+}
+
+/* 🎥 Horizontal → llena tarjeta */
+.video-horizontal {
+  object-fit: cover;     /* llena sin espacios */
+}
+
+/* 📱 Vertical → respeta proporción */
+.video-vertical {
+  width: auto;
+  object-fit: cover;   /* no recorta */
+}
+
+
+
+
+/* Texto overlay */
+.video-texto {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #fff;
+  /* background: linear-gradient(0deg, rgba(0,0,0,.65), rgba(0,0,0,0));  */
+  opacity: 0;
+  transition: opacity .25s ease;
+  pointer-events: none;
+}
+
+.video-container:hover .video-texto {
+  opacity: 1;
+}
+
+/* =========================
+   SLICK AJUSTES
+========================= */
+.slick-prev::before,
+.slick-next::before {
+  color: transparent;
+}
+
+.slick-dots {
+  bottom: -18px;
+}
+
+/* =========================
+   HERO
+========================= */
+.hero-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #7a3337;
+}
+
+.hero-desc {
+  max-width: 880px;
+  margin: 0 auto 22px;
+  color: #47595f;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================
+   SIN VIDEOS
+========================= */
+.sin-videos {
+  padding: 3rem 2rem;
+  background: #f9fafb;
+  border-radius: 16px;
+  color: #555;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  .contenedor-testimonios {
+    flex-direction: column;
+  }
+
+  .testimonios-texto,
+  .testimonios-video {
+    width: 100%;
+  }
+
+  .caja-texto,
+  .video-container {
+    height: 340px;
+  }
+}
+
+@media (max-width: 480px) {
+  .caja-texto,
+  .video-container {
+    height: 300px;
+    padding: 28px 20px 90px;
+  }
+
+  .frase {
+    -webkit-line-clamp: 5;
+  }
+}
+
+/* =========================== HERO / HEADER para testimonios =========================== */ 
+.hero-testimonios { padding: 48px 20px 28px 20px; box-sizing: border-box; overflow: visible; } 
+.hero-inner { max-width: 1100px; margin: 0 auto; text-align: center; position: relative; padding-top: 4px; } /* Pill (badge) con icono */ 
+.pill { display: inline-flex; align-items: center; gap: 10px; background: rgba(226,58,58,0.08); color: #b32d2d; padding: 10px 18px; border-radius: 999px; font-weight: 600; font-size: 25px; margin: 0 auto 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.6); animation: floatGlow 3s ease-in-out infinite; } 
+@keyframes floatGlow { 0% { transform: translateY(0); box-shadow: 0 4px 10px rgba(255,0,0,0.15); } 50% { transform: translateY(-6px); box-shadow: 0 6px 20px rgba(255,0,0,0.25); } 100% { transform: translateY(0); box-shadow: 0 4px 10px rgba(255,0,red,0.15); } } /* Icono dentro del pill (puedes usar SVG o texto) */ 
+.pill-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: rgba(226,58,58,0.98); color: #fff; font-size: 20px; line-height: 1; box-shadow: 0 4px 10px rgba(226,58,58,0.12); } /* Título principal */ 
+.hero-title { font-size: 22px; font-weight: 700; color: #7a3337; /* tono rojizo oscuro */ 
+  margin: 8px 0 10px; } /* Descripción centrada, ancho controlado */ 
+.hero-desc { max-width: 880px; margin: 0 auto ; color:#47595f ; /* gris azulado */ 
+  font-size :16 px ; line-height :1.6 ; }

@@ -344,10 +344,28 @@ class Testimonio_textoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView)
     serializer_class = TestimonioTextoSerializer
     permission_classes = [AllowAny]
 
+import cloudinary.uploader
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import AllowAny
+
 class Testimonio_videoListCreateView(ListCreateAPIView):
     queryset = Testimonio.objects.all()
     serializer_class = TestimonioVideoSerializer
     permission_classes = [AllowAny]
+
+    def perform_create(self, serializer):
+        video = self.request.FILES.get("video")
+
+        if video:
+            resultado = cloudinary.uploader.upload(
+                video,
+                resource_type="video",   # 🔴 CLAVE
+                quality="auto:good",     # 🔴 evita pixelado
+                audio_codec="aac"        # 🔴 asegura audio
+            )
+            serializer.save(video=resultado["secure_url"])
+        else:
+            serializer.save()
 
 
 class Testimonio_videoRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):

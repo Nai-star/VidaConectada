@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Outlet } from 'react-router-dom'
 import './Admin.css'
-import AdminSidebar from '../../Components/AdminSidebar/AdminSidebar'
+import AdminSidebar from '../../Components/Admin/AdminSidebar/AdminSidebar'
 
 
 function Admin() {

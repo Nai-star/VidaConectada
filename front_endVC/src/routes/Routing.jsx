@@ -6,22 +6,22 @@ import Home from '../Pages/Home/Home'
 
 
 import Private_routing from "./PrivateRouting";
-import GaleriaVermas from '../Components/Galeria/GaleriaVermas';
+import GaleriaVermas from '../Components/Pagehome/Galeria/GaleriaVermas';
 import Login from '../pages/Login/Login';
-import Register from '../Components/Register/Register';
+import Register from '../Components/Admin/Register/Register';
 import Admin from '../pages/Admin/Admin';
-import Configuracion from '../Components/AdminSidebar/Configuraciones/Configuracion';
-import Dashboard from '../Components/AdminSidebar/Dashboard/Dashboard';
-import GestionUsuarios from '../Components/AdminSidebar/GestionUsuarios/GestionUsuarios';
-import CaruselAdmin from '../Components/CaruselAdmin/CaruselAdmin';
-import Requisitos from '../Components/RequisitosAdmin/Requsitos/Requisitos';
-import AdminGaleria from '../Components/AdminSidebar/AdminGaleria/AdminGaleria';
-import RedBancos from "../Components/AdminSidebar/RedBancos/RedBancos";
-import AdminBuzon from '../Components/AdminSidebar/AdminBuzon/AdminBuzon';
-import TipoSangre from "../Components/AdminSidebar/TipoSangre/TipoSangre"
-import CampanasAdmin from "../Components/AdminSidebar/CampanasAdmin/CampanasAdmin"
-import GuiaDonante from '../Components/GuiaDonanate/GuiaDonante';
-import TestimoniosAdmin from '../Components/AdminSidebar/TestimonioAdmin/TestimonioAdmin';
+import Configuracion from '../Components/Admin/Configuraciones/Configuracion';
+import Dashboard from '../Components/Admin/Dashboard/Dashboard';
+import GestionUsuarios from '../Components/Admin/GestionUsuarios/GestionUsuarios';
+import CaruselAdmin from '../Components/Admin/CaruselAdmin/CaruselAdmin';
+import Requisitos from '../Components/Admin/RequisitosAdmin/Requsitos/Requisitos';
+import AdminGaleria from '../Components/Admin/AdminGaleria/AdminGaleria';
+import RedBancos from "../Components/Admin/RedBancos/RedBancos";
+import AdminBuzon from '../Components/Admin/AdminBuzon/AdminBuzon';
+import TipoSangre from "../Components/Admin/TipoSangre/TipoSangre"
+import CampanasAdmin from "../Components/Admin/CampanasAdmin/CampanasAdmin"
+import GuiaDonante from '../Components/Pagehome/GuiaDonanate/GuiaDonante';
+import TestimoniosAdmin from '../Components/Admin/TestimonioAdmin/TestimonioAdmin';
 import TerminosUso from "../Components/Terminos/TerminosUso"
 import PoliticasP from '../Components/politicas/PoliticasP';
 

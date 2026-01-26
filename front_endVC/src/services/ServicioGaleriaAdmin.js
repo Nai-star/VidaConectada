@@ -4,7 +4,7 @@ import { authorizedFetch } from "./auth";
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 // URL de subida a Cloudinary
-const CLOUDINARY_BASE = "https://api.cloudinary.com/v1_1/dfhdzszjp/image/upload";
+const CLOUDINARY_BASE = "https://api.cloudinary.com/v1_1/dfhdzszjp/auto/upload";
 // Preset de subida (debes crearlo en tu panel Cloudinary)
 const CLOUDINARY_UPLOAD_PRESET = "galeria_unsigned"; 
 
@@ -101,6 +101,26 @@ export async function cambiarEstadoGaleriaAdmin(id, nuevoEstado) {
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(body || "No se pudo actualizar el estado del item");
+  }
+
+  return await res.json();
+}
+
+/** Actualizar descripción de un item */
+export async function actualizarDescripcionGaleria(id, nuevaDescripcion) {
+  if (!id) throw new Error("Debe proporcionar un id");
+
+  const formData = new FormData();
+  formData.append("descripcion", nuevaDescripcion);
+
+  const res = await authorizedFetch(`${API_URL}/api/galeria/${id}/`, {
+    method: "PATCH",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(body || "No se pudo actualizar la descripción");
   }
 
   return await res.json();
