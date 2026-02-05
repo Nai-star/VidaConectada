@@ -8,9 +8,9 @@
 }
 
 .ben-title {
-  font-size: 36px;
-  font-weight: 700;
-  color: #c62828; /* rojo del título */
+  font-size: clamp(1.6rem, 2.6vw, 2.70rem);
+  font-weight: 800;
+  color: #3c3f48; 
   margin-bottom: 8px;
 }
 
@@ -37,10 +37,9 @@
 /* Tarjeta */
 .ben-card {
   background: #fff;
-  border: 1px solid #e6e6e6;
   border-radius: 16px;
   padding: 28px 22px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.173);
   transition: transform .22s ease, box-shadow .22s ease;
 }
 

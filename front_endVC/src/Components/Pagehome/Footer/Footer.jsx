@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa"
-import { Link } from "react-router-dom"
+import { FaFacebookF, FaInstagram } from "react-icons/fa"
+import { FiMail, FiPhone  } from "react-icons/fi";
+
 import { HashLink } from 'react-router-hash-link';
 import ModalGuiaDonante from "../GuiaDonanate/ModalGuiaDonante";
 
@@ -56,8 +57,8 @@ function Footer() {
         {/* Columna 4 */}
         <div className="footer-section">
           <h4>Contacto</h4>
-          <p>📧 vidaconectadacr@gmail.com</p>
-          <p>📞 +506 8888-8888</p>
+          <p><FiMail className="contact-icon1" /> vidaconectadacr@gmail.com</p>
+          <p><FiPhone className="contact-icon1" /> +506 8888-8888</p>
           <h5>Síguenos</h5>
           <div className="footer-social">
             <a href="https://facebook.com" target="_blank"><FaFacebookF /></a>

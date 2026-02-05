@@ -140,13 +140,13 @@ class CantonesListCreateView(ListCreateAPIView):
 
 
 # ✅ Campañas
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 
 class CampanasAdminView(ListCreateAPIView):
     queryset = Campana.objects.all().order_by("-id")
     serializer_class = CampanaCreateSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
 
 
     def get_serializer_context(self):
@@ -167,6 +167,22 @@ class CampanaDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Campana.objects.all()
     serializer_class = CampanaCreateSerializer
     permission_classes = [AllowAny]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
+
+    def patch(self, request, *args, **kwargs):
+        campana = self.get_object()
+
+        activo = request.data.get("Activo")
+        print("🔥 ACTIVO RECIBIDO:", request.data.get("activo"))
+
+        if activo is not None:
+            campana.Activo = bool(int(activo)) if isinstance(activo, int) else activo
+            campana.save()
+
+        return Response(
+            {"id": campana.id, "Activo": campana.Activo},
+            status=status.HTTP_200_OK
+        )
 
 
 # ✅ Imágenes de campaña
@@ -517,3 +533,31 @@ class FaqPublicView(ListAPIView):
            
 
         )
+    from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from datetime import timedelta
+from django.utils import timezone
+from .models import Participacion
+
+class ParticipacionesRecientesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usuario = request.user
+        ahora = timezone.now()
+        limite = ahora - timedelta(days=120)  # 4 meses ≈ 120 días
+
+        participaciones = Participacion.objects.filter(
+            suscritos__user=usuario,
+            fecha_participacion__gte=limite
+        ).select_related('campana')
+
+        data = [
+            {
+                "campana_id": p.campana.id,
+                "fecha_participacion": p.fecha_participacion
+            } for p in participaciones
+        ]
+
+        return Response(data)

@@ -7,7 +7,7 @@
   text-align: center;         /* centrar texto */
   font-size: 17px;            /* tamaño similar */
   line-height: 1.6;           /* más legible */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);  /* sombra suave */
+  
 }
 
 .alerta-roja {
@@ -46,6 +46,30 @@
   margin: 6px 0;
   line-height: 1.6;
 }
+
+.info-box {
+  position: relative;
+  overflow: hidden;
+}
+
+/* capa de brillo */
+.info-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.7),
+    transparent
+  );
+  animation: brillo-suave 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
 /* --------------------------------------------------------------------- */
 /* parte de ¿Listo para ser un héroe? */
 /* Contenedor principal con degradado y borde redondeado */
@@ -60,6 +84,7 @@
   border: 1px solid rgba(230, 236, 245, 0.8);
   font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
+
 
 /* Título y subtítulo */
 .cta-title {
@@ -144,4 +169,18 @@
 @keyframes brillo {
   0% { left: -50%; }
   100% { left: 100%; }
+}
+
+    
+
+@keyframes brillo-suave {
+  0% {
+    left: -70%;
+  }
+  50% {
+    left: 120%;
+  }
+  100% {
+    left: 120%;
+  }
 }

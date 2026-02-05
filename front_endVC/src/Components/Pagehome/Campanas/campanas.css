@@ -1,3 +1,4 @@
+
 :root {
   --bg: #f5f9fc;
   --card-bg: #ffffff;
@@ -127,10 +128,19 @@
 }
 
 .cmp-title{
-  color: #d90429;
+    background: linear-gradient(
+    90deg,
+    #ff5a5f 0%,
+    #9d2b29 50%,
+    #e94a4a 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
   margin: 0;
-  font-size: 30px;
-  font-weight: 600;
+  font-size: 40px;
+  font-weight: 800;
   text-align: center;
 }
 
@@ -314,4 +324,12 @@
 
 .map-link:hover {
   text-decoration: underline;
+}
+.mensaje-error {
+  background-color: #ffe6e6;
+  color: #a00;
+  padding: 10px 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  font-weight: 500;
 }

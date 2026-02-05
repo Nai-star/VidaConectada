@@ -96,6 +96,7 @@ function Contactanos() {
             {/* ---------- Red de bancos y horarios (Sección Colapsable) ---------- */}
             <div className="tabla-header">
                 <h2 className="tabla-title">Red de bancos y horarios</h2>
+                <p className="tabla-subtitle">Encuentra el banco de sangre más cercano y conoce los horarios para sumarte a la donación.</p>
 
                 <button
                     className="btn-toggle-tabla"

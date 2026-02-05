@@ -20,7 +20,7 @@ export const registrarParticipacion = async ({ cedula, nombre, email, campaignId
   for (const base of candidates) {
     try {
       console.log("Intentando POST en:", base + "/participacion/");
-      const response = await axios.post(`${base}/participacion/`, payload, { timeout: 8000 });
+      const response = await axios.post(`${base}/participacion/`, payload, { timeout: 20000});
       console.log("registrarParticipacion - success:", base, response.status, response.data);
       return response.data;
     } catch (error) {

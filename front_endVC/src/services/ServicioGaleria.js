@@ -1,3 +1,4 @@
+
 // ServicioGaleria.js
 import { authorizedFetch } from "./auth";
 
@@ -59,23 +60,32 @@ function mapItem(raw) {
   };
 }
 
-/** Obtiene todas las imágenes activas */
+/** Obtiene todas las imágenes activas (endpoint público) */
 export async function obtenerGaleriaActiva() {
   const url = `${API_URL}/api/galeria/`;
-  const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
-  const res = await fetcher(url, { method: "GET" });
+
+  let res;
+  try {
+    res = await fetch(url, { method: "GET" });
+  } catch (err) {
+    console.error("ServicioGaleria: error de red", err);
+    throw new Error("Error de red al cargar la galería");
+  }
+
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(body || "No se pudo cargar la galería");
   }
+
   const data = await res.json();
   const items = Array.isArray(data) ? data : (data?.results ?? []);
-  // mapear y filtrar nulos y activos
+
   return items
     .map(mapItem)
     .filter(Boolean)
     .filter(i => (i?.raw?.activo ?? i?.raw?.estado ?? true) !== false);
 }
+
 
 /** Obtener un ítem por id (opcional) */
 export async function obtenerImagenPorId(id) {
@@ -87,19 +97,32 @@ export async function obtenerImagenPorId(id) {
   return mapItem(raw);
 }
 
-/** Obtener galería (paginada). */
+/** Obtener galería (paginada) – endpoint público */
 export async function obtenerGaleriaPaginada(page = 1, pageSize = 24) {
   const url = `${API_URL}/api/galeria/?page=${page}&page_size=${pageSize}`;
-  const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
-  const res = await fetcher(url, { method: "GET" });
+
+  let res;
+  try {
+    // 👇 fetch público, SIN Authorization
+    res = await fetch(url, { method: "GET" });
+  } catch (err) {
+    console.error("ServicioGaleria: error de red", err);
+    throw new Error("Error de red al cargar la galería");
+  }
+
   if (!res.ok) {
     const body = await res.text().catch(() => "");
     throw new Error(body || "No se pudo cargar la galería");
   }
+
   const json = await res.json();
   const itemsRaw = Array.isArray(json) ? json : (json?.results ?? []);
+
   const mapped = itemsRaw.map(mapItem).filter(Boolean);
-  const visible = mapped.filter(i => (i?.raw?.activo ?? i?.raw?.estado ?? true) !== false);
+  const visible = mapped.filter(
+    i => (i?.raw?.activo ?? i?.raw?.estado ?? true) !== false
+  );
+
   return {
     items: visible,
     next: json?.next ?? null,
@@ -107,6 +130,7 @@ export async function obtenerGaleriaPaginada(page = 1, pageSize = 24) {
     count: json?.count ?? (Array.isArray(json) ? json.length : mapped.length),
   };
 }
+
 
 /** Obtener todo (sin paginar) */
 export async function obtenerGaleriaAll() {

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import "./tiposSangreEscasez.css";
 import { FaExclamationCircle } from "react-icons/fa";
@@ -30,6 +31,8 @@ const TiposSangreEscasez = () => {
       }
     })();
   }, []);
+
+  
 
   const renderContent = () => {
     if (loading) return <p className="subtitulo">Cargando…</p>;
@@ -75,7 +78,7 @@ const TiposSangreEscasez = () => {
   return (
     <section className="tipos-sangre-container" id="escasez">
       <h2 className="titulo-seccion">
-        <FaExclamationCircle className="icono-alerta" /> Tipos de Sangre en Escasez
+        {/* <FaExclamationCircle className="icono-alerta" /> */} Tipos de <span>Sangre</span> en Escasez
       </h2>
       <p className="subtitulo">
         Estos son los tipos de sangre que necesitan donación urgente

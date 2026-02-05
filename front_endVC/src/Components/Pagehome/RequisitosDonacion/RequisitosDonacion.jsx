@@ -23,7 +23,7 @@ function RequisitosDonacion() {
   return (
     <section id="requisitos" className="req-container">
       <h2 className="req-title">
-        <FaClipboardList className="req-icon" /> Requisitos para Donar
+        {/* <FaClipboardList className="req-icon" /> */} Requisitos para <span>Donar</span>
       </h2>
       <p className="req-subtitle">
         Verifica que cumples con los requisitos básicos para ser donante

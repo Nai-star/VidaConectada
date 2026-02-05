@@ -8,54 +8,77 @@ import { obtenerParticipaciones } from "../../../services/ServicioSuscripcion";
 import { obtenerProvincias, obtenerCantones } from "../../../services/ServicioProvincias";
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock } from "react-icons/fa";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-
-import "./CampanasAdmin.css";
 import ModalNuevoCampana from "./ModalNuevoCam/ModalNuevoCampana";
 import ModalEditar from "./ModalEditarCam/ModalEditar";
 import ModalEliminar from "./ModalEliminarCam/ModalEliminar";
 
+import "./CampanasAdmin.css";
+
 export default function GestionCampanas() {
-  const [campanas, setCampanas] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [campanas, setCampanas] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [mostrarModal, setMostrarModal] = useState(false)
+  const [mostrarModalEditar, setMostrarModalEditar] = useState(false)
+  const [campanaSeleccionada, setCampanaSeleccionada] = useState(null)
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false)
+  const [campanaAEliminar, setCampanaAEliminar] = useState(null)
+  const [rawMap, setRawMap] = useState({})
+  const [provLookup, setProvLookup] = useState({})
+  const [cantonLookup, setCantonLookup] = useState({})
+  const [requisitosExpandido, setRequisitosExpandido] = useState({})
+  const [busqueda, setBusqueda] = useState("")
+  const [filtroEstado, setFiltroEstado] = useState("todos")
 
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [mostrarModalEditar, setMostrarModalEditar] = useState(false);
-  const [campanaSeleccionada, setCampanaSeleccionada] = useState(null);
 
-  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
-  const [campanaAEliminar, setCampanaAEliminar] = useState(null);
 
-  const [rawMap, setRawMap] = useState({});
-  const [provLookup, setProvLookup] = useState({});
-  const [cantonLookup, setCantonLookup] = useState({});
-  const [requisitosExpandido, setRequisitosExpandido] = useState({});
+function obtenerEstadoCampana(c, raw) {
+  if (raw?.Activo === false) return "vencida";
 
-  const [busqueda, setBusqueda] = useState("");
-  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const ahora = new Date();
 
-  /* ======================================================
-     🔹 ESTADO AUTOMÁTICO POR FECHAS (ÚNICA FUENTE DE VERDAD)
-  ====================================================== */
-  function obtenerEstadoCampana(c, raw) {
-    if (raw?.Activo === false) return "vencida";
+  const inicio = construirFechaHora(c.fecha_inicio, c.hora_inicio);
+  const fin = construirFechaHora(
+    c.fecha_fin || c.fecha_inicio,
+    c.hora_fin
+  );
 
-    const hoy = new Date();
-    const inicio = new Date(c.fecha_inicio);
-    const fin = new Date(c.fecha_fin || c.fecha_inicio);
+  if (!inicio || !fin) return "proxima";
 
-    if (hoy < inicio) return "proxima";
-    if (hoy > fin) return "vencida";
-    return "activa";
-  }
+  if (ahora < inicio) return "proxima";
+  if (ahora >= inicio && ahora <= fin) return "activa";
+  return "vencida";
+}
 
-  // Abrir modal editar
+
+
+function construirFechaHora(fecha, hora) {
+  if (!fecha) return null;
+
+  const [year, month, day] = fecha.split("-").map(Number);
+  const [hh = 0, mm = 0] = (hora ?? "00:00").split(":").map(Number);
+
+  // ⚠️ Importante:
+  // month - 1 porque JS maneja meses de 0-11
+  return new Date(year, month - 1, day, hh, mm, 0);
+}
+
+
+
+
+
 function abrirModalEditar(campanaId) {
+  console.log("Abriendo modal editar:", campanaId);
+
   const raw = rawMap[campanaId];
-  if (!raw) return;
+  if (!raw) {
+    console.warn("No existe raw para id:", campanaId);
+    return;
+  }
 
   setCampanaSeleccionada(raw);
   setMostrarModalEditar(true);
 }
+
 
 // Abrir modal eliminar
 function abrirModalEliminar(campana) {
@@ -163,6 +186,54 @@ async function onDeletedCampana() {
   useEffect(() => {
     cargar();
   }, [Object.keys(provLookup).length, Object.keys(cantonLookup).length]);
+  
+  useEffect(() => {
+  if (!campanas.length) return;
+
+  const intervalo = setInterval(async () => {
+    const ahora = new Date();
+
+    for (const c of campanas) {
+      const raw = rawMap[c.id];
+      if (!raw) continue;
+
+      const inicio = construirFechaHora(c.fecha_inicio, c.hora_inicio);
+      const fin = construirFechaHora(
+        c.fecha_fin || c.fecha_inicio,
+        c.hora_fin
+      );
+
+      if (!inicio || !fin) continue;
+
+      const estadoCalculado = obtenerEstadoCampana(c, raw);
+
+      // Estado guardado actualmente en backend
+      const estadoBackend = raw.Activo === true ? "activa" : "vencida";
+
+      // PROGRAMADA → ACTIVA
+      if (
+        estadoCalculado === "activa" &&
+        estadoBackend !== "activa"
+      ) {
+        console.log("⏱ Activando campaña:", c.nombre_campana);
+        await actualizarEstadoCampana(c.id, true);
+        await cargar();
+      }
+
+      // ACTIVA → VENCIDA
+      if (
+        estadoCalculado === "vencida" &&
+        estadoBackend !== "vencida"
+      ) {
+        console.log("⛔ Venciendo campaña:", c.nombre_campana);
+        await actualizarEstadoCampana(c.id, false);
+        await cargar();
+      }
+    }
+  }, 60_000); // cada 1 minuto
+
+  return () => clearInterval(intervalo);
+}, [campanas, rawMap]);
 
 
 async function cambiarEstadoCampana(c, raw, nuevoEstado) {
@@ -190,22 +261,21 @@ async function cambiarEstadoCampana(c, raw, nuevoEstado) {
 }
 
 
-
   const campanasFiltradas = campanas.filter(c => {
-    const raw = rawMap[c.id];
-    const estado = obtenerEstadoCampana(c, raw);
-    const texto = busqueda.toLowerCase();
+  const raw = rawMap[c.id];
+  const estado = obtenerEstadoCampana(c, raw);
+  const texto = busqueda.toLowerCase();
 
-    const coincideBusqueda =
-      c.nombre_campana?.toLowerCase().includes(texto) ||
-      c.descripcion?.toLowerCase().includes(texto) ||
-      c.ubicacion?.toLowerCase().includes(texto);
+  const coincideBusqueda =
+    c.nombre_campana?.toLowerCase().includes(texto) ||
+    c.descripcion?.toLowerCase().includes(texto) ||
+    c.ubicacion?.toLowerCase().includes(texto);
 
-    const coincideEstado =
-      filtroEstado === "todos" || estado === filtroEstado;
+  const coincideEstado =
+    filtroEstado === "todos" || estado === filtroEstado;
 
-    return coincideBusqueda && coincideEstado;
-  });
+  return coincideBusqueda && coincideEstado;
+});
 
   if (cargando) return <p>Cargando campañas...</p>;
 
@@ -298,12 +368,13 @@ async function cambiarEstadoCampana(c, raw, nuevoEstado) {
           <tbody>
             { campanasFiltradas.map(c => {
               const raw = rawMap[c.id] ?? {};
+              const estado = obtenerEstadoCampana(c, raw);
               return (
                 <tr key={c.id}>
                   <td>
                     {c.imagenes.length > 0 ? (
                       <img
-                        src={c.imagenes[0]}
+                        src={`${c.imagenes[0]}?v=${c.id}-${Date.now()}`}
                         alt={c.nombre_campana}
                         className="campaign-image"
                       />
@@ -378,14 +449,21 @@ async function cambiarEstadoCampana(c, raw, nuevoEstado) {
                     <select
                       className="estado-select"
                       value={obtenerEstadoCampana(c, raw)}
-                      onChange={e => cambiarEstadoCampana(c, raw, e.target.value)}
+                      disabled={obtenerEstadoCampana(c, raw) === "vencida"}
+                      onChange={async (e) => {
+                        const nuevoEstado = e.target.value === "activa";
+                        await actualizarEstadoCampana(c.id, nuevoEstado);
+                        await cargar();
+                      }}
                     >
-                      <option
+
+                      {/* <option
                         value="activa"
                         disabled={new Date() > new Date(c.fecha_fin || c.fecha_inicio)}
                       >
                         Activa
-                      </option>
+                      </option> */}
+                      <option value="activa">Activa</option>
                       <option value="proxima" disabled>Programada</option>
                       <option value="vencida">Vencida</option>
                     </select>
@@ -427,7 +505,16 @@ async function cambiarEstadoCampana(c, raw, nuevoEstado) {
 
 
                   <td>
-                    <button onClick={() => abrirModalEditar(c.id)}><FiEdit /></button>
+                    
+
+                    <button
+                      disabled={estado === "vencida"}
+                      title={estado === "vencida" ? "Campaña vencida (solo eliminar)" : "Editar"}
+                      onClick={() => abrirModalEditar(c.id)}
+                    >
+                      <FiEdit />
+                    </button>
+
                     <button onClick={() => abrirModalEliminar(c)}> <FiTrash2 /> </button>
                   </td>
                 </tr>
@@ -436,6 +523,7 @@ async function cambiarEstadoCampana(c, raw, nuevoEstado) {
           </tbody>
         </table>
       </div>
+
       {mostrarModal && (
         <ModalNuevoCampana
           onClose={() => setMostrarModal(false)}

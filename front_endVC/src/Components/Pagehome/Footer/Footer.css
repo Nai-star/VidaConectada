@@ -86,7 +86,8 @@
 }
 
 .footer-social a:hover {
-  background: #d32f2f;
+  background: #911b1b;
+  color: #edcaca;
   transform: translateY(-3px);
 }
 
@@ -134,4 +135,10 @@
 
 .footer-links a:hover {
   color: #fff;
+}
+
+.contact-icon1 {
+  margin-right: 8px;
+  color: #c4161c; /* rojo donación */
+  font-size: 1.1rem;
 }

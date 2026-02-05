@@ -2,7 +2,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./PreguntasFrecuentes.css";
 import { obtenerPreguntasFrecuentes } from "../../../services/ServicioFaq";
-import { obtenerUsuarioActual } from "../../../services/ServicioBuzon";
 import { FaQuestionCircle } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
 import BuzonPreguntas from "../Buzon/BuzonPreguntas";
@@ -14,23 +13,13 @@ function PreguntasFrecuentes() {
   const [err, setErr] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [usuario, setUsuario] = useState(null);
 
-  // Cargar preguntas frecuentes
+  // Cargar preguntas frecuentes (endpoint público)
   useEffect(() => {
     obtenerPreguntasFrecuentes()
       .then(setFaqs)
       .catch((e) => setErr(e.message))
       .finally(() => setLoading(false));
-  }, []);
-
-  // Cargar usuario actual
-  useEffect(() => {
-    const cargarUsuario = async () => {
-      const u = await obtenerUsuarioActual();
-      setUsuario(u);
-    };
-    cargarUsuario();
   }, []);
 
   const toggle = (id) => setOpenId((prev) => (prev === id ? null : id));
@@ -62,20 +51,14 @@ function PreguntasFrecuentes() {
     return sortedFaqs.slice(0, 5);
   }, [sortedFaqs, showAll]);
 
- 
-  
-  const abrirModal = () => {
-  setModalOpen(true);
-};
-
-  console.log(visibleFaqs);
-  
+  const abrirModal = () => setModalOpen(true);
 
   return (
     <section className="faq-wrap" id="faq">
       <h2 className="faq-title">
-        <FaQuestionCircle className="faq-icon" /> Preguntas Frecuentes
+        {/* <FaQuestionCircle className="faq-icon" /> */} Preguntas Frecuentes
       </h2>
+
       <p className="faq-subtitle">
         Resolvemos las dudas más comunes sobre donación de sangre
       </p>

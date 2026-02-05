@@ -11,31 +11,48 @@
    TÍTULO Y SUBTÍTULO
    =========================== */
 .req-title {
-  color: #c62828;
-  font-size: 32px;
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
+  font-size: 40px;
+  font-weight: 800;
+  color: #3c3f48; /* azul oscuro casi negro */
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.1;
 }
+
+.req-title span {
+  background: linear-gradient(
+    90deg,
+    #ff5a5f 0%,
+    #e53935 50%,
+    #c62828 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
 
 .req-icon {
   font-size: 26px;
 }
 
 .req-subtitle {
-  color: #546e7a;
+  max-width: 620px;
+  margin: 0 auto 32px auto;
   font-size: 17px;
-  margin-bottom: 30px;
+  line-height: 1.6;
+  color: #64748b; /* gris moderno */
+  text-align: center;
 }
+
 
 /* ===========================
    TARJETA DE REQUISITOS
    =========================== */
 .req-card {
   background: #ffffff;
-  border: 1px solid #e6e6e6;
+  /* border: 1px solid #e6e6e6; */
   border-radius: 14px;
   padding: 32px;
   max-width: 900px;
@@ -71,7 +88,7 @@
    ADVERTENCIA IMPORTANTE
    =========================== */
 .req-warning {
-  background: #fff8d9;
+  background: #fff8d9b8;;
   border-left: 4px solid #ffb300;
   padding: 12px 14px;
   margin-top: 26px;
@@ -214,18 +231,22 @@
   }
 }
 
-.req-btn {
-  background: #b11226;
-  color: #fff;
-  padding: 0.7rem 1.6rem;
+ .req-btn {
+  background: #fdeaea; /* rosado suave */
+  color: #e53935;      /* rojo vivo */
+  border: 1px solid #e7b4b4;
+  padding: 10px 22px;
   border-radius: 999px;
-  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
   cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .req-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(177, 18, 38, 0.35);
+  background: #fbd6d6;
+  transform: translateY(-1px);
 }
+

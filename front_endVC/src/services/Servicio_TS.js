@@ -8,23 +8,23 @@ const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
  */
 export async function obtenerTiposSangreUrgentes() {
   try {
-    // 1️⃣ Obtener las urgencias
+    // Obtener las urgencias
     const rUrg = await fetch(`${API_URL}/urgente_tip_sang/`);
     if (!rUrg.ok) throw new Error("Error al obtener Urgente_Tip_Sang");
     const urgentes = await rUrg.json();
 
-    // 2️⃣ Filtrar los registros activos (usa 'activo' según tu modelo)
+    //  Filtrar los registros activos (usa 'activo' según tu modelo)
     const urgentesActivos = urgentes.filter((u) => u.activo === true);
 
-    // 3️⃣ Obtener el catálogo de tipos de sangre
+    //  Obtener el catálogo de tipos de sangre
     const rTipos = await fetch(`${API_URL}/sangre/`);
     if (!rTipos.ok) throw new Error("Error al obtener tipo_sangre");
     const tipos = await rTipos.json();
 
-    // 4️⃣ Crear un índice por ID de sangre
+    //  Crear un índice por ID de sangre
     const indexTipos = new Map(tipos.map((t) => [Number(t.id), t]));
 
-    // 5️⃣ Unir los datos
+    //  Unir los datos
     const resultado = urgentesActivos
       .map((u) => {
         const tipo = indexTipos.get(Number(u.Sangre));
@@ -41,7 +41,7 @@ export async function obtenerTiposSangreUrgentes() {
    /*  console.log("✅ Resultado final (solo urgentes):", resultado); */
     return resultado;
   } catch (error) {
-    console.error("❌ Error obteniendo tipos de sangre urgentes:", error);
+    console.error(" Error obteniendo tipos de sangre urgentes:", error);
     throw error;
   }
 }
@@ -71,7 +71,7 @@ export async function GetTiposSangre() {
     /* console.log("✅ Resultado final:", adaptado); */
     return adaptado;
   } catch (error) {
-    console.error("❌ Error cargando tipos de sangre:", error);
+    console.error("Error cargando tipos de sangre:", error);
     throw error;
   }
 }
@@ -92,7 +92,7 @@ export async function actualizarEstadoUrgencia(id, body) {
 
     return await res.json();
   } catch (error) {
-    console.error("❌ Error actualizando estado de urgencia:", error);
+    console.error(" Error actualizando estado de urgencia:", error);
     throw error;
   }
 }

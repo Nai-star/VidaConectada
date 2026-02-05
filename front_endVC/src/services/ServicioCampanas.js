@@ -227,102 +227,6 @@ function toBackendDate(fecha) {
   return null;
 }
 
-
-// ================================
-// Crear campaña
-// ================================
-/* export async function crearCampana(data) {
-  console.log("crearCampana - Datos de entrada:", data);
-
-  if (!data.titulo || !String(data.titulo).trim()) throw new Error("El titulo es requerido");
-  if (!data.fecha) throw new Error("La fecha es requerida");
-  if (!data.Cantones && data.Cantones !== 0) throw new Error("Debe seleccionar un canton");
-
-  let canton = Array.isArray(data.Cantones) ? data.Cantones[0] : data.Cantones;
-  canton = typeof canton === "string" ? parseInt(canton, 10) : canton;
-  if (Number.isNaN(canton)) throw new Error("Cantón inválido");
-
-  const Fecha_inicio = toBackendDate(data.fecha);
-  const Fecha_fin = toBackendDate(data.fechaFin || data.fecha);
-
-  if (!Fecha_inicio || !Fecha_fin) throw new Error("Formato de fecha inválido");
-
-  const formatHora = (h) => h ? (h.split(":").length === 3 ? h : `${h}:00`) : null;
-  const Hora_inicio = formatHora(data.hora);
-  const Hora_fin = formatHora(data.horaFin || data.hora);
-
-  const usuarioId = await obtenerUsuarioActual();
-  console.log("Usuario ID obtenido:", usuarioId);
-  if (!usuarioId) throw new Error("Usuario no autenticado (CustomUser requerido en backend)");
-
-  const tieneArchivo = data.imagen instanceof File;
-
-  if (tieneArchivo) {
-    const form = new FormData();
-    form.append("Titulo", String(data.titulo).trim());
-    form.append("Descripcion", String(data.subtitulo ?? ""));
-    form.append("Fecha_inicio", Fecha_inicio);
-    form.append("Fecha_fin", Fecha_fin);
-    if (Hora_inicio) form.append("Hora_inicio", Hora_inicio);
-    if (Hora_fin) form.append("Hora_fin", Hora_fin);
-    form.append("direccion_exacta", String(data.lugar ?? ""));
-    form.append("Activo", String(data.Activo !== undefined ? data.Activo : true));
-    form.append("Contacto", String(data.contacto ?? "info@vidaconectada.cr"));
-    form.append("Cantones", String(canton));
-    requisitosSeleccionados.forEach(id => formData.append("detalles_requisitos", id));
-
-    //form.append("CustomUser", String(usuarioId));
-    form.append("imagen", data.imagen);
-
-    console.log(form);
-    
-
-    console.log("[ServicioCampanas] Enviando FormData (multipart) con imagen");
-
-    const res = await authorizedFetch(`${API_URL}/admin/campanas/`, {
-      method: "POST",
-      body: form // NO poner Content-Type, browser lo hace
-    });
-
-    const texto = await res.text();
-    if (!res.ok) {
-      try { throw new Error(`Error ${res.status}: ${JSON.stringify(JSON.parse(texto))}`); }
-      catch { throw new Error(`Error ${res.status}: ${texto}`); }
-    }
-    return JSON.parse(texto);
-  }
-
-  // JSON normal si no hay archivo
-  const body = {
-    Titulo: String(data.titulo).trim(),
-    Descripcion: String(data.subtitulo ?? ""),
-    Fecha_inicio,
-    Fecha_fin,
-    Hora_inicio,
-    Hora_fin,
-    direccion_exacta: String(data.lugar ?? ""),
-    Activo: data.Activo !== undefined ? data.Activo : true,
-    Contacto: String(data.contacto ?? "info@vidaconectada.cr"),
-    Cantones: canton,
-    //CustomUser: usuarioId
-  };
-
-  console.log("Body a enviar:", body);
-
-  const res = await authorizedFetch(`${API_URL}/admin/campanas/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
-  });
-
-  const texto = await res.text();
-  if (!res.ok) {
-    try { throw new Error(`Error ${res.status}: ${JSON.stringify(JSON.parse(texto))}`); }
-    catch { throw new Error(`Error ${res.status}: ${texto}`); }
-  }
-
-  return JSON.parse(texto);
-} */
 export async function crearCampana(data) {
   const isFormData = data instanceof FormData;
 
@@ -399,8 +303,9 @@ export async function eliminarCampana(id) {
 }
 ;
 
-// en ServicioCampanas.js - parche para actualizarCampana:
-// ServicioCampanas.js
+// ================================
+// Actualizar campaña
+// ================================
 export async function actualizarCampana(id, data) {
   if (id == null) throw new Error("ID de campaña inválido");
 
@@ -415,36 +320,52 @@ export async function actualizarCampana(id, data) {
   const headers = isForm ? {} : { "Content-Type": "application/json" };
 
   let lastError = null;
+
   for (const url of urlsToTry) {
-    try {
-      const res = await authorizedFetch(url, { method: "PATCH", body, headers });
-      if (res.ok) {
-        const text = await res.text();
-        return text ? JSON.parse(text) : null;
+    // 🔁 Intentamos PATCH primero, luego PUT
+    for (const method of ["PATCH", "PUT"]) {
+      try {
+        const res = await authorizedFetch(url, { method, body, headers });
+
+        if (res.ok) {
+          const text = await res.text();
+          console.log(`✅ actualizarCampana OK (${method})`, url);
+          return text ? JSON.parse(text) : null;
+        }
+
+        const text = await res.text().catch(() => null);
+        lastError = { url, method, status: res.status, body: text };
+
+        // Si no es 404, no seguimos intentando
+        if (res.status !== 404) break;
+
+      } catch (err) {
+        lastError = { url, method, error: String(err) };
       }
-      const text = await res.text().catch(() => null);
-      lastError = { url, status: res.status, body: text };
-      // si responde distinto de 404, devolvemos info (no intentamos PUT)
-      if (res.status !== 404) break;
-    } catch (err) {
-      lastError = { url, error: String(err) };
     }
   }
 
-  console.error("actualizarCampana -> fallo PATCH. details:", lastError);
+  console.error(" actualizar Campaña fallo", lastError);
   const msg = lastError?.body ?? lastError?.error ?? `HTTP ${lastError?.status ?? "?"}`;
   throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
 }
+
+// ================================
+// Actualizar estado activo/inactivo de campaña
+// ================================
 export async function actualizarEstadoCampana(id, activo) {
+   console.log("🚀 PATCH enviado:", id, activo);
   if (id == null) throw new Error("ID de campaña inválido");
 
   const base = API_URL.replace(/\/+$/, "");
   const urls = [
-    `${base}/campanas/${id}/`,
     `${base}/campanas/${id}`
   ];
 
-  const body = JSON.stringify({ Activo: activo });
+  // 👇 CLAVE: forzar 1 / 0
+  const body = JSON.stringify({
+    activo: activo ? 1 : 0
+  });
 
   let lastError = null;
 
@@ -477,6 +398,7 @@ export async function actualizarEstadoCampana(id, activo) {
       : `No se pudo actualizar el estado`
   );
 }
+
 
 // ================================
 // Obtener campañas públicas (sin auth)
@@ -598,4 +520,37 @@ export async function obtenerCampanasPublicas() {
       imagenes,
     };
   });
+}
+
+// ================================
+// Validar si usuario ya tiene suscripción reciente (4 meses)
+// ================================
+// ================================
+// Validar si usuario ya participó en cualquier campaña en los últimos 4 meses
+// ================================
+
+
+export async function validarParticipacionRecienteGlobal() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return false;
+
+    const res = await fetch(`${API_URL}/participaciones_usuario/`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      console.warn(`No se pudo validar participaciones: ${res.status}`);
+      return false;
+    }
+
+    const participaciones = await res.json(); // Array de participaciones
+    return participaciones.length > 0; // true si ya hay alguna reciente
+  } catch (err) {
+    console.error("Error en validarParticipacionRecienteGlobal:", err);
+    return false;
+  }
 }

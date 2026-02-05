@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   obtenerTodosRequisitos,
   eliminarRequisito,
+  actualizarEstadoRequisito,
 } from "../../../../services/ServicioRequisitos";
 import ModalNuevo from "../ModalNuevo/ModalNuevo";
 import ModalEditar from "../ModalEditar/ModalEditar";
@@ -32,13 +33,14 @@ export default function RequisitosPage() {
     cargarDatos();
   }, []);
 
-  // OJITO – SOLO CAMBIA FRONT
-  const cambiarEstadoFront = (id) => {
-    setRequisitos((prev) =>
-      prev.map((r) =>
-        r.id === id ? { ...r, Estado: !r.Estado } : r
-      )
-    );
+  // OJITO – GUARDA EN BACKEND
+  const cambiarEstado = async (req) => {
+    try {
+      await actualizarEstadoRequisito(req.id, !req.Estado);
+      cargarDatos();
+    } catch (error) {
+      console.error("Error actualizando estado:", error);
+    }
   };
 
   // ABRIR MODAL ELIMINAR
@@ -94,7 +96,7 @@ export default function RequisitosPage() {
         </div>
 
         <table className="tabla-requisitos">
-          <thead >
+          <thead>
             <tr className="fila-requisitos">
               <th>Requisito</th>
               <th>Estado</th>
@@ -110,7 +112,11 @@ export default function RequisitosPage() {
                 </td>
 
                 <td>
-                  <span className={req.Estado ? "estado-activo" : "estado-inactivo"}>
+                  <span
+                    className={
+                      req.Estado ? "estado-activo" : "estado-inactivo"
+                    }
+                  >
                     {req.Estado ? "Activo" : "Inactivo"}
                   </span>
                 </td>
@@ -118,10 +124,16 @@ export default function RequisitosPage() {
                 <td className="actions-cell">
                   {/* OJITO */}
                   <button
-                    className={`btn-icon ojito-btn ${req.Estado ? "visible" : "oculto"}`}
-                    onClick={() => cambiarEstadoFront(req.id)}
+                    className={`btn-icon ojito-btn ${
+                      req.Estado ? "visible" : "oculto"
+                    }`}
+                    onClick={() => cambiarEstado(req)}
                   >
-                    {req.Estado ? <IoEye size={22} /> : <IoEyeOff size={22} />}
+                    {req.Estado ? (
+                      <IoEye size={22} />
+                    ) : (
+                      <IoEyeOff size={22} />
+                    )}
                   </button>
 
                   {/* EDITAR */}
@@ -165,13 +177,12 @@ export default function RequisitosPage() {
 
       {/* MODAL ELIMINAR */}
       {modalEliminar && (
-  <ModalEliminar
-    mensaje={`¿Seguro que deseas eliminar "${requisitoElim?.requisitos}"?`}
-    onConfirmar={handleEliminar}
-    onCancelar={() => setModalEliminar(false)}
-  />
-)}
-
+        <ModalEliminar
+          mensaje={`¿Seguro que deseas eliminar "${requisitoElim?.requisitos}"?`}
+          onConfirmar={handleEliminar}
+          onCancelar={() => setModalEliminar(false)}
+        />
+      )}
     </div>
   );
 }

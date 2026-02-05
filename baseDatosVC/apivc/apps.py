@@ -13,3 +13,9 @@ class BaseDatosVCConfig(AppConfig):
 
     def ready(self):
         import VidaConectada.baseDatosVC.apivc.signals
+
+
+
+
+
+

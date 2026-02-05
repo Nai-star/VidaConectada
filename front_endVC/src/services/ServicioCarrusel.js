@@ -1,11 +1,11 @@
 import { authorizedFetch } from "./auth";
 
-/* const API_URL = (import.meta.env.VITE_API_URL || "http://192.168.100.90:8000").replace(/\/+$/, ""); */
+
 const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 const CLOUDINARY_BASE = (import.meta.env.VITE_CLOUDINARY_BASE || "https://res.cloudinary.com/dfhdzszjp/").replace(/\/+$/, "");
 
-/** Une base + path evitando barras dobles */
+// Une base + path evitando barras dobles 
 function joinUrl(base, path) {
   if (!path) return "";
   return `${base}/${String(path).replace(/^\/+/, "")}`;
@@ -69,17 +69,16 @@ function mapItem(raw) {
   };
 }
 
-/* ============================================================
-   🔹 1. OBTENER SOLO ACTIVOS (tu función original)
-============================================================ */
+//OBTENER SOLO ACTIVOS (endpoint público)
+
 export async function obtenerCarruselActivos() {
   const url = `${API_URL}/api/carusel/`;
-  const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
 
   let res;
 
   try {
-    res = await fetcher(url, { method: "GET" });
+    // 👇 USAR fetch normal, NO authorizedFetch
+    res = await fetch(url, { method: "GET" });
   } catch (err) {
     console.error("ServicioCarrusel: error de red", err);
     throw new Error("Error de red al cargar el carrusel");
@@ -114,9 +113,7 @@ export async function obtenerCarruselActivos() {
     .map(mapItem);
 }
 
-/* ============================================================
-   🔹 2. OBTENER TODOS los banners (Activos + Inactivos)
-============================================================ */
+//Obtoner banners de la base de datos
 export async function obtenerTodosLosBanners() {
   const url = `${API_URL}/api/carusel/`;
   const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
@@ -140,9 +137,8 @@ export async function obtenerTodosLosBanners() {
   return Array.isArray(data) ? data.map(mapItem) : [];
 }
 
-/* ============================================================
-   🔹 3. CREAR Banner
-============================================================ */
+//CREAR Banner
+
 export async function crearBanner(data) {
   const url = `${API_URL}/api/carusel/`;
   const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
@@ -167,9 +163,9 @@ export async function crearBanner(data) {
   return mapItem(await res.json());
 }
 
-/* ============================================================
-   🔹 4. ELIMINAR Banner
-============================================================ */
+
+  // ELIMINAR Banner
+
 export async function eliminarBanner(id) {
   const url = `${API_URL}/api/carusel/${id}/`;
   const fetcher = typeof authorizedFetch === "function" ? authorizedFetch : fetch;
@@ -192,7 +188,7 @@ export async function cambiarEstadoBanner(id, nuevoEstado) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ estado: nuevoEstado }), // ← ← AQUÍ EL CAMBIO
+      body: JSON.stringify({ estado: nuevoEstado }), 
     });
 
     if (!response.ok) {
@@ -207,10 +203,10 @@ export async function cambiarEstadoBanner(id, nuevoEstado) {
 }
 
 
-/* ============================================================
-   🔹 5. CREAR Banner (Admin) — acepta archivo o URL
-============================================================ */
-// NUEVO SERVICIO PARA ADMIN – NO ROMPE NADA DE LO EXISTENTE
+
+   // CREAR Banner (Admin) — acepta archivo o URL
+
+
 export async function crearBannerAdmin({ file, url, texto, filtro_oscuro, mostrar_texto }) {
   try {
     const formData = new FormData();
@@ -252,9 +248,7 @@ export async function crearBannerAdmin({ file, url, texto, filtro_oscuro, mostra
   }
 }
 
-/* ============================================================
-   🔹 6. ACTUALIZAR Banner (Admin)
-============================================================ */
+// ACTUALIZAR Banner (Admin)
 export async function actualizarBannerAdmin(id, { texto, showText, darkFilter, image }) {
   try {
     const formData = new FormData();

@@ -1,17 +1,41 @@
 import React, { useEffect, useState } from "react";
 import "./TarjetasTipoSangre.css";
 import { GetTiposSangre } from "../../../services/Servicio_TS";
-import {
-  FiDroplet,
-} from "react-icons/fi";
+import { FaTint } from "react-icons/fa";
 
-const badgeClass = (frecuencia = "") => {
-  const f = frecuencia.toLowerCase();
-  if (f.includes("muy")) return "badge badge-orange-strong";
-  if (f.includes("raro")) return "badge badge-orange";
-  if (f.includes("poco")) return "badge badge-yellow";
-  return "badge badge-green";
+
+
+
+const getFrecuenciaBadge = (poblacion) => {
+  const porcentaje = Number(poblacion); 
+
+  if (isNaN(porcentaje)) {
+    return {
+      text: "Desconocido",
+      className: "badge badge-gray",
+    };
+  }
+
+  if (porcentaje >= 20) {
+    return {
+      text: "Común",
+      className: "badge badge-green",
+    };
+  }
+
+  if (porcentaje >= 5) {
+    return {
+      text: "Poco común",
+      className: "badge badge-yellow",
+    };
+  }
+
+  return {
+    text: "Muy raro",
+    className: "badge badge-orange-strong",
+  };
 };
+
 
 
 function TarjetasTipoSangre() {
@@ -27,13 +51,19 @@ function TarjetasTipoSangre() {
         .finally(() => setLoading(false));
     }, []);
 
+    const formatPorcentaje = (value) => {
+    const n = Number(value);
+    return isNaN(n) ? value : `${n}%`;
+  };
+
+      
 
 
   return (
  
     <section  className="ts2-container" id="tipos-sangre">
       <div id="info"  className="ts2-header">
-        <h2 className="ts2-title"> <FiDroplet/>  Tipos de Sangre</h2>
+        <h2 className="ts2-title"> {/* <FaTint className="icono-gota"/> */}  Tipos de Sangre</h2>
         <p className="ts2-subtitle">
           Conoce los diferentes tipos sanguíneos y sus compatibilidades
         </p>
@@ -53,17 +83,23 @@ function TarjetasTipoSangre() {
   >
     <header className="ts2-card-top">
       <h3 className="ts2-type">{t.blood_type}</h3>
-      <span className={badgeClass(t.frecuencia)}>{t.frecuencia}</span>
+      {(() => {
+        const badge = getFrecuenciaBadge(t.poblacion);
+        return (
+          <span className={badge.className}>
+            {badge.text}
+          </span>
+        );
+      })()}
     </header>
 
     <div className="ts2-body">
       <div className="ts2-row">
         <span className="ts2-label">Población</span>
         <span className="ts2-strong">
-          {typeof t.poblacion === "number"
-            ? `${t.poblacion}%`
-            : t.poblacion}
+          {formatPorcentaje(t.poblacion)}
         </span>
+
       </div>
 
       <div className="ts2-row">

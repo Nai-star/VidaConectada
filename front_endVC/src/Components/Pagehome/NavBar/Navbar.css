@@ -44,7 +44,22 @@
 .navbar-logo span {
   font-size: 1.6rem;
   font-weight: bold;
-  color: var(--color-rojo-principal);
+  font-weight: 800;
+  color: #3c3f48;
+  
+}
+
+.navbar-logo span b {
+    background: linear-gradient(
+    90deg,
+    #ff5a5f 0%,
+    #920907 50%,
+    #f99c9c 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
 /* --- Lista de Enlaces de Navegación --- */
@@ -91,18 +106,20 @@
 }
 
 .btn-sucribirse:hover {
-  background-color: #fef0f2; /* Un hover rojo muy suave */
+  background-color: var(--color-rojo-principal); /* Un hover rojo muy suave */
+  color: var(--color-fondo);
 }
 
 .btn-participar {
   background-color: var(--color-rojo-principal);
   color: var(--color-fondo);
-  border: 2px solid var(--color-rojo-principal);
+  border: 3px solid var(--color-rojo-principal);
 }
 
 .btn-participar:hover {
-  background-color: var(--color-rojo-oscuro);
-  border-color: var(--color-rojo-oscuro);
+  background-color: var(--color-fondo);
+  color: var(--color-rojo-principal);
+  border-color: 3px solid var(--color-rojo-oscuro);
 }
 
 /* --- Botón Hamburguesa (Mobile) --- */

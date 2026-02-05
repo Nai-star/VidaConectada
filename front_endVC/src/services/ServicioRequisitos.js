@@ -1,7 +1,7 @@
-const API_URL = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000") + "/api";
-/* const API_URL = "http://192.168.100.34:8000/api"; */
+const API_URL =
+  (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000") + "/api";
 
-/** Obtiene requisitos activos (estado=true) desde JSON Server */
+/** Obtiene requisitos activos (estado=true) */
 export async function obtenerRequisitos() {
   try {
     const res = await fetch(`${API_URL}/requisitos/`);
@@ -9,7 +9,6 @@ export async function obtenerRequisitos() {
 
     const data = await res.json();
 
-    // Solo activos y ordenados por id asc
     return (Array.isArray(data) ? data : [])
       .filter((r) => r.Estado === true)
       .sort((a, b) => a.id - b.id);
@@ -18,6 +17,7 @@ export async function obtenerRequisitos() {
     throw error;
   }
 }
+
 export async function obtenerTodosRequisitos() {
   try {
     const res = await fetch(`${API_URL}/requisitos/`);
@@ -30,7 +30,7 @@ export async function obtenerTodosRequisitos() {
   }
 }
 
-/** 🔹 Crear un nuevo requisito */
+/** Crear requisito */
 export async function crearRequisito(data) {
   try {
     const res = await fetch(`${API_URL}/requisitos/`, {
@@ -47,7 +47,7 @@ export async function crearRequisito(data) {
   }
 }
 
-/** 🔹 Editar requisito existente */
+/** Editar requisito */
 export async function actualizarRequisito(id, data) {
   try {
     const res = await fetch(`${API_URL}/requisitos/${id}/`, {
@@ -64,7 +64,24 @@ export async function actualizarRequisito(id, data) {
   }
 }
 
-/** 🔹 Eliminar requisito */
+/** Cambiar estado (ojito) */
+export async function actualizarEstadoRequisito(id, estado) {
+  try {
+    const res = await fetch(`${API_URL}/requisitos/${id}/`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ Estado: estado }),
+    });
+
+    if (!res.ok) throw new Error("Error actualizando estado");
+    return await res.json();
+  } catch (error) {
+    console.error("❌ Error actualizando estado:", error);
+    throw error;
+  }
+}
+
+/** Eliminar requisito */
 export async function eliminarRequisito(id) {
   try {
     const res = await fetch(`${API_URL}/requisitos/${id}/`, {
@@ -78,12 +95,3 @@ export async function eliminarRequisito(id) {
     throw error;
   }
 }
-
-const cambiarEstado = async (req) => {
-  try {
-    await actualizarEstadoRequisito(req.id, !req.Estado); // alterna estado
-    cargarDatos(); // refresca tabla y vista previa
-  } catch (error) {
-    console.error("Error actualizando estado:", error);
-  }
-};

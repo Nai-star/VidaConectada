@@ -31,7 +31,7 @@ function Navbar() {
         <div className="navbar-logo">
           <Link to="/"onClick={cerrarMenu}>
             <img src={logo} alt="Logo VidaConectada" />
-            <span>VidaConectada</span>
+            <span>Vida<b>Conectada</b></span>
           </Link>
         </div>
 

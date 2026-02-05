@@ -308,14 +308,13 @@ class CantonesSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'Provincia']
 
 
-
 class MapaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mapa
         fields = '__all__'
 
-#Preguntas y rspuestas
 
+#Preguntas y rspuestas
 class BuzonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Buzon
@@ -368,9 +367,6 @@ class Red_bancosSerializer(serializers.ModelSerializer):
 
 
 # ---------------- Carusel ----------------
-# serializers.py (o donde tengas CaruselSerializer)
-
-
 class CaruselSerializer(serializers.ModelSerializer):
     texto = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
@@ -410,7 +406,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 				return data
             
 
-
+# ---------------- Campana Create/Update ----------------
 class CampanaCreateSerializer(serializers.ModelSerializer):
     CustomUser = serializers.StringRelatedField(read_only=True)
     Contacto = serializers.CharField(required=False, allow_blank=True)
@@ -434,9 +430,7 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
         user = request.user if request else None
 
         if not user or not user.is_authenticated:
-            raise serializers.ValidationError(
-                {"detail": "Usuario no autenticado"}
-            )
+            raise serializers.ValidationError({"detail": "Usuario no autenticado"})
 
         requisitos_ids = request.data.getlist("requisitos")
         imagen_file = request.FILES.get("imagen")
@@ -444,13 +438,11 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
         try:
             with transaction.atomic():
 
-                # 1️⃣ Crear campaña
                 campana = Campana.objects.create(
                     CustomUser=user,
                     **validated_data
                 )
 
-                # 2️⃣ Crear requisitos
                 for requisito_id in requisitos_ids:
                     DetalleRequisitos.objects.create(
                         Campana=campana,
@@ -459,7 +451,6 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
                         Estado=True
                     )
 
-                # 3️⃣ Crear imagen
                 if imagen_file:
                     Imagen_campana.objects.create(
                         Campana=campana,
@@ -473,6 +464,66 @@ class CampanaCreateSerializer(serializers.ModelSerializer):
                 {"detail": f"Error al crear la campaña: {str(e)}"}
             )
 
+    def update(self, instance, validated_data):
+        print("🔥 UPDATE LLAMADO")
+        print("🔥 VALIDATED DATA:", validated_data)
+        
+        request = self.context.get("request")
+        imagen_file = request.FILES.get("imagen") if request else None
+        if request:
+            if hasattr(request.data, "getlist"):
+                requisitos_ids = request.data.getlist("requisitos")
+            else:
+                requisitos_ids = request.data.get("requisitos", [])
+        else:
+            requisitos_ids = []
+
+
+        try:
+            with transaction.atomic():
+
+                # Actualizar campos normales
+                for attr, value in validated_data.items():
+                    setattr(instance, attr, value)
+                instance.save()
+
+                # Actualizar requisitos (opcional si quieres)
+                if requisitos_ids:
+                    instance.DetalleRequisito.all().delete()
+                    for requisito_id in requisitos_ids:
+                        DetalleRequisitos.objects.create(
+                            Campana=instance,
+                            Requisitos_id=requisito_id,
+                            CustomUser=instance.CustomUser,
+                            Estado=True
+                        )
+
+                # Actualizar imagen
+                if imagen_file:
+                    print("Actualizando imagen campaña...")
+
+                    # Elimina imágenes anteriores
+                    instance.Imagen_campana.all().delete()
+
+                    # Crea la nueva
+                    Imagen_campana.objects.create(
+                        Campana=instance,
+                        imagen=imagen_file
+                    )
+
+                return instance
+
+        except Exception as e:
+            raise serializers.ValidationError(
+                {"detail": f"Error al actualizar campaña: {str(e)}"}
+            )
+
+
+
+
+
+
+# ---------------- Campana Pública ----------------
 class CampanaPublicaSerializer(serializers.ModelSerializer):
     Canton_nombre = serializers.CharField(
         source="Cantones.nombre_canton",
@@ -480,7 +531,7 @@ class CampanaPublicaSerializer(serializers.ModelSerializer):
     )
 
     detalles_requisitos = DetalleRequisitosSerializer(
-        source="DetalleRequisito",  # 🔥 related_name correcto
+        source="DetalleRequisito", 
         many=True,
         read_only=True
     )
@@ -573,9 +624,7 @@ class TestimonioSerializer(serializers.ModelSerializer):
 
 
 
-from rest_framework import serializers
-from .models import Testimonio, Testimonio_video
-
+# ---------------- Testimonio Video ----------------
 class TestimonioVideoSerializer(serializers.ModelSerializer):
     # Campos para crear el video
     Descripcion = serializers.CharField(write_only=True)
@@ -609,13 +658,14 @@ class TestimonioVideoSerializer(serializers.ModelSerializer):
          videos = obj.Testimonio_video.all()
          return [
         {
-            "id": v.id,  # 🔥 ESTE CAMPO ES LA CLAVE
+            "id": v.id,  # ESTE CAMPO ES LA CLAVE
             "Descripcion": v.Descripcion,
             "Video": v.Video.url if v.Video else None
         }
         for v in videos
     ]
 
+# ---------------- Testimonio Video Update ----------------
 class TestimonioVideoUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Testimonio_video
@@ -625,7 +675,7 @@ class TestimonioVideoUpdateSerializer(serializers.ModelSerializer):
         }
 
     
-
+# ---------------- Participacion ----------------
 class ParticipacionSerializer(serializers.ModelSerializer):
     Numero_cedula = serializers.CharField(write_only=True, required=True)
     email = serializers.EmailField(write_only=True, required=False, allow_blank=True)

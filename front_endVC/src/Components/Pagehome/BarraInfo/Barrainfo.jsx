@@ -33,35 +33,35 @@ function Barrainfo() {
     
     <div className={`mini-topbar ${hidden ? "is-hidden" : ""}`}>
       <div className="mini-wrap">
-        <a href="tel:+50626308045" className="mini-item">
+        <a target= "_blank" href="tel:+50626308045" className="mini-item">
           <FiPhone className="mini-ic" />
           <span>2630-8045</span>
         </a>
 
         <div className="mini-divider" />
 
-        <div className="mini-item">
+        <a className="mini-item" target= "_blank" href="https://maps.app.goo.gl/RHZKWdEQyK75LijJ9">
           <FiMapPin className="mini-ic" />
           <span>Hospital Monseñor Sanabria</span>
-        </div>
+        </a>
 
         <div className="mini-divider" />
 
-        <a href="mailto:vidaconectadacr@gmail.com" className="mini-item">
+        <a target= "_blank" href="mailto:vidaconectadacr@gmail.com" className="mini-item">
           <FiMail className="mini-ic" />
           <span>vidaconectadacr@gmail.com</span>
         </a>
 
         <div className="mini-divider" />
 
-        <a href="https://forms.office.com/r/SYYbTB4s41?origin=lprLink" className="mini-item">
+        <a target= "_blank" href="https://forms.office.com/r/SYYbTB4s41?origin=lprLink" className="mini-item">
           <FiUser className="mini-ic" />
           <span>Encuesta satisfacción al usuario</span>
         </a>
 
         <div className="mini-divider" />
 
-        <a href="https://forms.office.com/r/SYYbTB4s41" className="mini-item">
+        <a target= "_blank" href="https://forms.office.com/r/SYYbTB4s41" className="mini-item">
           <FiUser className="mini-ic" />
           <span>Quejas y sugerencias</span>
         </a>

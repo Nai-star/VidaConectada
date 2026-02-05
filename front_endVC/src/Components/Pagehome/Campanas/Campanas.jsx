@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { obtenerCampanasPublicas } from "../../../services/ServicioCampanas";
+import { obtenerCampanasPublicas, validarParticipacionRecienteGlobal } from "../../../services/ServicioCampanas";
 import { FiCalendar, FiClock, FiMapPin, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import ParticiparModal from "../ParticiparModal/ParticiparModal"; 
 import "./campanas.css";
@@ -70,10 +70,17 @@ function Campanas() {
     cargar();
   }, []);
 
-  const handleCardButtonClick = (c) => {
+  const handleCardButtonClick = async (c) => {
     const cid = c.id ?? c.pk ?? c._id;
     if (openId === cid) {
-      // Botón dice "Participar en la campaña", abrir modal
+      // Validar si usuario tiene participación reciente
+      const tieneReciente = await validarParticipacionRecienteGlobal();
+      if (tieneReciente) {
+        alert("Ya participaste en otra campaña en los últimos 4 meses. No puedes inscribirte aún.");
+        return;
+      }
+
+      // Abrir modal de participación
       setSelectedCampaign(c);
       setModalOpen(true);
     } else {
@@ -89,38 +96,24 @@ function Campanas() {
 
   const handleParticipateSuccess = (campaign) => {
     console.log("Participación registrada para:", campaign);
-    // Aquí puedes actualizar estado o mostrar un toast si quieres
   };
 
   const generarLinkMapa = (direccion) => {
-  if (!direccion) return null;
+    if (!direccion) return null;
 
-  const esUrl = /^https?:\/\//i.test(direccion);
+    const esUrl = /^https?:\/\//i.test(direccion);
+    if (esUrl) return direccion;
 
-  // Si ya es un link → se usa tal cual
-  if (esUrl) return direccion;
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccion)}`;
+  };
 
-  // Si es texto → generamos búsqueda en Google Maps
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccion)}`;
-};
-
-const textoDireccionVisible = (direccion) => {
-  if (!direccion) return "";
-
-  const esUrl = /^https?:\/\//i.test(direccion);
-  const MAX_LARGO = 45;
-
-  // Si es un link o es muy largo → texto genérico
-  if (esUrl || direccion.length > MAX_LARGO) {
-    return "Ver ubicación";
-  }
-
-  // Si es texto corto → mostrar tal cual
-  return `${direccion}`;
-};
-
-
-
+  const textoDireccionVisible = (direccion) => {
+    if (!direccion) return "";
+    const esUrl = /^https?:\/\//i.test(direccion);
+    const MAX_LARGO = 45;
+    if (esUrl || direccion.length > MAX_LARGO) return "Ver ubicación";
+    return `${direccion}`;
+  };
 
   return (
     <section className="cmp-wrap" id="campanas">
@@ -135,9 +128,8 @@ const textoDireccionVisible = (direccion) => {
             const cid = c.id ?? c.pk ?? c._id ?? idx;
             const imagenes = Array.isArray(c.imagenes) ? c.imagenes : [];
             const requisitos = Array.isArray(c.detalles_requisitos)
-            ? c.detalles_requisitos
-            : [];
-
+              ? c.detalles_requisitos
+              : [];
 
             return (
               <div key={cid} className="campana-card">
@@ -155,7 +147,6 @@ const textoDireccionVisible = (direccion) => {
 
                 <div className="info-row">
                   <FiMapPin />
-
                   {(c.direccion_exacta || c.direccion) ? (
                     <a
                       href={generarLinkMapa(c.direccion_exacta ?? c.direccion)}
@@ -170,12 +161,9 @@ const textoDireccionVisible = (direccion) => {
                   )}
                 </div>
 
-
-
                 <div className={`detalles-expandido ${openId === cid ? "open" : ""}`}>
                   <div className="detalles-content">
                     <h4>Descripción</h4>
-                    
                     <p>{c.Descripcion ?? "Sin descripción disponible."}</p>
 
                     <h4>Requisitos</h4>

@@ -25,6 +25,7 @@ export default function ModalEditarCampana({ campana = null, onClose, onSaved })
   // requisitos
   const [requisitosDisponibles, setRequisitosDisponibles] = useState([]);
   const [requisitosSeleccionados, setRequisitosSeleccionados] = useState([]);
+  
 
   // ubicaciones
   const [provincias, setProvincias] = useState([]);
@@ -158,7 +159,15 @@ export default function ModalEditarCampana({ campana = null, onClose, onSaved })
         fd.append("requisitos", id)
       );
 
-      if (imagen) fd.append("imagen", imagen);
+      if (imagen instanceof File) {
+      fd.append("imagen", imagen);
+    }
+    
+    
+    for (let pair of fd.entries()) {
+      console.log("FD EDIT:", pair[0], pair[1]);
+    }
+
 
       await actualizarCampana(campana.id, fd);
 
@@ -229,7 +238,17 @@ export default function ModalEditarCampana({ campana = null, onClose, onSaved })
         </select>
 
         <label>Imagen nueva</label>
-        <input type="file" onChange={e => setImagen(e.target.files[0])} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={e => {
+            const file = e.target.files?.[0] || null;
+            console.log("📷 Imagen seleccionada (editar):", file);
+            setImagen(file);
+          }}
+        />
+
+        {/* <input type="file" onChange={e => setImagen(e.target.files[0])} /> */}
 
         <div className="botones0">
           <button onClick={guardar} disabled={saving}>
