@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import "./tiposSangreEscasez.css";
+import "./TiposSangreEscasez.css";
 import { FaExclamationCircle } from "react-icons/fa";
 import { obtenerTiposSangreUrgentes } from "../../../services/Servicio_TS"; 
 
