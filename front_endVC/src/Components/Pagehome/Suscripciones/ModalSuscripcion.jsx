@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./modalSuscripcion.css";
+import "./ModalSuscripcion.css";
 import { crearSuscripcion } from "../../../services/ServicioSuscripcion";
 import { GetTiposSangre } from "../../../services/Servicio_TS";
 // Asegúrate de importar estas funciones si las usas, si no, déjalas comentadas o bórralas

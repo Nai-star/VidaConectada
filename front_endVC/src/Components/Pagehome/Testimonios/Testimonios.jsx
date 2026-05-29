@@ -7,7 +7,7 @@ import Slider from "react-slick";
 
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import "./testimonios.css";
+import "./Testimonios.css";
 
 function Testimonios() {
   const [testimoniosTexto, setTestimoniosTexto] = useState([]);

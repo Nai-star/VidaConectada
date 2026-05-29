@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ModalGuiaDonante from "../GuiaDonanate/ModalGuiaDonante";
 
-import "./requisitosDonacion.css";
+import "./RequisitosDonacion.css";
 import { obtenerRequisitos } from "../../../services/ServicioRequisitos";
 import TestDonacionModal from "./TestDonacionModal/TestDonacionModal";
 import { FaClipboardList, FaCheckCircle } from "react-icons/fa";
