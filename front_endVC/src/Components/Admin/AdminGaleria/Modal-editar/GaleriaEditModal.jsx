@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./galeriaeditmodal.css";
+
 
 export default function GaleriaEditModal({
   open,
