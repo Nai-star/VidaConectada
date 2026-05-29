@@ -34,7 +34,7 @@ function Routing() {
 
 
   return (
-    <Router>    
+    <Router basename="/VidaConectada">    
       <Routes>    
         {/* Rutas públicas */}
         <Route path='/' element={<Home/>}/>
