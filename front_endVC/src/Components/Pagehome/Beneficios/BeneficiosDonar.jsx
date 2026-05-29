@@ -1,5 +1,5 @@
 import React from "react";
-import "./beneficiosDonar.css";
+import "./BeneficiosDonar.css";
 import { FaRegHeart, FaUsers, FaAward } from "react-icons/fa";
 
 const BENEFICIOS = [
