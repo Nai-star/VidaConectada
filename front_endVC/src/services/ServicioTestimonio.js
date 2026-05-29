@@ -1,8 +1,11 @@
 // ServicioTestimonio.js
 import axios from "axios";
 
-const API_URL_TEXTO = "http://localhost:8000/api/Testimonio_texto/";
-const API_URL_VIDEO = "http://localhost:8000/api/Testimonio_video/";
+/* const API_URL_TEXTO = "http://localhost:8000/api/Testimonio_texto/";
+const API_URL_VIDEO = "http://localhost:8000/api/Testimonio_video/"; */
+
+const API_URL_TEXTO = `${import.meta.env.VITE_API_URL}/Testimonio_texto/`;
+const API_URL_VIDEO = `${import.meta.env.VITE_API_URL}/Testimonio_video/`;
 
 // Ajusta tu Cloudinary Cloud Name aquí
 const CLOUDINARY_BASE_URL = "https://res.cloudinary.com/vida-conectada/"; 
