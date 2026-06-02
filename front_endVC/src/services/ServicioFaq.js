@@ -3,7 +3,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
 /** Obtiene preguntas frecuentes activas (estado=true) */
 export async function obtenerPreguntasFrecuentes() {
-  const res = await fetch(`${API_URL}/faq/`);
+  const res = await fetch(`${API_URL}/api/faq/`);
 
   if (!res.ok) {
     throw new Error("No se pudieron cargar las preguntas frecuentes");

@@ -30,7 +30,7 @@ function buildCloudinaryUrl(value) {
 export async function obtenerUsuarioActual() {
   try {
     const id = localStorage.getItem("userId");
-    const res = await authorizedFetch(`${API_URL}/usuarios/${id}/`);
+    const res = await authorizedFetch(`${API_URL}/api/usuarios/${id}/`);
     console.log("Status de usuario actual:", res.status);
     if (!res.ok) return null;
     const data = await res.json();
@@ -49,7 +49,7 @@ export async function obtenerUsuarioActual() {
 // ================================
 // reemplaza la función obtenerCampanas en ServicioCampanas.js por esta
 export async function obtenerCampanas() {
-  const res = await authorizedFetch(`${API_URL}/admin/campanas/`);
+  const res = await authorizedFetch(`${API_URL}/api/admin/campanas/`);
   if (!res.ok) throw new Error(`Error al obtener campañas: ${res.status}`);
   const data = await res.json();
 
@@ -230,7 +230,7 @@ function toBackendDate(fecha) {
 export async function crearCampana(data) {
   const isFormData = data instanceof FormData;
 
-  const res = await authorizedFetch(`${API_URL}/admin/campanas/`, {
+  const res = await authorizedFetch(`${API_URL}/api/admin/campanas/`, {
     method: "POST",
     body: isFormData ? data : JSON.stringify(data),
     headers: isFormData ? {} : { "Content-Type": "application/json" },
@@ -257,8 +257,8 @@ export async function eliminarCampana(id) {
 
   const base = API_URL.replace(/\/+$/, "");
   const urls = [
-    `${base}/campanas/${id}/`,
-    `${base}/campanas/${id}`
+    `${base}/api/campanas/${id}/`,
+    `${base}/api/campanas/${id}`
   ];
 
   let lastDetail = null;
@@ -311,8 +311,8 @@ export async function actualizarCampana(id, data) {
 
   const base = API_URL.replace(/\/+$/, "");
   const urlsToTry = [
-    `${base}/campanas/${id}/`,
-    `${base}/campanas/${id}`
+    `${base}/api/campanas/${id}/`,
+    `${base}/api/campanas/${id}`
   ];
 
   const isForm = data instanceof FormData;
@@ -359,7 +359,7 @@ export async function actualizarEstadoCampana(id, activo) {
 
   const base = API_URL.replace(/\/+$/, "");
   const urls = [
-    `${base}/campanas/${id}`
+    `${base}/api/campanas/${id}`
   ];
 
   // 👇 CLAVE: forzar 1 / 0
@@ -405,7 +405,7 @@ export async function actualizarEstadoCampana(id, activo) {
 // ================================
 
 export async function obtenerCampanasPublicas() {
-  const res = await fetch(`${API_URL}/campanas/`, {
+  const res = await fetch(`${API_URL}/api/campanas/`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -535,7 +535,7 @@ export async function validarParticipacionRecienteGlobal() {
     const token = localStorage.getItem("token");
     if (!token) return false;
 
-    const res = await fetch(`${API_URL}/participaciones_usuario/`, {
+    const res = await fetch(`${API_URL}/api/participaciones_usuario/`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
