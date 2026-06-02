@@ -53,7 +53,9 @@ function Routing() {
       
 
         {/* Rutas anidadas del panel de administración */}
-        <Route element={<PrivateRouting />}>
+
+        
+        <Route /* element={<PrivateRouting />} */>
         <Route path="/admin" element={
              
                 <Admin />
