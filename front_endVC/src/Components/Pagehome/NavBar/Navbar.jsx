@@ -2,7 +2,7 @@ import React, { useState} from 'react'
 import { Link } from "react-router-dom"
 import { HashLink } from 'react-router-hash-link'
 import { FaEllipsisH, FaTimes } from "react-icons/fa"
-import logo from "/logo_vidaconectada.png"
+const logo = `${import.meta.env.BASE_URL}logo_vidaconectada.png`;
 import "../BarraInfo/barrainfo.css"
 import './Navbar.css'
 import ModalSuscripcion from "../Suscripciones/ModalSuscripcion"
