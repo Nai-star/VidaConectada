@@ -20,7 +20,7 @@ function Footer() {
         {/* Columna 1 */}
         <div className="footer-section">
           <div className="footer-logo">
-            <img src="/logo_vidaconectada.png" alt="VidaConectada" />
+            <img src={`${import.meta.env.BASE_URL}logo_vidaconectada.png`} alt="VidaConectada" />
             <span>Vida<span className="footer-accent">Conectada</span></span>
           </div>
           <p>
