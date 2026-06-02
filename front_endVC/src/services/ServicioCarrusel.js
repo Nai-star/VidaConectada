@@ -229,10 +229,10 @@ export async function crearBannerAdmin({ file, url, texto, filtro_oscuro, mostra
     // Siempre activo al crear
     formData.append("estado", "true");
 
-    const response = await fetch(`${API_URL}/api/carusel/`, {
-      method: "POST",
-      body: formData,
-    });
+    const response = await authorizedFetch(`${API_URL}/api/carusel/`, {
+  method: "POST",
+  body: formData,
+});
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -261,7 +261,7 @@ export async function actualizarBannerAdmin(id, { texto, showText, darkFilter, i
     if (showText !== undefined) formData.append("mostrar_texto", showText ? "true" : "false");
     if (darkFilter !== undefined) formData.append("filtro_oscuro", darkFilter ? "true" : "false");
 
-    const response = await fetch(`${API_URL}/api/carusel/${id}/`, {
+    const response = await authorizedFetch(`${API_URL}/api/carusel/${id}/`, {
       method: "PATCH",
       body: formData,
     });
