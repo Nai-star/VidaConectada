@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api";
 export async function obtenerTiposSangreUrgentes() {
   try {
     // Obtener las urgencias
-    const rUrg = await fetch(`${API_URL}/urgente_tip_sang/`);
+    const rUrg = await fetch(`${API_URL}/api/urgente_tip_sang/`);
     if (!rUrg.ok) throw new Error("Error al obtener Urgente_Tip_Sang");
     const urgentes = await rUrg.json();
 
@@ -17,7 +17,7 @@ export async function obtenerTiposSangreUrgentes() {
     const urgentesActivos = urgentes.filter((u) => u.activo === true);
 
     //  Obtener el catálogo de tipos de sangre
-    const rTipos = await fetch(`${API_URL}/sangre/`);
+    const rTipos = await fetch(`${API_URL}/api/sangre/`);
     if (!rTipos.ok) throw new Error("Error al obtener tipo_sangre");
     const tipos = await rTipos.json();
 
@@ -51,7 +51,7 @@ export async function obtenerTiposSangreUrgentes() {
  */
 export async function GetTiposSangre() {
   try {
-    const response = await fetch(`${API_URL}/sangre/`);
+    const response = await fetch(`${API_URL}/api/sangre/`);
     if (!response.ok) {
       throw new Error("Error al obtener los tipos de sangre");
     }
@@ -78,7 +78,7 @@ export async function GetTiposSangre() {
 
 export async function actualizarEstadoUrgencia(id, body) {
   try {
-    const res = await fetch(`${API_URL}/urgente_tip_sang/${id}/`, {
+    const res = await fetch(`${API_URL}/api/urgente_tip_sang/${id}/`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -97,12 +97,12 @@ export async function actualizarEstadoUrgencia(id, body) {
   }
 }
 export async function getUrgentesRaw() {
-  const res = await fetch(`${API_URL}/urgente_tip_sang/`);
+  const res = await fetch(`${API_URL}/api/urgente_tip_sang/`);
   if (!res.ok) throw new Error("Error obteniendo urgente_tip_sang");
   return await res.json();
 }
 export async function crearUrgente(body) {
-  const res = await fetch(`${API_URL}/urgente_tip_sang/`, {
+  const res = await fetch(`${API_URL}/api/urgente_tip_sang/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
