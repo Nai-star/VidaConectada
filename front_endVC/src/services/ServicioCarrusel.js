@@ -229,7 +229,7 @@ export async function crearBannerAdmin({ file, url, texto, filtro_oscuro, mostra
     // Siempre activo al crear
     formData.append("estado", "true");
 
-    const response = await fetch("http://localhost:8000/api/carusel/", {
+    const response = await fetch(`${API_URL}/api/carusel/`, {
       method: "POST",
       body: formData,
     });
