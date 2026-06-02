@@ -41,7 +41,7 @@ function AdminSidebar() {
     <aside className="admin-sidebar">
       <div className="brand">
         <img
-          src="/logo_vidaconectada.png"
+          src={`${import.meta.env.BASE_URL}logo_vidaconectada.png`}
           className="brand-logo"
           alt="VidaConectada"
         />

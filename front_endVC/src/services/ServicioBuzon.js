@@ -92,7 +92,7 @@ async function handleResponse(response) {
    Crear consulta del buzón (público)
    ========================== */
 export async function crearConsultaBuzon(payload) {
-  const res = await fetch(`${API_URL}/buzon/`, {
+  const res = await fetch(`${API_URL}/api/buzon/`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -108,7 +108,7 @@ export async function crearConsultaBuzon(payload) {
    Listar buzón (requiere token)
    ========================== */
 export async function listarBuzon() {
-  const res = await fetch(`${API_URL}/buzon/`, {
+  const res = await fetch(`${API_URL}/api/buzon/`, {
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
   });
   return handleResponse(res);
@@ -118,7 +118,7 @@ export async function listarBuzon() {
    Eliminar pregunta
    ========================== */
 export async function eliminarPregunta(id) {
-  const res = await fetch(`${API_URL}/buzon/${id}/`, {
+  const res = await fetch(`${API_URL}/api/buzon/${id}/`, {
     method: "DELETE",
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
   });
@@ -134,7 +134,7 @@ export async function eliminarPregunta(id) {
    Listar respuestas
    ========================== */
 export async function listarRespuestas() {
-  const res = await fetch(`${API_URL}/respuestas/`, {
+  const res = await fetch(`${API_URL}/api/respuestas/`, {
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
   });
 
@@ -146,7 +146,7 @@ export async function listarRespuestas() {
    Obtener respuestas por buzón
    ========================== */
 export async function obtenerRespuestasPorBuzon(buzonId) {
-  const res = await fetch(`${API_URL}/respuestas/?buzon_id=${buzonId}`, {
+  const res = await fetch(`${API_URL}/api/respuestas/?buzon_id=${buzonId}`, {
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
   });
 
@@ -160,7 +160,7 @@ export async function obtenerRespuestasPorBuzon(buzonId) {
 export async function crearRespuesta(payload) {
   console.log(payload);
   
-  const res = await fetch(`${API_URL}/respuestas/`, {
+  const res = await fetch(`${API_URL}/api/respuestas/`, {
     method: "POST",
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -190,7 +190,7 @@ export async function obtenerUsuarioActual() {
     
     if (!token) return null; // no token → null
 
-    const res = await fetch(`${API_URL}/usuarios/`, {
+    const res = await fetch(`${API_URL}/api/usuarios/`, {
       headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
     });
 
@@ -218,7 +218,7 @@ export const listarRespuestasAlias = listarRespuestas;
    ========================== */
 export async function cambiarEstadoRespuesta(id, payload) {
   if (!id) throw new Error("ID de respuesta requerido para cambiar estado.");
-  const res = await fetch(`${API_URL}/respuesta/${id}/`, {
+  const res = await fetch(`${API_URL}/api/respuesta/${id}/`, {
     method: "PATCH",
     headers: {
       ...getAuthHeaders(),
@@ -240,7 +240,7 @@ export async function cambiarEstadoRespuesta(id, payload) {
    ========================== */
 export async function actualizarRespuesta(id, payload) {
   if (!id) throw new Error("ID de respuesta requerido para actualizar.");
-  const res = await fetch(`${API_URL}/respuesta/${id}/`, {
+  const res = await fetch(`${API_URL}/api/respuesta/${id}/`, {
     method: "PUT",
     headers: {
       ...getAuthHeaders(),
@@ -261,7 +261,7 @@ export async function actualizarRespuesta(id, payload) {
    ========================== */
 export async function obtenerRespuestaPorId(id) {
   if (!id) return null;
-  const res = await fetch(`${API_URL}/respuesta/${id}/`, {
+  const res = await fetch(`${API_URL}/api/respuesta/${id}/`, {
     headers: { ...getAuthHeaders(), "Content-Type": "application/json" },
   });
 
