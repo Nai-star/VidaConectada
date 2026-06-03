@@ -95,6 +95,8 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'api.CustomUser'
 
+STATICFILES_DIRS = []
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
