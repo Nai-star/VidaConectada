@@ -562,27 +562,3 @@ class ParticipacionesRecientesView(APIView):
 
         return Response(data)
 
-from django.http import JsonResponse
-
-
-def seed_provincias_cantones(request):
-    datos = [
-        {"provincia": "San José", "cantones": ["San José", "Escazú", "Desamparados", "Puriscal", "Tarrazú", "Aserrí", "Mora", "Goicoechea", "Santa Ana", "Alajuelita", "Vásquez de Coronado", "Acosta", "Tibás", "Moravia", "Montes de Oca", "Turrubares", "Dota", "Curridabat", "Pérez Zeledón", "León Cortés"]},
-        {"provincia": "Alajuela", "cantones": ["Alajuela", "San Ramón", "Grecia", "San Mateo", "Atenas", "Naranjo", "Palmares", "Poás", "Orotina", "San Carlos", "Zarcero", "Sarchí", "Upala", "Los Chiles", "Guatuso", "Río Cuarto"]},
-        {"provincia": "Cartago", "cantones": ["Cartago", "Paraíso", "La Unión", "Jiménez", "Turrialba", "Alvarado", "Oreamuno", "El Guarco"]},
-        {"provincia": "Heredia", "cantones": ["Heredia", "Barva", "Santo Domingo", "Santa Bárbara", "San Rafael", "San Isidro", "Belén", "Flores", "San Pablo", "Sarapiquí"]},
-        {"provincia": "Guanacaste", "cantones": ["Liberia", "Nicoya", "Santa Cruz", "Bagaces", "Carrillo", "Cañas", "Abangares", "Tilarán", "Nandayure", "La Cruz", "Hojancha"]},
-        {"provincia": "Puntarenas", "cantones": ["Puntarenas", "Esparza", "Buenos Aires", "Montes de Oro", "Osa", "Quepos", "Golfito", "Coto Brus", "Parrita", "Corredores", "Garabito"]},
-        {"provincia": "Limón", "cantones": ["Limón", "Pococí", "Siquirres", "Talamanca", "Matina", "Guácimo"]},
-    ]
-    
-    for d in datos:
-        provincia, _ = Provincia.objects.get_or_create(nombre_p=d["provincia"])
-        for canton in d["cantones"]:
-            Cantones.objects.get_or_create(nombre_canton=canton, Provincia=provincia)
-    
-    return JsonResponse({
-        "status": "ok", 
-        "provincias": Provincia.objects.count(),
-        "cantones": Cantones.objects.count()
-    })
