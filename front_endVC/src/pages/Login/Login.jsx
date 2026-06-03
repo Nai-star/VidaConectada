@@ -16,10 +16,11 @@ const Login = () => {
        // Favicon y título dinámicos
   useEffect(() => {
     const link = document.querySelector("link[rel~='icon']");
-    if (link) link.href = "/logo_vidaconectada.png";
+    if (link) link.href = `${import.meta.env.BASE_URL}logo_vidaconectada.png` ;
     document.title = "Login | Vida Conectada";
   }, []);
-
+  
+  
 
 
   const [email, setEmail] = useState("");

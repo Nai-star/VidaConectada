@@ -6,9 +6,11 @@ import './terminos.css';
 function TerminosUso() {
   useEffect(() => {
     const link = document.querySelector("link[rel~='icon']");
-    if (link) link.href = "/logo.png";
+    if (link) link.href = `${import.meta.env.BASE_URL}logo_vidaconectada.png`;
     document.title = "Términos de Uso | VidaConectada";
   }, []);
+
+
 
   return (
     <div className="legal-page">

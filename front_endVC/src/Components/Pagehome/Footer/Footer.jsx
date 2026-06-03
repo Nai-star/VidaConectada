@@ -4,7 +4,7 @@ import { FiMail, FiPhone  } from "react-icons/fi";
 
 import { HashLink } from 'react-router-hash-link';
 import ModalGuiaDonante from "../GuiaDonanate/ModalGuiaDonante";
-
+import { Link } from 'react-router-dom';
 import "./Footer.css"
 
 function Footer() {
@@ -81,11 +81,15 @@ function Footer() {
         </p>
         <div className="footer-links">
           <div >
-          <a className="gal-btn" href="/privacidad">Política de Privacidad</a>
+          <Link to="/privacidad" className="gal-btn">
+            Política de Privacidad
+          </Link>
           </div>
 
           <div >
-            <a className="gal-btn" href="/terminos">Términos de Uso</a>
+            <Link to="/terminos" className="gal-btn">
+              Términos de Uso
+            </Link>
           </div>
 
 

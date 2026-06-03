@@ -6,7 +6,7 @@ import './politica.css';
 function PoliticasP() {
   useEffect(() => {
     const link = document.querySelector("link[rel~='icon']");
-    if (link) link.href = "/logo.png";
+    if (link) link.href = `${import.meta.env.BASE_URL}logo_vidaconectada.png`;
     document.title = "Política de Privacidad | VidaConectada";
   }, []);
 

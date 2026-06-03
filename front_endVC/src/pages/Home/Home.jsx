@@ -29,10 +29,10 @@ function Home() {
 
   // Favicon y título
   useEffect(() => {
-    const link = document.querySelector("link[rel~='icon']");
-    if (link) link.href = "/logo_vidaconectada.png";
-    document.title = "Vida Conectada";
-  }, []);
+      const link = document.querySelector("link[rel~='icon']");
+      if (link) link.href = `${import.meta.env.BASE_URL}logo_vidaconectada.png`;
+      document.title = "Vida Conectada";
+    }, []);
 
   const stats = [
     { id: 1, value: "10 min", label: "Duración promedio" },

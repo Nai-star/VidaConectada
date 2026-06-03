@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "./Galeria.css";
 import { obtenerGaleriaActiva } from "../../../services/ServicioGaleria";
+import { Link } from 'react-router-dom';
+
 
 function Galeria({ limit = 8 }) {
 const [items, setItems] = useState([]);
@@ -75,7 +77,9 @@ return (
   </div>
 
   <div className="gal-actions">
-    <a className="gal-btn" href="/galeriavermas">Ver más fotos →</a>
+    <Link to="/galeriavermas" className="gal-btn">
+      Ver más fotos →
+    </Link>
   </div>
 </section>
 ); }
