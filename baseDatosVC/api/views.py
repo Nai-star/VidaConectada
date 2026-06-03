@@ -561,3 +561,22 @@ class ParticipacionesRecientesView(APIView):
         ]
 
         return Response(data)
+
+
+from django.http import JsonResponse
+from .models import Sangre
+
+def seed_sangre(request):
+    datos = [
+        {"tipo_sangre": "O+", "frecuencia": "38%", "poblacion": "38 de cada 100", "donaA": "O+, A+, B+, AB+", "recibeDe": "O+, O-"},
+        {"tipo_sangre": "O-", "frecuencia": "7%", "poblacion": "7 de cada 100", "donaA": "Todos", "recibeDe": "O-"},
+        {"tipo_sangre": "A+", "frecuencia": "34%", "poblacion": "34 de cada 100", "donaA": "A+, AB+", "recibeDe": "A+, A-, O+, O-"},
+        {"tipo_sangre": "A-", "frecuencia": "6%", "poblacion": "6 de cada 100", "donaA": "A+, A-, AB+, AB-", "recibeDe": "A-, O-"},
+        {"tipo_sangre": "B+", "frecuencia": "9%", "poblacion": "9 de cada 100", "donaA": "B+, AB+", "recibeDe": "B+, B-, O+, O-"},
+        {"tipo_sangre": "B-", "frecuencia": "2%", "poblacion": "2 de cada 100", "donaA": "B+, B-, AB+, AB-", "recibeDe": "B-, O-"},
+        {"tipo_sangre": "AB+", "frecuencia": "3%", "poblacion": "3 de cada 100", "donaA": "AB+", "recibeDe": "Todos"},
+        {"tipo_sangre": "AB-", "frecuencia": "1%", "poblacion": "1 de cada 100", "donaA": "Todos", "recibeDe": "AB-, O-, A-, B-"},
+    ]
+    for d in datos:
+        Sangre.objects.get_or_create(tipo_sangre=d["tipo_sangre"], defaults=d)
+    return JsonResponse({"status": "ok", "total": Sangre.objects.count()})

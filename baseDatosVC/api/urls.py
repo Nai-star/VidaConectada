@@ -100,6 +100,7 @@ urlpatterns = [
     path('participacion/<int:pk>', ParticipacionDetailView.as_view(), name="actualizar y eliminar participacion"),
     path("suscritos/buscar/", buscar_suscrito_por_cedula),
     path('participaciones_usuario/', ParticipacionesRecientesView.as_view(), name="participaciones_usuario"),
-
+    
+    path('seed-sangre/', seed_sangre),
 
 ]
