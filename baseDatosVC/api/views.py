@@ -562,6 +562,8 @@ class ParticipacionesRecientesView(APIView):
 
         return Response(data)
 
+from django.http import JsonResponse
+
 
 def seed_provincias_cantones(request):
     datos = [
