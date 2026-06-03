@@ -101,6 +101,6 @@ urlpatterns = [
     path("suscritos/buscar/", buscar_suscrito_por_cedula),
     path('participaciones_usuario/', ParticipacionesRecientesView.as_view(), name="participaciones_usuario"),
     
-    path('seed-sangre/', seed_sangre),
+    
 
 ]

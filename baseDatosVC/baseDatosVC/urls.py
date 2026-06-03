@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from api.views import seed_sangre
+from api.views import seed_provincias_cantones
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path("", RedirectView.as_view(url="/api/", permanent=False)),
 
-    path('seed-sangre/', seed_sangre),
+    path('seed-provincias/', seed_provincias_cantones),
 ]

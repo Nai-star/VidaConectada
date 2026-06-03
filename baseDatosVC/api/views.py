@@ -563,20 +563,24 @@ class ParticipacionesRecientesView(APIView):
         return Response(data)
 
 
-from django.http import JsonResponse
-from .models import Sangre
-
-def seed_sangre(request):
+def seed_provincias_cantones(request):
     datos = [
-        {"tipo_sangre": "O+", "frecuencia": "38%", "poblacion": "38 de cada 100", "donaA": "O+, A+, B+, AB+", "recibeDe": "O+, O-"},
-        {"tipo_sangre": "O-", "frecuencia": "7%", "poblacion": "7 de cada 100", "donaA": "Todos", "recibeDe": "O-"},
-        {"tipo_sangre": "A+", "frecuencia": "34%", "poblacion": "34 de cada 100", "donaA": "A+, AB+", "recibeDe": "A+, A-, O+, O-"},
-        {"tipo_sangre": "A-", "frecuencia": "6%", "poblacion": "6 de cada 100", "donaA": "A+, A-, AB+, AB-", "recibeDe": "A-, O-"},
-        {"tipo_sangre": "B+", "frecuencia": "9%", "poblacion": "9 de cada 100", "donaA": "B+, AB+", "recibeDe": "B+, B-, O+, O-"},
-        {"tipo_sangre": "B-", "frecuencia": "2%", "poblacion": "2 de cada 100", "donaA": "B+, B-, AB+, AB-", "recibeDe": "B-, O-"},
-        {"tipo_sangre": "AB+", "frecuencia": "3%", "poblacion": "3 de cada 100", "donaA": "AB+", "recibeDe": "Todos"},
-        {"tipo_sangre": "AB-", "frecuencia": "1%", "poblacion": "1 de cada 100", "donaA": "Todos", "recibeDe": "AB-, O-, A-, B-"},
+        {"provincia": "San José", "cantones": ["San José", "Escazú", "Desamparados", "Puriscal", "Tarrazú", "Aserrí", "Mora", "Goicoechea", "Santa Ana", "Alajuelita", "Vásquez de Coronado", "Acosta", "Tibás", "Moravia", "Montes de Oca", "Turrubares", "Dota", "Curridabat", "Pérez Zeledón", "León Cortés"]},
+        {"provincia": "Alajuela", "cantones": ["Alajuela", "San Ramón", "Grecia", "San Mateo", "Atenas", "Naranjo", "Palmares", "Poás", "Orotina", "San Carlos", "Zarcero", "Sarchí", "Upala", "Los Chiles", "Guatuso", "Río Cuarto"]},
+        {"provincia": "Cartago", "cantones": ["Cartago", "Paraíso", "La Unión", "Jiménez", "Turrialba", "Alvarado", "Oreamuno", "El Guarco"]},
+        {"provincia": "Heredia", "cantones": ["Heredia", "Barva", "Santo Domingo", "Santa Bárbara", "San Rafael", "San Isidro", "Belén", "Flores", "San Pablo", "Sarapiquí"]},
+        {"provincia": "Guanacaste", "cantones": ["Liberia", "Nicoya", "Santa Cruz", "Bagaces", "Carrillo", "Cañas", "Abangares", "Tilarán", "Nandayure", "La Cruz", "Hojancha"]},
+        {"provincia": "Puntarenas", "cantones": ["Puntarenas", "Esparza", "Buenos Aires", "Montes de Oro", "Osa", "Quepos", "Golfito", "Coto Brus", "Parrita", "Corredores", "Garabito"]},
+        {"provincia": "Limón", "cantones": ["Limón", "Pococí", "Siquirres", "Talamanca", "Matina", "Guácimo"]},
     ]
+    
     for d in datos:
-        Sangre.objects.get_or_create(tipo_sangre=d["tipo_sangre"], defaults=d)
-    return JsonResponse({"status": "ok", "total": Sangre.objects.count()})
+        provincia, _ = Provincia.objects.get_or_create(nombre_p=d["provincia"])
+        for canton in d["cantones"]:
+            Cantones.objects.get_or_create(nombre_canton=canton, Provincia=provincia)
+    
+    return JsonResponse({
+        "status": "ok", 
+        "provincias": Provincia.objects.count(),
+        "cantones": Cantones.objects.count()
+    })
